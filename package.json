@@ -1,0 +1,21 @@
+{
+    "name": "com.beans.deform",
+    "displayName": "Deform",
+    "version": "0.0.1-preview.1",
+    "unity": "2018.3",
+    "description": "A framework for deforming meshes in the editor and at runtime.",
+    "category": "Unity",
+    "keywords": 
+    [
+        "burst",
+        "mathematics",
+        "mesh",
+        "modifiers",
+        "deformers"
+    ],
+    "dependencies": 
+    {
+        "com.unity.burst": "0.2.4-preview.41",
+        "com.unity.mathematics": "0.0.12-preview.19"
+    }
+}
