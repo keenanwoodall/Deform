@@ -1,5 +1,6 @@
 {
     "name": "com.beans.deform",
+    "author": "Keenan Woodall",
     "displayName": "Deform",
     "version": "0.0.1-preview.1",
     "unity": "2018.3",
