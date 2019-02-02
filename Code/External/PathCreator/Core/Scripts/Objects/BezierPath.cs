@@ -358,42 +358,44 @@ namespace PathCreation
         /// Insert new anchor point at given position. Automatically place control points around it so as to keep shape of curve the same
         public void SplitSegment(Vector3 anchorPos, int segmentIndex, float splitTime)
         {
+			splitTime = Mathf.Clamp01 (splitTime);
+			anchorPos -= localPosition;
 
-            anchorPos -= localPosition;
-
-            if (controlMode == ControlMode.Automatic)
-            {
-                points.InsertRange(segmentIndex * 3 + 2, new Vector3[] { Vector3.zero, anchorPos, Vector3.zero });
-                AutoSetAllAffectedControlPoints(segmentIndex * 3 + 3);
-            }
-            else
-            {
-                // Split the curve to find where control points can be inserted to least affect shape of curve
-                // Curve will probably be deformed slightly since splitTime is only an estimate (for performance reasons, and so doesn't correspond exactly with anchorPos)
-                Vector3[][] splitSegment = CubicBezierUtility.SplitCurve(GetPointsInSegment(segmentIndex), splitTime);
-                points.InsertRange(segmentIndex * 3 + 2, new Vector3[] { splitSegment[0][2], splitSegment[1][0], splitSegment[1][1] });
-                int newAnchorIndex = segmentIndex * 3 + 3;
-                MovePoint(newAnchorIndex - 2, splitSegment[0][1], true);
-                MovePoint(newAnchorIndex + 2, splitSegment[1][2], true);
-                MovePoint(newAnchorIndex, anchorPos, true);
+			if (controlMode == ControlMode.Automatic)
+			{
+				points.InsertRange (segmentIndex * 3 + 2, new Vector3[] { Vector3.zero, anchorPos, Vector3.zero });
+				AutoSetAllAffectedControlPoints (segmentIndex * 3 + 3);
+			}
+			else
+			{
+				// Split the curve to find where control points can be inserted to least affect shape of curve
+				// Curve will probably be deformed slightly since splitTime is only an estimate (for performance reasons, and so doesn't correspond exactly with anchorPos)
+				Vector3[][] splitSegment = CubicBezierUtility.SplitCurve (GetPointsInSegment (segmentIndex), splitTime);
+				points.InsertRange (segmentIndex * 3 + 2, new Vector3[] { splitSegment[0][2], splitSegment[1][0], splitSegment[1][1] });
+				int newAnchorIndex = segmentIndex * 3 + 3;
+				MovePoint (newAnchorIndex - 2, splitSegment[0][1], true);
+				MovePoint (newAnchorIndex + 2, splitSegment[1][2], true);
+				MovePoint (newAnchorIndex, anchorPos, true);
 
 
-                if (controlMode == ControlMode.Mirrored)
-                {
-                    float avgDst = ((splitSegment[0][2] - anchorPos).magnitude + (splitSegment[1][1] - anchorPos).magnitude) / 2;
-                    MovePoint(newAnchorIndex + 1, anchorPos + (splitSegment[1][1] - anchorPos).normalized * avgDst, true);
-                }
-            }
+				if (controlMode == ControlMode.Mirrored)
+				{
+					float avgDst = ((splitSegment[0][2] - anchorPos).magnitude + (splitSegment[1][1] - anchorPos).magnitude) / 2;
+					MovePoint (newAnchorIndex + 1, anchorPos + (splitSegment[1][1] - anchorPos).normalized * avgDst, true);
+				}
+			}
 
-            // Insert angle for new anchor (value should be set inbetween neighbour anchor angles)
-            int newAnchorAngleIndex = segmentIndex + 1;
-            int numAngles = perAnchorNormalsAngle.Count;
-            float anglePrev = (newAnchorAngleIndex > 0 || isClosed) ? perAnchorNormalsAngle[(newAnchorAngleIndex - 1 + numAngles) % numAngles] : 0;
-            float angleNext = (newAnchorAngleIndex < numAngles || isClosed) ? perAnchorNormalsAngle[(newAnchorAngleIndex + 1) % numAngles] : 0;
-            perAnchorNormalsAngle.Insert(newAnchorAngleIndex, (anglePrev + angleNext) / 2f);
+			// Insert angle for new anchor (value should be set inbetween neighbour anchor angles)
+			int newAnchorAngleIndex = segmentIndex + 1;
+			int numAngles = perAnchorNormalsAngle.Count;
 
-            NotifyPathModified();
-        }
+			float anglePrev = perAnchorNormalsAngle[(newAnchorAngleIndex - 1)];
+			float angleNext = perAnchorNormalsAngle[newAnchorAngleIndex];
+			float splitAngle = Mathf.LerpAngle (anglePrev, angleNext, splitTime);
+			perAnchorNormalsAngle.Insert (newAnchorAngleIndex, splitAngle);
+
+			NotifyPathModified ();
+		}
 
         /// Delete the anchor point at given index, as well as its associated control points
         public void DeleteSegment(int anchorIndex)
