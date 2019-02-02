@@ -9,7 +9,7 @@ using Deform;
 
 namespace DeformEditor
 {
-	public class DeformWindow : EditorWindow
+	public class CreatorWindow : EditorWindow
 	{
 		private static List<DeformerAttribute> deformerAttributes;
 
@@ -62,7 +62,7 @@ namespace DeformEditor
 		[MenuItem ("Tools/Deform/Creator", priority = 0)]
 		public static void ShowWindow ()
 		{
-			GetWindow<DeformWindow> ("Deform", true);
+			GetWindow<CreatorWindow> ("Creator", true);
 		}
 
 		[UnityEditor.Callbacks.DidReloadScripts]
