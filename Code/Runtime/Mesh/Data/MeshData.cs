@@ -69,8 +69,10 @@ namespace Deform
 			}
 			// Since this has already been initialized, make a new mesh for the dynamic mesh to reference
 			// so that two Deformables aren't displaying and modifying the same mesh.
-			else
+			else if (OriginalMesh != null)
 				DynamicMesh = GameObject.Instantiate (OriginalMesh);
+			else
+				return false;
 			
 			// Tell the mesh filter to display the dynamic mesh.
 			Target.SetMesh (DynamicMesh);
