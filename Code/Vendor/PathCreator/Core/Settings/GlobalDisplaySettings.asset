@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46d5e8d803e252f4499b52e657f8e1a2, type: 3}
+  m_Name: GlobalDisplaySettings
+  m_EditorClassIdentifier: 
+  anchorSize: 10
+  controlSize: 7
+  hideAutoControls: 1
+  anchorShape: 0
+  controlShape: 0
+  anchor: {r: 0.95, g: 0.25, b: 0.25, a: 0.85}
+  anchorHighlighted: {r: 1, g: 0.4, b: 0.4, a: 1}
+  anchorSelected: {r: 1, g: 1, b: 1, a: 1}
+  control: {r: 0.35, g: 0.6, b: 1, a: 0.85}
+  controlHighlighted: {r: 0.6, g: 0.6, b: 1, a: 1}
+  controlSelected: {r: 1, g: 1, b: 1, a: 1}
+  handleDisabled: {r: 1, g: 1, b: 1, a: 0.2}
+  controlLine: {r: 0, g: 0, b: 0, a: 0.7254902}
+  bezierPath: {r: 0, g: 1, b: 0, a: 1}
+  highlightedPath: {r: 1, g: 0.6, b: 0, a: 1}
+  bounds: {r: 1, g: 1, b: 1, a: 0.4}
+  segmentBounds: {r: 1, g: 1, b: 1, a: 0.4}
+  vertexPath: {r: 1, g: 1, b: 1, a: 1}
+  vertex: {r: 0, g: 0, b: 0, a: 1}
+  normals: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  normalsLength: 0.1
