@@ -11,7 +11,7 @@ namespace DeformEditor
 			get
 			{
 				if (settingsAsset == null)
-					settingsAsset = DeformEditorResources.LoadAssetOfType <DeformEditorSettingsAsset> ();
+					settingsAsset = DeformEditorResources.LoadAssetOfType <DeformEditorSettingsAsset> (searchAssets: DeformEditorResources.SearchFilter.Assets);
 				if (settingsAsset == null)
 				{
 					settingsAsset = ScriptableObject.CreateInstance<DeformEditorSettingsAsset> ();
