@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System;
+using System.IO;
+using Object = UnityEngine.Object;
 
 namespace DeformEditor
 {
@@ -8,49 +11,82 @@ namespace DeformEditor
 	/// </summary>
 	public static class DeformEditorResources
 	{
-		/// <summary>
-		/// A path to Deform's Editor Resources folder, relative to the project.
-		/// </summary>
-		public static readonly string RESOURCES_PATH = "Assets/Deform/EditorResources/";
-
-		/// <summary>
-		/// Loads an asset of type T at a path relative to RESOURCES_PATH.
-		/// </summary>
-		public static T LoadAsset<T> (string path) where T : Object
+		public enum SearchFilter
 		{
-			return AssetDatabase.LoadAssetAtPath<T> ($"{RESOURCES_PATH}{path}");
+			All,
+			Assets,
+			Packages
+		}
+
+		public static T LoadAssetOfType<T> (string contains = null, SearchFilter searchAssets = SearchFilter.All, Action error = null, Action success = null) where T : Object
+		{
+			bool allowScriptAssets = typeof (T) == typeof (MonoScript);
+
+			T t = null;
+			string[] assetGUIDs = AssetDatabase.FindAssets ($"t:{typeof (T).Name}", GetSearchDirectories (searchAssets));
+			foreach (var assetGUID in assetGUIDs)
+			{
+				string assetPath = AssetDatabase.GUIDToAssetPath (assetGUID);
+				if (string.IsNullOrEmpty (assetPath) || !allowScriptAssets && assetPath.EndsWith (".cs") || contains != null && !Path.GetFileName (assetPath).Contains (contains))
+					continue;
+				t = AssetDatabase.LoadAssetAtPath<T> (assetPath);
+				break;
+			}
+
+			if (t == null)
+				error?.Invoke ();
+			else
+				success?.Invoke ();
+
+			return t;
 		}
 
 		/// <summary>
-		/// Creates an asset of type T at a path relative to RESOURCES_PATH.
+		/// Creates asset relative to the Assets folder.
 		/// </summary>
-		public static void CreateAsset (Object asset, string path)
+		public static void CreateAsset (Object asset, string relativePath)
 		{
-			AssetDatabase.CreateAsset (asset, $"{RESOURCES_PATH}{path}");
+			EnsurePath (relativePath);
+			AssetDatabase.CreateAsset (asset, $"Assets/{relativePath}");
 		}
 
-		/// <summary>
-		/// Loads an mesh at a path relative to RESOURCES_PATH/Meshes.
-		/// </summary>
-		public static Mesh LoadMesh (string name)
+		private static void EnsurePath (string relativePath)
 		{
-			return LoadAsset<Mesh> ($"Meshes/{name}");
+			if (!AssetDatabase.IsValidFolder ($"Assets/{relativePath}"))
+			{
+				string[] paths = relativePath.Split ('/');
+				string workingPath = "Assets";
+				for (int i = 0; i < paths.Length; i++)
+				{
+					if (!AssetDatabase.IsValidFolder ($"{workingPath}/{paths[i]}"))
+					{
+						AssetDatabase.CreateFolder (workingPath, paths[i]);
+					}
+					workingPath += $"/{paths[i]}";
+				}
+				AssetDatabase.Refresh (ImportAssetOptions.Default);
+			}
 		}
 
-		/// <summary>
-		/// Loads a mesh at RESOURCES_PATH/Meshes folder with the name "DefaultMesh".
-		/// </summary>
-		/// <returns></returns>
-		public static Mesh LoadDefaultMesh ()
+		private static string[] GetSearchDirectories (SearchFilter searchAssets)
 		{
-			var mesh = LoadMesh ("DefaultMesh.fbx");
-			if (mesh == null)
-				mesh = LoadMesh ("DefaultMesh.obj");
-			if (mesh == null)
-				mesh = LoadMesh ("DefaultMesh.blend");
-			if (mesh == null)
-				mesh = LoadMesh ("DefaultMesh.max");
-			return mesh;
+			string[] searchDirs;
+			switch (searchAssets)
+			{
+				case SearchFilter.All:
+					searchDirs = new[] { "Assets", "Packages" };
+					break;
+				case SearchFilter.Assets:
+					searchDirs = new[] { "Assets" };
+					break;
+				case SearchFilter.Packages:
+					searchDirs = new[] { "Packages" };
+					break;
+				default:
+					throw new ArgumentOutOfRangeException (nameof (searchAssets), searchAssets, null);
+			}
+
+			return searchDirs;
 		}
 	}
 }

@@ -195,7 +195,7 @@ namespace DeformEditor
 					// Check if there's already a Deformable/
 					var deformable = target.GetComponent<Deformable> ();
 					// If there isn't, we can add one
-					if (deformable == null)
+					if (!PrefabUtility.IsPartOfPrefabAsset (target) && deformable == null)
 					{
 						Undo.AddComponent<Deformable> (target);
 						addedComponent = true;
@@ -214,7 +214,7 @@ namespace DeformEditor
 			newObject.name = "Deformable Object";
 
 			var deformable = newObject.AddComponent<Deformable> ();
-			deformable.ChangeMesh (DeformEditorResources.LoadDefaultMesh ());
+			deformable.ChangeMesh (DeformEditorResources.LoadAssetOfType<Mesh> ("DeformDefaultMesh"));
 
 			DestroyImmediate (newObject.GetComponent<Collider> ());
 

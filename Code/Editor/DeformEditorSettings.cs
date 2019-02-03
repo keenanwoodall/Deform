@@ -5,22 +5,17 @@ namespace DeformEditor
 {
 	public static class DeformEditorSettings
 	{
-		/// <summary>
-		/// A path to the settings asset, relative to the project.
-		/// </summary>
-		public static readonly string SETTINGS_PATH = "DeformSettings.asset";
-
 		private static DeformEditorSettingsAsset settingsAsset;
 		public static DeformEditorSettingsAsset SettingsAsset
 		{
 			get
 			{
 				if (settingsAsset == null)
-					settingsAsset = DeformEditorResources.LoadAsset<DeformEditorSettingsAsset> (SETTINGS_PATH);
+					settingsAsset = DeformEditorResources.LoadAssetOfType <DeformEditorSettingsAsset> ();
 				if (settingsAsset == null)
 				{
 					settingsAsset = ScriptableObject.CreateInstance<DeformEditorSettingsAsset> ();
-					DeformEditorResources.CreateAsset (settingsAsset, SETTINGS_PATH);
+					DeformEditorResources.CreateAsset (settingsAsset, "Deform/EditorResources/DeformSettings.asset");
 				}
 				return settingsAsset;
 			}
