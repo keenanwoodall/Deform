@@ -235,6 +235,7 @@ namespace DeformEditor
 			if (selectedGameObjects == null || selectedGameObjects.Length == 0)
 			{
 				var newGameObject = new GameObject (attribute.Name);
+
 				Undo.RegisterCreatedObjectUndo (newGameObject, "Created Deformer");
 
 				newGameObject.AddComponent (attribute.Type);
@@ -245,104 +246,77 @@ namespace DeformEditor
 			}
 			else
 			{
-				if (autoAdd)
-					Undo.SetCurrentGroupName ("Created and Added Deformer");
-				else
-					Undo.SetCurrentGroupName ("Created Deformer");
+				Undo.SetCurrentGroupName ("Created Deformer");
 
 				var newGameObject = new GameObject (attribute.Name);
 				Undo.RegisterCreatedObjectUndo (newGameObject, "Created Deformer");
 
-				var newDeformer = newGameObject.AddComponent (attribute.Type) as Deformer;
+				EditorGUIUtility.PingObject (newGameObject);
 
-				if (selectedGameObjects.Length == 1)
-				{
-					var parent = selectedGameObjects[0].transform;
-					newGameObject.transform.SetParent (parent, true);
-					newGameObject.transform.position = parent.position;
-					newGameObject.transform.rotation = parent.rotation * Quaternion.Euler (attribute.XRotation, attribute.YRotation, attribute.ZRotation);
-				}
-				else
-				{
-					var center = GetAverageGameObjectPosition (selectedGameObjects);
-					var rotation = Quaternion.Euler (attribute.XRotation, attribute.YRotation, attribute.ZRotation);
-					newGameObject.transform.SetPositionAndRotation (center, rotation);
-				}
+				var newDeformer = newGameObject.AddComponent (attribute.Type) as Deformer;
 
 				if (autoAdd)
 				{
-					var groups = new GroupDeformer[selectedGameObjects.Length];
-					var repeaters = new RepeaterDeformer[selectedGameObjects.Length];
-					var deformables = new Deformable[selectedGameObjects.Length];
-
-					var groupIndex = 0;
-					var repeaterIndex = 0;
-					var deformableIndex = 0;
-
-					foreach (var gameObject in selectedGameObjects)
+					if (selectedGameObjects.Length == 1)
 					{
-						// if the object we're creating a deformer under has an auto group, there's no need to add the new deformer to anything
-						// because the auto group will automatically find it.
-						if (gameObject.GetComponent<AutoGroupDeformer> () != null)
-							continue;
-						// check for repeater deformer
-						var repeater = gameObject.GetComponent<RepeaterDeformer> ();
-						if (repeater != null)
+						if (!PrefabUtility.IsPartOfPrefabAsset (Selection.gameObjects[0]))
 						{
-							repeaters[repeaterIndex] = repeater;
-							repeaterIndex++;
+							var parent = selectedGameObjects[0].transform;
+							newGameObject.transform.SetParent (parent, true);
+							newGameObject.transform.position = parent.position;
+							newGameObject.transform.rotation = parent.rotation * Quaternion.Euler (attribute.XRotation, attribute.YRotation, attribute.ZRotation);
 						}
-							
-						// check for group deformer
-						var group = gameObject.GetComponent<GroupDeformer> ();
-						if (group != null)
+					}
+					else
+					{
+						var center = GetAverageGameObjectPosition (selectedGameObjects);
+						var rotation = Quaternion.Euler (attribute.XRotation, attribute.YRotation, attribute.ZRotation);
+						newGameObject.transform.SetPositionAndRotation (center, rotation);
+					}
+
+					var deformables = GetComponents<Deformable> (selectedGameObjects);
+					var groups = GetComponents<GroupDeformer> (selectedGameObjects);
+					var repeaters = GetComponents<RepeaterDeformer> (selectedGameObjects);
+
+					foreach (var deformable in deformables)
+					{
+						if (deformable != null && !PrefabUtility.IsPartOfPrefabAsset (deformable))
 						{
-							// add group to array of groups if it exists
-							groups[groupIndex] = group;
-							groupIndex++;
-						}
-						// if there isn't a group or repeater deformer, check for a deformable
-						if (repeater == null || group == null)
-						{
-							var deformable = gameObject.GetComponent<Deformable> ();
-							if (deformable != null)
-							{
-								// add deformable to array of deformables if it exists
-								deformables[deformableIndex] = deformable;
-								deformableIndex++;
-							}
+							Undo.RecordObject (deformable, "Added Deformer");
+							deformable.DeformerElements.Add (new DeformerElement (newDeformer));
 						}
 					}
 
-					if (repeaters!= null && repeaters.Length != 0)
+					foreach (var group in groups)
 					{
-						Array.Resize (ref repeaters, repeaterIndex);
-						Undo.RecordObjects (repeaters, "Set Deformer");
-						foreach (var repeater in repeaters)
-							if (repeater != null)
-								repeater.Deformer = newDeformer;
+						if (group != null && !PrefabUtility.IsPartOfPrefabAsset (group))
+						{
+							Undo.RecordObject (group, "Added Deformer");
+							group.DeformerElements.Add (new DeformerElement (newDeformer));
+						}
 					}
 
-					if (groups != null && groups.Length != 0)
+					foreach (var repeater in repeaters)
 					{
-						Array.Resize (ref groups, groupIndex);
-						Undo.RecordObjects (groups, "Added Deformer");
-						foreach (var group in groups)
-							if (group != null)
-								group.DeformerElements.Add (new DeformerElement (newDeformer));
-					}
-
-					if (deformables != null && deformables.Length != 0)
-					{
-						Array.Resize (ref deformables, deformableIndex);
-						Undo.RecordObjects (deformables, "Added Deformer");
-						foreach (var deformable in deformables)
-							if (deformable != null)
-								deformable.DeformerElements.Add (new DeformerElement (newDeformer));
+						if (repeater != null && !PrefabUtility.IsPartOfPrefabAsset (repeater))
+						{
+							Undo.RecordObject (repeater, "Set Deformer");
+							repeater.Deformer = newDeformer;
+						}
 					}
 				}
 
 				Undo.CollapseUndoOperations (Undo.GetCurrentGroup ());
+			}
+		}
+
+		private IEnumerable<T> GetComponents<T> (GameObject[] objects) where T : Component
+		{
+			for (int i = 0; i < objects.Length; i++)
+			{
+				var component = objects[i].GetComponent<T> ();
+				if (component != null)
+					yield return component;
 			}
 		}
 
