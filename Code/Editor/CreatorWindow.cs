@@ -145,7 +145,7 @@ namespace DeformEditor
 								EditorGUILayout.LabelField (current.Category.ToString (), EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
 
 							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.ListButton))
-								CreateDeformerFromAttribute (current, true);
+								CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
 							drawnCount++;
 						}
 
@@ -304,7 +304,15 @@ namespace DeformEditor
 							repeater.Deformer = newDeformer;
 						}
 					}
+
+					foreach (var so in DeformableEditor.SerializedObjects)
+					{
+						so.SetIsDifferentCacheDirty ();
+						so.Update ();
+					}
 				}
+				else
+					Selection.activeGameObject = newGameObject;
 
 				Undo.CollapseUndoOperations (Undo.GetCurrentGroup ());
 			}

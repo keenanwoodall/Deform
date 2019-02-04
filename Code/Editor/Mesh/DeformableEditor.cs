@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using Deform;
+using System.Collections.Generic;
 
 namespace DeformEditor
 {
@@ -77,6 +78,8 @@ namespace DeformEditor
 			}
 		}
 
+		public static List<SerializedObject> SerializedObjects { get; private set; } = new List<SerializedObject> ();
+
 		[SerializeField]
 		private static bool ShowDebug;
 
@@ -87,10 +90,17 @@ namespace DeformEditor
 
 		private void OnEnable ()
 		{
+			SerializedObjects.Add (serializedObject);
+
 			content.Update ();
 			properties.Update (serializedObject);
 
 			deformerList = new DeformerListEditor (serializedObject, serializedObject.FindProperty ("deformerElements"));
+		}
+
+		private void OnDisable ()
+		{
+			SerializedObjects.Remove (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -121,6 +131,8 @@ namespace DeformEditor
 						((Deformable)t).Manager = (DeformableManager)properties.Manager.objectReferenceValue;
 			}
 
+			serializedObject.SetIsDifferentCacheDirty ();
+			serializedObject.Update ();
 			deformerList.DoLayoutList ();
 			serializedObject.ApplyModifiedProperties ();
 
