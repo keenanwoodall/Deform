@@ -113,8 +113,11 @@ namespace DeformEditor
 			{
 				EditorGUILayout.PropertyField (properties.UpdateMode, content.UpdateMode);
 				if (check.changed)
+				{
+					serializedObject.ApplyModifiedProperties ();
 					foreach (var t in targets)
 						((Deformable)t).UpdateMode = (UpdateMode)properties.UpdateMode.enumValueIndex;
+				}
 			}
 
 			EditorGUILayout.PropertyField (properties.NormalsRecalculation, content.NormalsRecalculation);
@@ -127,14 +130,14 @@ namespace DeformEditor
 			{
 				EditorGUILayout.PropertyField (properties.Manager, content.Manager);
 				if (check.changed)
+				{
+					serializedObject.ApplyModifiedProperties ();
 					foreach (var t in targets)
 						((Deformable)t).Manager = (DeformableManager)properties.Manager.objectReferenceValue;
+				}
 			}
 
-			serializedObject.SetIsDifferentCacheDirty ();
-			serializedObject.Update ();
 			deformerList.DoLayoutList ();
-			serializedObject.ApplyModifiedProperties ();
 
 			EditorGUILayout.Space ();
 
