@@ -1,7 +1,8 @@
 {
     "name": "DeformEditor",
     "references": [
-        "Deform"
+        "Deform",
+        "PathCreator"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

@@ -15,7 +15,8 @@ namespace DeformEditor
 				Twist, 
 				Speed, 
 				Path, 
-				Axis;
+				Axis,
+				CreatePath;
 
 			public void Update ()
 			{
@@ -40,6 +41,10 @@ namespace DeformEditor
 					text: "Path"
 				);
 				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
+				CreatePath = new GUIContent
+				(
+					text: "Create Path"
+				);
 			}
 		}
 
@@ -83,6 +88,23 @@ namespace DeformEditor
 			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
 			EditorGUILayout.PropertyField (properties.Path, content.Path);
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			if (properties.Path.objectReferenceValue == null && !properties.Path.hasMultipleDifferentValues)
+			{
+				if (GUILayout.Button (content.CreatePath))
+				{
+					var pathDeformer = (PathDeformer)target;
+					if (targets.Length == 1)
+						properties.Path.objectReferenceValue = Undo.AddComponent<PathCreation.PathCreator> (pathDeformer.gameObject);
+					else
+					{
+						var newPathObject = new GameObject ("Path Creator");
+						Undo.RegisterCreatedObjectUndo (newPathObject, "Created Path Creator");
+						var newPathCreator = newPathObject.AddComponent<PathCreation.PathCreator> ();
+						properties.Path.objectReferenceValue = newPathCreator;
+					}
+				}
+			}
 
 			serializedObject.ApplyModifiedProperties ();
 			EditorApplication.QueuePlayerLoopUpdate ();
