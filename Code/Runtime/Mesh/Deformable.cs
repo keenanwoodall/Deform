@@ -235,6 +235,14 @@ namespace Deform
 			if (ColliderRecalculation == ColliderRecalculation.Auto)
 				RecalculateMeshCollider ();
 
+			ResetDynamicData ();
+		}
+
+		/// <summary>
+		/// Sends the original native mesh data to the dynamic mesh data.
+		/// </summary>
+		private void ResetDynamicData ()
+		{
 			data.ResetData (currentModifiedDataFlags);
 
 			lastModifiedDataFlags = currentModifiedDataFlags;
