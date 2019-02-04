@@ -13,6 +13,15 @@ namespace Deform
 		private MeshFilter meshFilter;
 		private SkinnedMeshRenderer skinnedMeshRenderer;
 
+		
+		public static bool IsValid (GameObject target)
+		{
+			if (target.GetComponent<MeshFilter> () == null)
+				if (target.GetComponent<SkinnedMeshRenderer> () == null)
+					return false;
+			return true;
+		}
+
 		/// <summary>
 		/// Tries to find a MeshFilter or SkinnedMeshRenderer on the target game object.
 		/// </summary>

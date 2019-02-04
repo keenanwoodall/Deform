@@ -195,7 +195,7 @@ namespace DeformEditor
 					// Check if there's already a Deformable/
 					var deformable = target.GetComponent<Deformable> ();
 					// If there isn't, we can add one
-					if (!PrefabUtility.IsPartOfPrefabAsset (target) && deformable == null)
+					if (!PrefabUtility.IsPartOfPrefabAsset (target) && deformable == null && MeshTarget.IsValid (target))
 					{
 						Undo.AddComponent<Deformable> (target);
 						addedComponent = true;
