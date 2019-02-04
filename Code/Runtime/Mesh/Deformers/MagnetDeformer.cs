@@ -7,8 +7,8 @@ using static Unity.Mathematics.math;
 
 namespace Deform
 {
-	[Deformer (Name = "Gravity", Description = "Attracts or repels vertices from a point", Type = typeof (GravityDeformer))]
-	public class GravityDeformer : Deformer, IFactor
+	[Deformer (Name = "Magnet", Description = "Attracts or repels vertices from a point", Type = typeof (MagnetDeformer))]
+	public class MagnetDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{
@@ -44,7 +44,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Center, data.Target.GetTransform ());
 
-			return new GravityDeformJob
+			return new MagnetDeformJob
 			{
 				factor = Factor,
 				falloff = falloff,
@@ -55,7 +55,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct GravityDeformJob : IJobParallelFor
+		private struct MagnetDeformJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;

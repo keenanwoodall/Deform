@@ -4,8 +4,8 @@ using Deform;
 
 namespace DeformEditor
 {
-	[CustomEditor (typeof (GravityDeformer)), CanEditMultipleObjects]
-	public class GravityDeformerEditor : Editor
+	[CustomEditor (typeof (MagnetDeformer)), CanEditMultipleObjects]
+	public class MagnetDeformerEditor : Editor
 	{
 		private class Content
 		{
