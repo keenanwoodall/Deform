@@ -99,6 +99,9 @@ namespace DeformEditor
 		/// </summary>
 		public static void Curve (AnimationCurve curve, Transform axis, float magnitude, float xOffset, float yOffset, int segments = DEF_CURVE_SEGMENTS)
 		{
+			if (curve == null || curve.length == 0)
+				return;
+
 			var lastPoint = Vector3.zero;
 			var lastPointSet = false;
 

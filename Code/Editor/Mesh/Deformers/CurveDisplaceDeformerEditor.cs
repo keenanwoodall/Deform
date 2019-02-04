@@ -73,6 +73,8 @@ namespace DeformEditor
 		{
 			var curveDisplace = target as CurveDisplaceDeformer;
 
+			if (curveDisplace.Curve == null || curveDisplace.Curve.length < 1)
+				return;
 			DeformHandles.Curve (curveDisplace.Curve, curveDisplace.Axis, curveDisplace.Factor, curveDisplace.Offset, 0f);
 		}
 	}

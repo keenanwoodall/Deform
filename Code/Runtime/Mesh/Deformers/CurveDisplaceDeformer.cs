@@ -57,13 +57,13 @@ namespace Deform
 
 		public override void PreProcess ()
 		{
-			if (curve != null)
+			if (curve != null && curve.length > 0)
 				nativeCurve.Update (curve, 32);
 		}
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
-			if (!nativeCurve.IsCreated || curve == null)
+			if (!nativeCurve.IsCreated || curve == null || curve.length == 0)
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
