@@ -8,6 +8,8 @@ namespace Deform
 {
 	public struct NativePath : IDisposable
 	{
+		public bool IsCreated { get => points.IsCreated; }
+
 		private NativeArray<float3> points;
 		private NativeArray<float3> normals;
 		private NativeArray<float3> tangents;

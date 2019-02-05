@@ -1,8 +1,12 @@
 {
-    "name": "PathCreator",
-    "references": [],
+    "name": "PathCreatorEditor",
+    "references": [
+        "PathCreator"
+    ],
     "optionalUnityReferences": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

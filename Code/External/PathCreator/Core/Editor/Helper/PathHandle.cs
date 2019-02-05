@@ -201,7 +201,7 @@ namespace PathCreationEditor
             int numToAdd = (upToIndex - numIDAtStart) + 1;
             for (int i = 0; i < numToAdd; i++)
             {
-                string hashString = $"pathhandle({numIDAtStart + i})";
+                string hashString = string.Format("pathhandle({0})", numIDAtStart + i);
                 int hash = hashString.GetHashCode();
 
                 int id = GUIUtility.GetControlID(hash, FocusType.Passive);

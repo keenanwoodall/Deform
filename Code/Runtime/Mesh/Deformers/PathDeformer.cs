@@ -59,6 +59,8 @@ namespace Deform
 		private JobHandle handle;
 
 		private NativePath pathData;
+		private bool pathDataIsDirty = true;
+		private bool pathHadPoints = false;
 
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
@@ -72,10 +74,22 @@ namespace Deform
 #endif
 		}
 
+		private void OnEnable ()
+		{
+			pathDataIsDirty = true;
+			Path.pathUpdated += SetPathDataDirty;
+		}
 		private void OnDisable ()
 		{
+			Path.pathUpdated -= SetPathDataDirty;
+
 			handle.Complete ();
 			pathData.Dispose ();
+		}
+
+		public void SetPathDataDirty ()
+		{
+			pathDataIsDirty = true;
 		}
 
 		public float GetTotalOffset ()
@@ -85,10 +99,23 @@ namespace Deform
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			if (Path == null)
+			if (Path == null || Path.path.vertices == null)
+			{
+				pathHadPoints = false;
 				return dependency;
+			}
 
-			pathData.Update (Path.path);
+			if (pathDataIsDirty || !pathHadPoints)
+			{
+				pathData.Update (Path.path);
+			}
+
+			if (pathData.IsCreated)
+			{
+				pathDataIsDirty = false;
+				pathHadPoints = true;
+			}
+			else return dependency;
 
 			var targetTransform = data.Target.GetTransform ();
 
