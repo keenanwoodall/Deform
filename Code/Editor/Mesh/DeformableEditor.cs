@@ -78,8 +78,6 @@ namespace DeformEditor
 			}
 		}
 
-		public static List<SerializedObject> SerializedObjects { get; private set; } = new List<SerializedObject> ();
-
 		[SerializeField]
 		private static bool ShowDebug;
 
@@ -90,17 +88,10 @@ namespace DeformEditor
 
 		private void OnEnable ()
 		{
-			SerializedObjects.Add (serializedObject);
-
 			content.Update ();
 			properties.Update (serializedObject);
 
 			deformerList = new DeformerListEditor (serializedObject, serializedObject.FindProperty ("deformerElements"));
-		}
-
-		private void OnDisable ()
-		{
-			SerializedObjects.Remove (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()

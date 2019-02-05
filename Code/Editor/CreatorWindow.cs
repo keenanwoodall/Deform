@@ -305,11 +305,6 @@ namespace DeformEditor
 						}
 					}
 
-					foreach (var so in DeformableEditor.SerializedObjects)
-					{
-						so.SetIsDifferentCacheDirty ();
-						so.Update ();
-					}
 				}
 				else
 					Selection.activeGameObject = newGameObject;

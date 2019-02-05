@@ -81,5 +81,19 @@ namespace DeformEditor
 		{
 			list.DoLayoutList ();
 		}
+
+		public void DoLayoutListSafe ()
+		{
+			try
+			{
+				list.DoLayoutList ();
+			}
+			catch (System.InvalidOperationException)
+			{
+				var so = list.serializedProperty.serializedObject;
+				so.SetIsDifferentCacheDirty ();
+				so.Update ();
+			}
+		}
 	}
 }
