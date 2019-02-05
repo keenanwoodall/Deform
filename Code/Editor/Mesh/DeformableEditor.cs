@@ -94,6 +94,8 @@ namespace DeformEditor
 			deformerList = new DeformerListEditor (serializedObject, serializedObject.FindProperty ("deformerElements"));
 		}
 
+		private void OnDisable () => deformerList.Dispose();
+
 		public override void OnInspectorGUI ()
 		{
 			base.OnInspectorGUI ();

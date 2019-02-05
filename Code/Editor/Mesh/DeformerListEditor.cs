@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Reflection;
+using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using Deform;
+using Object = UnityEngine.Object;
 
 namespace DeformEditor
 {
-	public class DeformerListEditor
+	public class DeformerListEditor : IDisposable
 	{
 		private const int PADDING = 5;
 
@@ -41,13 +43,17 @@ namespace DeformEditor
 
 		private Styles styles = new Styles ();
 		private Content content = new Content ();
-
-		private ReorderableList list;
+		private readonly ReorderableList list;
 
 		public DeformerListEditor (SerializedObject serializedObject, SerializedProperty elements)
 		{
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui += SceneGUI;
+			#else
+			SceneView.onSceneGUIDelegate += SceneGUI;
+			#endif
+			
 			list = new ReorderableList (serializedObject, elements);
-
 			list.elementHeight = EditorGUIUtility.singleLineHeight;
 
 			list.drawHeaderCallback  += (r) => GUI.Label (r, new GUIContent (LIST_TITLE));
@@ -75,24 +81,103 @@ namespace DeformEditor
 				objectRect.xMin += EditorGUIUtility.singleLineHeight + PADDING;
 				EditorGUI.ObjectField (objectRect, deformerProperty, GUIContent.none);
 			};
+			list.onSelectCallback += l =>
+			{
+				//On select, create the Editor for the selected Deformer so it can be displayed below the list.
+				if (l.index >= 0)
+				{
+					var elementProperty = l.serializedProperty.GetArrayElementAtIndex(l.index);
+					var deformerProperty = elementProperty.FindPropertyRelative(DEFORMER_PROP);
+
+					if (deformerProperty.objectReferenceValue != null)
+					{
+						//Create the editor
+						if(selectedEditor != null)
+							Object.DestroyImmediate(selectedEditor, true);
+						selectedEditor = Editor.CreateEditor(deformerProperty.objectReferenceValue);
+						
+						//Get the OnSceneGUI method so it can be called from this editor
+						selectedEditorOnSceneGUI = selectedEditor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+						
+						//Create a label with icon for the foldout
+						Type t = deformerProperty.objectReferenceValue.GetType();
+						selectedEditorLabel = EditorGUIUtility.ObjectContent(deformerProperty.objectReferenceValue, t);
+						selectedEditorLabel.text = ObjectNames.NicifyVariableName(t.Name);
+						return;
+					}
+				}
+				if(selectedEditor != null)
+					Object.DestroyImmediate(selectedEditor, true);
+			};
+		}
+
+		//The selected Deformer's Editor variables
+		private GUIContent selectedEditorLabel;
+		private Editor selectedEditor;
+		private bool selectedEditorExpanded = true;
+		private MethodInfo selectedEditorOnSceneGUI;
+
+		private void SceneGUI(SceneView sceneView)
+		{
+			//Display the selected Editor's OnSceneGUI content if expanded
+			if(selectedEditorExpanded)
+				selectedEditorOnSceneGUI?.Invoke(selectedEditor, null);
+		}
+
+		public void Dispose()
+		{
+			SelectedEditorCleanup();
+			
+			//Remove scene view delegates
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui -= SceneGUI;
+			#else
+			SceneView.onSceneGUIDelegate -= SceneGUI;
+			#endif
+		}
+
+		/// <summary>
+		/// Cleanup the instantiated Editor ScriptableObject
+		/// and reset of any other related content
+		/// </summary>
+		void SelectedEditorCleanup()
+		{
+			if(selectedEditor != null)
+				Object.DestroyImmediate(selectedEditor, true);
+			selectedEditorOnSceneGUI = null;
 		}
 
 		public void DoLayoutList ()
 		{
-			list.DoLayoutList ();
-		}
-
-		public void DoLayoutListSafe ()
-		{
+			
 			try
 			{
 				list.DoLayoutList ();
 			}
-			catch (System.InvalidOperationException)
+			catch (InvalidOperationException)
 			{
 				var so = list.serializedProperty.serializedObject;
 				so.SetIsDifferentCacheDirty ();
 				so.Update ();
+			}
+			
+			
+			if (selectedEditor != null)
+			{
+				if (list.index < 0)
+				{
+					//Cleanup the Editor if it has become deselected via a means that does not fire the selected callback
+					//This could be when scripts recompile or an undo is made
+					SelectedEditorCleanup();
+					return;
+				}
+				//Draw the foldout and InspectorGUI for the selected Editor.
+				DeformEditorGUILayout.DrawSplitter();
+				if (DeformEditorGUILayout.DrawHeaderWithFoldout(selectedEditorLabel, selectedEditorExpanded))
+					selectedEditorExpanded = !selectedEditorExpanded;
+				if(selectedEditorExpanded)
+					selectedEditor.OnInspectorGUI();
+				DeformEditorGUILayout.DrawSplitter();
 			}
 		}
 	}
