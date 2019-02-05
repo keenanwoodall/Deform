@@ -150,5 +150,38 @@ namespace DeformEditor
 			Line (rightBottomBack,	rightBottomFront,	mode);
 			Line (leftBottomBack,	leftBottomFront,	mode);
 		}
+
+		public static void TransformTool (Transform target)
+		{
+			var newPosition = target.position * 2f;
+			var newRotation = target.rotation;
+			var newScale = target.localScale;
+
+			using (new Handles.DrawingScope (Matrix4x4.Scale (Vector3.one / 2)))
+			using (var check = new EditorGUI.ChangeCheckScope ())
+			{
+				switch (Tools.current)
+				{
+					case Tool.Move:
+						if (Tools.pivotRotation == PivotRotation.Local)
+							newPosition = Handles.PositionHandle (target.position * 2f, target.rotation);
+						else
+							newPosition = Handles.PositionHandle (target.position * 2f, Quaternion.identity);
+						break;
+					case Tool.Rotate:
+						newRotation = Handles.RotationHandle(target.rotation, target.position * 2f);
+						break;
+					case Tool.Scale:
+						newScale = Handles.ScaleHandle (target.localScale, target.position * 2f, target.rotation, HandleUtility.GetHandleSize (target.position));
+						break;
+				}
+				if (check.changed)
+				{
+					Undo.RecordObject (target, "Changed Transform");
+					target.SetPositionAndRotation (newPosition * 0.5f, newRotation);
+					target.localScale = newScale;
+				}
+			}
+		}
 	}
 }
