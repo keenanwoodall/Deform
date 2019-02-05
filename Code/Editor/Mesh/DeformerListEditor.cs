@@ -127,7 +127,7 @@ namespace DeformEditor
 			{
 				selectedEditorOnSceneGUI?.Invoke (selectedEditor, null);
 				if (selectedDeformer != null)
-					DeformHandles.TransformToolHandle (selectedDeformer.transform, 0.75f);
+					DeformHandles.TransformToolHandle (selectedDeformer.transform, 0.5f);
 			}
 		}
 
@@ -154,7 +154,7 @@ namespace DeformEditor
 			selectedEditorOnSceneGUI = null;
 		}
 
-		public void DoLayoutList ()
+		public void DoLayoutList (bool drawSelectedEditor = true)
 		{
 
 			try
@@ -169,7 +169,7 @@ namespace DeformEditor
 			}
 
 
-			if (selectedEditor != null)
+			if (drawSelectedEditor && selectedEditor != null)
 			{
 				if (list.index < 0)
 				{
