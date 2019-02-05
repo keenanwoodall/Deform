@@ -147,7 +147,7 @@ namespace DeformEditor
 		private void DrawGuides (SineDeformer sine)
 		{
 			var direction = sine.Axis.forward;
-			var distance = (sine.Frequency != 0f) ? 1f / sine.Frequency : 100f;
+			var distance = (sine.Frequency != 0f) ? 2f / sine.Frequency : 100f;
 
 			var baseA = sine.Axis.position - direction * distance;
 			var baseB = sine.Axis.position + direction * distance;
