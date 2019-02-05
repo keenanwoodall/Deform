@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Reflection;
+using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using Deform;
+using Object = UnityEngine.Object;
 
 namespace DeformEditor
 {
-	public class DeformerListEditor
+	public class DeformerListEditor : IDisposable
 	{
 		private const int PADDING = 5;
 
@@ -46,6 +48,12 @@ namespace DeformEditor
 
 		public DeformerListEditor (SerializedObject serializedObject, SerializedProperty elements)
 		{
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui += SceneGUI;
+			#else
+			SceneView.onSceneGUIDelegate += SceneGUI;
+			#endif
+			
 			list = new ReorderableList (serializedObject, elements);
 
 			list.elementHeight = EditorGUIUtility.singleLineHeight;
@@ -75,20 +83,68 @@ namespace DeformEditor
 				objectRect.xMin += EditorGUIUtility.singleLineHeight + PADDING;
 				EditorGUI.ObjectField (objectRect, deformerProperty, GUIContent.none);
 			};
+			list.onSelectCallback += l =>
+			{
+				if (l.index >= 0)
+				{
+					var elementProperty = l.serializedProperty.GetArrayElementAtIndex(l.index);
+					var deformerProperty = elementProperty.FindPropertyRelative(DEFORMER_PROP);
+
+					if (deformerProperty.objectReferenceValue != null)
+					{
+						editor = Editor.CreateEditor(deformerProperty.objectReferenceValue);
+						
+						Type t = deformerProperty.objectReferenceValue.GetType();
+						onSceneGUIMethod = editor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+						editorLabel = EditorGUIUtility.ObjectContent(deformerProperty.objectReferenceValue, t);
+						editorLabel.text = ObjectNames.NicifyVariableName(t.Name);
+						return;
+					}
+				}
+				if(editor != null)
+					Object.DestroyImmediate(editor, true);
+			};
+		}
+
+		private GUIContent editorLabel;
+		private Editor editor;
+		private bool expandedEditor = true;
+		private MethodInfo onSceneGUIMethod;
+
+		private void SceneGUI(SceneView sceneView)
+		{
+			if(expandedEditor)
+				onSceneGUIMethod?.Invoke(editor, null);
+		}
+
+		public void Dispose()
+		{
+			if(editor != null)
+				Object.DestroyImmediate(editor, true);
+			#if UNITY_2019_1_OR_NEWER
+			SceneView.duringSceneGui -= SceneGUI;
+			#else
+			SceneView.onSceneGUIDelegate -= SceneGUI;
+			#endif
 		}
 
 		public void DoLayoutList ()
 		{
-			list.DoLayoutList ();
-		}
-
-		public void DoLayoutListSafe ()
-		{
 			try
 			{
 				list.DoLayoutList ();
+
+				if (editor != null)
+				{
+					DeformEditorGUILayout.DrawSplitter();
+					if (DeformEditorGUILayout.DrawHeaderWithFoldout(editorLabel, expandedEditor))
+						expandedEditor = !expandedEditor;
+					if(expandedEditor)
+						editor.OnInspectorGUI();
+					DeformEditorGUILayout.DrawSplitter();
+				}
 			}
-			catch (System.InvalidOperationException)
+			catch (InvalidOperationException)
 			{
 				var so = list.serializedProperty.serializedObject;
 				so.SetIsDifferentCacheDirty ();
