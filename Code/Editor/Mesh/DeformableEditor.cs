@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEditor;
 using Deform;
-using System.Collections.Generic;
 
 namespace DeformEditor
 {
@@ -101,7 +100,6 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
 				EditorGUILayout.PropertyField (properties.UpdateMode, content.UpdateMode);
@@ -278,7 +276,7 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			if (ShowDebug = EditorGUILayout.Foldout (ShowDebug, "Debug Info"))
+			if (ShowDebug = DeformEditorGUILayout.DrawHeaderWithFoldout ("Debug Info", ShowDebug))
 			{
 				using (new EditorGUI.IndentLevelScope ())
 				{

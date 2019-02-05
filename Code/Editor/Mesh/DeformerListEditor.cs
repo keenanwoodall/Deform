@@ -45,11 +45,10 @@ namespace DeformEditor
 		private readonly ReorderableList list;
 		private Styles styles = new Styles ();
 		private Content content = new Content ();
-		//The selected Deformer's Editor variables
+		
 		private Deformer selectedDeformer;
 		private GUIContent selectedEditorLabel;
 		private Editor selectedEditor;
-		[SerializeField]
 		private bool selectedEditorExpanded = true;
 		private MethodInfo selectedEditorOnSceneGUI;
 
@@ -108,10 +107,8 @@ namespace DeformEditor
 						//Get the OnSceneGUI method so it can be called from this editor
 						selectedEditorOnSceneGUI = selectedEditor.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-						//Create a label with icon for the foldout
-						Type t = deformerProperty.objectReferenceValue.GetType ();
-						selectedEditorLabel = EditorGUIUtility.ObjectContent (deformerProperty.objectReferenceValue, t);
-						selectedEditorLabel.text = ObjectNames.NicifyVariableName (t.Name);
+						//Create foldout content
+						selectedEditorLabel = new GUIContent ("Selection Properties");
 						return;
 					}
 				}
@@ -130,7 +127,7 @@ namespace DeformEditor
 			{
 				selectedEditorOnSceneGUI?.Invoke (selectedEditor, null);
 				if (selectedDeformer != null)
-					DeformHandles.TransformToolHandle (selectedDeformer.transform, 0.5f);
+					DeformHandles.TransformToolHandle (selectedDeformer.transform, 0.75f);
 			}
 		}
 
@@ -183,9 +180,7 @@ namespace DeformEditor
 				}
 				//Draw the foldout and InspectorGUI for the selected Editor.
 				DeformEditorGUILayout.DrawSplitter ();
-				if (DeformEditorGUILayout.DrawHeaderWithFoldout (selectedEditorLabel, selectedEditorExpanded))
-					selectedEditorExpanded = !selectedEditorExpanded;
-				if (selectedEditorExpanded)
+				if (selectedEditorExpanded = DeformEditorGUILayout.DrawHeaderWithFoldout (selectedEditorLabel, selectedEditorExpanded))
 					selectedEditor.OnInspectorGUI ();
 				DeformEditorGUILayout.DrawSplitter ();
 			}
