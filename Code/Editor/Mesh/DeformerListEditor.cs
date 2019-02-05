@@ -43,8 +43,7 @@ namespace DeformEditor
 
 		private Styles styles = new Styles ();
 		private Content content = new Content ();
-
-		private ReorderableList list;
+		private readonly ReorderableList list;
 
 		public DeformerListEditor (SerializedObject serializedObject, SerializedProperty elements)
 		{
@@ -55,7 +54,6 @@ namespace DeformEditor
 			#endif
 			
 			list = new ReorderableList (serializedObject, elements);
-
 			list.elementHeight = EditorGUIUtility.singleLineHeight;
 
 			list.drawHeaderCallback  += (r) => GUI.Label (r, new GUIContent (LIST_TITLE));
@@ -92,6 +90,8 @@ namespace DeformEditor
 
 					if (deformerProperty.objectReferenceValue != null)
 					{
+						if(editor != null)
+							Object.DestroyImmediate(editor, true);
 						editor = Editor.CreateEditor(deformerProperty.objectReferenceValue);
 						
 						Type t = deformerProperty.objectReferenceValue.GetType();
@@ -121,6 +121,8 @@ namespace DeformEditor
 		{
 			if(editor != null)
 				Object.DestroyImmediate(editor, true);
+			onSceneGUIMethod = null;
+			
 			#if UNITY_2019_1_OR_NEWER
 			SceneView.duringSceneGui -= SceneGUI;
 			#else
@@ -130,25 +132,31 @@ namespace DeformEditor
 
 		public void DoLayoutList ()
 		{
+			
 			try
 			{
 				list.DoLayoutList ();
-
-				if (editor != null)
-				{
-					DeformEditorGUILayout.DrawSplitter();
-					if (DeformEditorGUILayout.DrawHeaderWithFoldout(editorLabel, expandedEditor))
-						expandedEditor = !expandedEditor;
-					if(expandedEditor)
-						editor.OnInspectorGUI();
-					DeformEditorGUILayout.DrawSplitter();
-				}
 			}
 			catch (InvalidOperationException)
 			{
 				var so = list.serializedProperty.serializedObject;
 				so.SetIsDifferentCacheDirty ();
 				so.Update ();
+			}
+			
+
+			if (editor != null)
+			{
+				if (list.index < 0){
+					Object.DestroyImmediate(editor, true);
+					return;
+				}
+				DeformEditorGUILayout.DrawSplitter();
+				if (DeformEditorGUILayout.DrawHeaderWithFoldout(editorLabel, expandedEditor))
+					expandedEditor = !expandedEditor;
+				if(expandedEditor)
+					editor.OnInspectorGUI();
+				DeformEditorGUILayout.DrawSplitter();
 			}
 		}
 	}
