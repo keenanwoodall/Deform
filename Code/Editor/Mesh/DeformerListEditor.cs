@@ -130,7 +130,7 @@ namespace DeformEditor
 			{
 				selectedEditorOnSceneGUI?.Invoke (selectedEditor, null);
 				if (selectedDeformer != null)
-					DeformHandles.TransformTool (selectedDeformer.transform);
+					DeformHandles.TransformToolHandle (selectedDeformer.transform, 0.5f);
 			}
 		}
 

@@ -151,34 +151,38 @@ namespace DeformEditor
 			Line (leftBottomBack,	leftBottomFront,	mode);
 		}
 
-		public static void TransformTool (Transform target)
+		public static void TransformToolHandle (Transform target, float scale = 1f)
 		{
-			var newPosition = target.position * 2f;
+			var matrix = Matrix4x4.Scale (Vector3.one * scale);
+
+			var newPosition = matrix.inverse.MultiplyPoint3x4 (target.position);
 			var newRotation = target.rotation;
 			var newScale = target.localScale;
 
-			using (new Handles.DrawingScope (Matrix4x4.Scale (Vector3.one / 2)))
+			using (new Handles.DrawingScope (matrix))
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
 				switch (Tools.current)
 				{
 					case Tool.Move:
 						if (Tools.pivotRotation == PivotRotation.Local)
-							newPosition = Handles.PositionHandle (target.position * 2f, target.rotation);
+							newPosition = Handles.PositionHandle (matrix.inverse.MultiplyPoint3x4 (target.position), target.rotation);
 						else
-							newPosition = Handles.PositionHandle (target.position * 2f, Quaternion.identity);
+							newPosition = Handles.PositionHandle (matrix.inverse.MultiplyPoint3x4 (target.position), Quaternion.identity);
 						break;
+					// rotation handle doesn't differentiate between local/global pivot mode b/c you'd have to persist the last rotation used 
+					// in global mode and reset it whenever the object was reselected or the pivt mode changed.
 					case Tool.Rotate:
-						newRotation = Handles.RotationHandle(target.rotation, target.position * 2f);
+						newRotation = Handles.RotationHandle(target.rotation, matrix.inverse.MultiplyPoint3x4 (target.position));
 						break;
 					case Tool.Scale:
-						newScale = Handles.ScaleHandle (target.localScale, target.position * 2f, target.rotation, HandleUtility.GetHandleSize (target.position));
+						newScale = Handles.ScaleHandle (target.localScale, matrix.inverse.MultiplyPoint3x4 (target.position), target.rotation, HandleUtility.GetHandleSize (target.position));
 						break;
 				}
 				if (check.changed)
 				{
 					Undo.RecordObject (target, "Changed Transform");
-					target.SetPositionAndRotation (newPosition * 0.5f, newRotation);
+					target.SetPositionAndRotation (matrix.MultiplyPoint3x4 (newPosition), newRotation);
 					target.localScale = newScale;
 				}
 			}
