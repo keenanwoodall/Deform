@@ -58,11 +58,12 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
 			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
 			EditorGUILayout.PropertyField (properties.Center, content.Center);
-
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}

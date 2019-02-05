@@ -50,6 +50,7 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
@@ -63,8 +64,9 @@ namespace DeformEditor
 						((BlendDeformer)t).Initialize ();
 				}
 			}
-
 			serializedObject.ApplyModifiedProperties ();
+
+			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}
 }

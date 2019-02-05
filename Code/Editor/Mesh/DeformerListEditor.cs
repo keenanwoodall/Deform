@@ -156,7 +156,6 @@ namespace DeformEditor
 
 		public void DoLayoutList (bool drawSelectedEditor = true)
 		{
-
 			try
 			{
 				list.DoLayoutList ();
@@ -167,7 +166,6 @@ namespace DeformEditor
 				so.SetIsDifferentCacheDirty ();
 				so.Update ();
 			}
-
 
 			if (drawSelectedEditor && selectedEditor != null)
 			{

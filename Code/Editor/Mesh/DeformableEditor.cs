@@ -10,7 +10,16 @@ namespace DeformEditor
 	{
 		private class Content
 		{
-			public GUIContent UpdateMode, NormalsRecalculation, BoundsRecalculation, ColliderRecalculation, Manager, ClearDeformers, CleanDeformers, SaveObj, SaveAsset;
+			public GUIContent 
+				UpdateMode,
+				NormalsRecalculation, 
+				BoundsRecalculation,
+				ColliderRecalculation,
+				Manager,
+				ClearDeformers,
+				CleanDeformers, 
+				SaveObj, 
+				SaveAsset;
 
 			public void Update ()
 			{
@@ -64,7 +73,13 @@ namespace DeformEditor
 
 		private class Properties
 		{
-			public SerializedProperty UpdateMode, NormalsRecalculation, BoundsRecalculation, ColliderRecalculation, MeshCollider, Manager;
+			public SerializedProperty 
+				UpdateMode, 
+				NormalsRecalculation, 
+				BoundsRecalculation, 
+				ColliderRecalculation, 
+				MeshCollider,
+				Manager;
 
 			public void Update (SerializedObject obj)
 			{
@@ -77,7 +92,6 @@ namespace DeformEditor
 			}
 		}
 
-		[SerializeField]
 		private static bool ShowDebug;
 
 		private Content content = new Content ();
@@ -93,7 +107,7 @@ namespace DeformEditor
 			deformerList = new DeformerListEditor (serializedObject, serializedObject.FindProperty ("deformerElements"));
 		}
 
-		private void OnDisable () => deformerList.Dispose();
+		private void OnDisable () => deformerList.Dispose ();
 
 		public override void OnInspectorGUI ()
 		{
@@ -297,6 +311,7 @@ namespace DeformEditor
 			}
 
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 

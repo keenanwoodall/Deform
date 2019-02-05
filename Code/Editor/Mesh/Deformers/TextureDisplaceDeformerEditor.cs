@@ -84,6 +84,7 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
 			EditorGUILayout.PropertyField (properties.Repeat, content.Repeat);
 			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
@@ -103,13 +104,13 @@ namespace DeformEditor
 			}
 
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			serializedObject.ApplyModifiedProperties ();
 
 			if (targets.Where (t => ((TextureDisplaceDeformer)t).Texture != null).Any (t => !((TextureDisplaceDeformer)t).Texture.isReadable))
 				EditorGUILayout.HelpBox (NotReadableWarning, MessageType.Error, true);
 
 			DeformEditorGUILayout.WIPAlert ();
 
-			serializedObject.ApplyModifiedProperties ();
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}

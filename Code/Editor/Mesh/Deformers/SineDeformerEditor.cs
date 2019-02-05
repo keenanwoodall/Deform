@@ -82,16 +82,15 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
-			var firstSine = target as SineDeformer;
-
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.PropertyField (properties.Frequency, content.Frequency);
 			EditorGUILayout.PropertyField (properties.Magnitude, content.Magnitude);
 			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
 			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
 			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
-
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 

@@ -41,7 +41,9 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.PropertyField (properties.RefreshGroup, content.RefreshGroup);
+			serializedObject.ApplyModifiedProperties ();
 
 			var targetsHaveDifferentGroupSize = targets.Any (t => ((AutoGroupDeformer)t).GetGroupSize () != ((AutoGroupDeformer)target).GetGroupSize ());
 
@@ -50,7 +52,6 @@ namespace DeformEditor
 			if (!targetsHaveDifferentGroupSize && firstGroup.GetGroupSize () == 0)
 				EditorGUILayout.HelpBox ("Add deformers to child game objects for this deformer to have an effect.", MessageType.Info);
 
-			serializedObject.ApplyModifiedProperties ();
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}

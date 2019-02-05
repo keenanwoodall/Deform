@@ -37,10 +37,9 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-
 			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
-
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}

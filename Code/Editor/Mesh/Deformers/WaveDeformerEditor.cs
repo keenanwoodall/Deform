@@ -73,15 +73,16 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			DeformEditorGUILayout.MinField (properties.WaveLength, 0f, content.WaveLength);
 			EditorGUILayout.Slider (properties.Steepness, 0f, 1f, content.Steepness);
 			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
 			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			serializedObject.ApplyModifiedProperties ();
 
 			DeformEditorGUILayout.WIPAlert ();
 
-			serializedObject.ApplyModifiedProperties ();
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}

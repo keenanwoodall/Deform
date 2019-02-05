@@ -49,7 +49,7 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
-			serializedObject.Update ();
+			serializedObject.UpdateIfRequiredOrScript ();
 			deformerList.DoLayoutList ();
 			serializedObject.ApplyModifiedProperties ();
 
@@ -71,7 +71,7 @@ namespace DeformEditor
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
-				if (GUILayout.Button (content.ClearDeformers, EditorStyles.miniButtonRight))
+				if (GUILayout.Button (content.ClearDeformers, EditorStyles.miniButtonLeft))
 				{
 					Undo.RecordObjects (targets, "Cleared Deformers");
 					foreach (var t in targets)
@@ -85,7 +85,6 @@ namespace DeformEditor
 						((GroupDeformer)t).DeformerElements.RemoveAll (d => d.Deformer == null);
 				}
 			}
-
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}

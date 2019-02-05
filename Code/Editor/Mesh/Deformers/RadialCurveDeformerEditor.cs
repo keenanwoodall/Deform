@@ -64,13 +64,14 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
 			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
 			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
 			EditorGUILayout.PropertyField (properties.Curve, content.Curve);
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
-
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}

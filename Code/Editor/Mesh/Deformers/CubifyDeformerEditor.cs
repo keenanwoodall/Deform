@@ -73,15 +73,14 @@ namespace DeformEditor
 		{
 			base.OnInspectorGUI ();
 
-			var firstCubify = target as CubifyDeformer;
-
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
 			EditorGUILayout.PropertyField (properties.Width, content.Width);
 			EditorGUILayout.PropertyField (properties.Height, content.Height);
 			EditorGUILayout.PropertyField (properties.Length, content.Length);
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
-
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 

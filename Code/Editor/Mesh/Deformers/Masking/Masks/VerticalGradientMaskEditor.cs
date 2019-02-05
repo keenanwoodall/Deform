@@ -57,12 +57,13 @@ namespace DeformEditor.Masking
 		{
 			base.OnInspectorGUI ();
 
+			serializedObject.UpdateIfRequiredOrScript ();
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
 			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
 			EditorGUILayout.PropertyField (properties.Invert, content.Invert);
 			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
-
 			serializedObject.ApplyModifiedProperties ();
+
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 	}
