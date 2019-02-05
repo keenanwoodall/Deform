@@ -77,11 +77,13 @@ namespace Deform
 		private void OnEnable ()
 		{
 			pathDataIsDirty = true;
-			Path.pathUpdated += SetPathDataDirty;
+			if (Path != null)
+				Path.pathUpdated += SetPathDataDirty;
 		}
 		private void OnDisable ()
 		{
-			Path.pathUpdated -= SetPathDataDirty;
+			if (Path != null)
+				Path.pathUpdated -= SetPathDataDirty;
 
 			handle.Complete ();
 			pathData.Dispose ();
