@@ -83,6 +83,7 @@ namespace DeformEditor
 			};
 			list.onSelectCallback += l =>
 			{
+				//On select, create the Editor for the selected Deformer so it can be displayed below the list.
 				if (l.index >= 0)
 				{
 					var elementProperty = l.serializedProperty.GetArrayElementAtIndex(l.index);
@@ -90,44 +91,60 @@ namespace DeformEditor
 
 					if (deformerProperty.objectReferenceValue != null)
 					{
-						if(editor != null)
-							Object.DestroyImmediate(editor, true);
-						editor = Editor.CreateEditor(deformerProperty.objectReferenceValue);
+						//Create the editor
+						if(selectedEditor != null)
+							Object.DestroyImmediate(selectedEditor, true);
+						selectedEditor = Editor.CreateEditor(deformerProperty.objectReferenceValue);
 						
+						//Get the OnSceneGUI method so it can be called from this editor
+						selectedEditorOnSceneGUI = selectedEditor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+						
+						//Create a label with icon for the foldout
 						Type t = deformerProperty.objectReferenceValue.GetType();
-						onSceneGUIMethod = editor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-						editorLabel = EditorGUIUtility.ObjectContent(deformerProperty.objectReferenceValue, t);
-						editorLabel.text = ObjectNames.NicifyVariableName(t.Name);
+						selectedEditorLabel = EditorGUIUtility.ObjectContent(deformerProperty.objectReferenceValue, t);
+						selectedEditorLabel.text = ObjectNames.NicifyVariableName(t.Name);
 						return;
 					}
 				}
-				if(editor != null)
-					Object.DestroyImmediate(editor, true);
+				if(selectedEditor != null)
+					Object.DestroyImmediate(selectedEditor, true);
 			};
 		}
 
-		private GUIContent editorLabel;
-		private Editor editor;
-		private bool expandedEditor = true;
-		private MethodInfo onSceneGUIMethod;
+		//The selected Deformer's Editor variables
+		private GUIContent selectedEditorLabel;
+		private Editor selectedEditor;
+		private bool selectedEditorExpanded = true;
+		private MethodInfo selectedEditorOnSceneGUI;
 
 		private void SceneGUI(SceneView sceneView)
 		{
-			if(expandedEditor)
-				onSceneGUIMethod?.Invoke(editor, null);
+			//Display the selected Editor's OnSceneGUI content if expanded
+			if(selectedEditorExpanded)
+				selectedEditorOnSceneGUI?.Invoke(selectedEditor, null);
 		}
 
 		public void Dispose()
 		{
-			if(editor != null)
-				Object.DestroyImmediate(editor, true);
-			onSceneGUIMethod = null;
+			SelectedEditorCleanup();
 			
+			//Remove scene view delegates
 			#if UNITY_2019_1_OR_NEWER
 			SceneView.duringSceneGui -= SceneGUI;
 			#else
 			SceneView.onSceneGUIDelegate -= SceneGUI;
 			#endif
+		}
+
+		/// <summary>
+		/// Cleanup the instantiated Editor ScriptableObject
+		/// and reset of any other related content
+		/// </summary>
+		void SelectedEditorCleanup()
+		{
+			if(selectedEditor != null)
+				Object.DestroyImmediate(selectedEditor, true);
+			selectedEditorOnSceneGUI = null;
 		}
 
 		public void DoLayoutList ()
@@ -144,18 +161,22 @@ namespace DeformEditor
 				so.Update ();
 			}
 			
-
-			if (editor != null)
+			
+			if (selectedEditor != null)
 			{
-				if (list.index < 0){
-					Object.DestroyImmediate(editor, true);
+				if (list.index < 0)
+				{
+					//Cleanup the Editor if it has become deselected via a means that does not fire the selected callback
+					//This could be when scripts recompile or an undo is made
+					SelectedEditorCleanup();
 					return;
 				}
+				//Draw the foldout and InspectorGUI for the selected Editor.
 				DeformEditorGUILayout.DrawSplitter();
-				if (DeformEditorGUILayout.DrawHeaderWithFoldout(editorLabel, expandedEditor))
-					expandedEditor = !expandedEditor;
-				if(expandedEditor)
-					editor.OnInspectorGUI();
+				if (DeformEditorGUILayout.DrawHeaderWithFoldout(selectedEditorLabel, selectedEditorExpanded))
+					selectedEditorExpanded = !selectedEditorExpanded;
+				if(selectedEditorExpanded)
+					selectedEditor.OnInspectorGUI();
 				DeformEditorGUILayout.DrawSplitter();
 			}
 		}
