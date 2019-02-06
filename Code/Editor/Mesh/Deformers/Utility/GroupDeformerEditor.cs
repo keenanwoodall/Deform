@@ -43,14 +43,12 @@ namespace DeformEditor
 			deformerList = new DeformerListEditor (serializedObject, properties.DeformerElements);
 		}
 
-		private void OnDisable() => deformerList.Dispose();
-
 		public override void OnInspectorGUI ()
 		{
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			deformerList.DoLayoutList (false);
+			deformerList.DoLayoutList ();
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorGUILayout.Space ();
@@ -85,10 +83,6 @@ namespace DeformEditor
 						((GroupDeformer)t).DeformerElements.RemoveAll (d => d.Deformer == null);
 				}
 			}
-
-			serializedObject.UpdateIfRequiredOrScript ();
-			deformerList.DoSelectedInspector ();
-			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}

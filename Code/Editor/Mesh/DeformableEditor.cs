@@ -107,8 +107,6 @@ namespace DeformEditor
 			deformerList = new DeformerListEditor (serializedObject, serializedObject.FindProperty ("deformerElements"));
 		}
 
-		private void OnDisable () => deformerList.Dispose ();
-
 		public override void OnInspectorGUI ()
 		{
 			base.OnInspectorGUI ();
@@ -142,7 +140,7 @@ namespace DeformEditor
 				}
 			}
 
-			deformerList.DoLayoutList (false);
+			deformerList.DoLayoutList ();
 
 			EditorGUILayout.Space ();
 
@@ -290,7 +288,8 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			if (ShowDebug = DeformEditorGUILayout.DrawHeaderWithFoldout ("Debug Info", ShowDebug))
+			DeformEditorGUILayout.Splitter ();
+			if (ShowDebug = DeformEditorGUILayout.Foldout (ShowDebug, "Debug Info"))
 			{
 				using (new EditorGUI.IndentLevelScope ())
 				{
@@ -305,12 +304,11 @@ namespace DeformEditor
 							vertexCount += deformable.GetMesh ().vertexCount;
 						modifiedData |= deformable.ModifiedDataFlags;
 					}
-					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
-					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
+					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}", EditorStyles.miniLabel);
+					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}", EditorStyles.miniLabel);
 				}
 			}
-
-			deformerList.DoSelectedInspector ();
+			DeformEditorGUILayout.Splitter ();
 
 			serializedObject.ApplyModifiedProperties ();
 

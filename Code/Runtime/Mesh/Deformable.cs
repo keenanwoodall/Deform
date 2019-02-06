@@ -11,6 +11,7 @@ namespace Deform
 	[ExecuteAlways, DisallowMultipleComponent]
 	public class Deformable : MonoBehaviour, IDeformable
 	{
+		public int[] ints;
 		public UpdateMode UpdateMode
 		{
 			get => updateMode;

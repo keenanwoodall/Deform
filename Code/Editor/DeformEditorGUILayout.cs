@@ -6,6 +6,27 @@ namespace DeformEditor
 {
 	public static class DeformEditorGUILayout
 	{
+		public static void Splitter ()
+		{
+			var rect = GUILayoutUtility.GetRect (1f, 1f);
+			if (Event.current.type != EventType.Repaint)
+				return;
+			rect.xMin = 0f;
+			var color = DeformEditorGUIUtility.EditorLowlightColor;
+			color.a = GUI.color.a;
+			EditorGUI.DrawRect (rect, color);
+		}
+
+		public static bool Foldout (bool foldout, string text)
+		{
+			var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
+			toggleRect.xMin = 0;
+			EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.EditorHighlightColor);
+			EditorGUI.LabelField (toggleRect, text, EditorStyles.centeredGreyMiniLabel);
+			using (new EditorGUI.IndentLevelScope (1))
+				return EditorGUI.Foldout (toggleRect, foldout, GUIContent.none, true);
+		}
+
 		/// <summary>
 		/// Draws a property field for a float and prevents it from going below min.
 		/// </summary>
@@ -116,97 +137,6 @@ namespace DeformEditor
 			}
 
 			return null;
-		}
-
-
-		public static bool DrawHeader (GUIContent label)
-		{
-			Rect r = GUILayoutUtility.GetRect (1, 17);
-			return DrawHeader (r, label);
-		}
-
-		private static bool DrawHeader (Rect contentRect, GUIContent label)
-		{
-			Rect labelRect = contentRect;
-			labelRect.xMin += 16f;
-			labelRect.xMax -= 20f;
-			Rect toggleRect = contentRect;
-			toggleRect.xMin = EditorGUI.indentLevel * 15;
-			toggleRect.y += 2f;
-			toggleRect.width = 13f;
-			toggleRect.height = 13f;
-			contentRect.xMin = 0.0f;
-
-			EditorGUI.DrawRect (contentRect, !EditorGUIUtility.isProSkin ? new Color (1, 1, 1, 0.2f) : new Color (0.1f, 0.1f, 0.1f, 0.2f));
-			EditorGUI.LabelField (labelRect, label, EditorStyles.centeredGreyMiniLabel);
-			labelRect.xMin = 0;
-			Event current = Event.current;
-			if (current.type == EventType.MouseDown)
-			{
-				if (labelRect.Contains (current.mousePosition))
-				{
-					if (current.button == 0)
-					{
-						current.Use ();
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
-		public static bool DrawHeaderWithFoldout (string text, bool expanded)
-		{
-			return DrawHeaderWithFoldout (new GUIContent (text), expanded);
-		}
-
-		public static bool DrawHeaderWithFoldout (GUIContent label, bool expanded)
-		{
-			if (DrawHeader (label) || Foldout (GUILayoutUtility.GetLastRect (), expanded))
-				expanded = !expanded;
-			return expanded;
-		}
-
-		private static bool Foldout (Rect r, bool expanded)
-		{
-			switch (Event.current.type)
-			{
-				case EventType.DragUpdated:
-					if (!expanded)
-					{
-						if (r.Contains (Event.current.mousePosition))
-						{
-							if (Event.current.delta.sqrMagnitude < 1)
-							{
-								Event.current.Use ();
-								return true;
-							}
-						}
-					}
-					break;
-				case EventType.Repaint:
-					//Only draw the Foldout - don't use it as a button or get focus
-					r.x += 3;
-					r.x += EditorGUI.indentLevel * 15;
-					r.y += 1.5f;
-					bool enabledT = GUI.enabled;
-					GUI.enabled = false;
-					EditorStyles.foldout.Draw (r, GUIContent.none, -1, expanded);
-					GUI.enabled = enabledT;
-					break;
-			}
-			return false;
-		}
-
-		public static void DrawSplitter ()
-		{
-			Rect rect = GUILayoutUtility.GetRect (1f, 1f);
-			rect.xMin = 0.0f;
-			if (Event.current.type != EventType.Repaint)
-				return;
-			Color c = EditorGUIUtility.isProSkin ? new Color (0.12f, 0.12f, 0.12f) : new Color (0.6f, 0.6f, 0.6f);
-			c.a = GUI.color.a;
-			EditorGUI.DrawRect (rect, c);
 		}
 	}
 }
