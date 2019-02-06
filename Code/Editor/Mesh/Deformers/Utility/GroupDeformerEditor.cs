@@ -34,13 +34,13 @@ namespace DeformEditor
 		private Content content = new Content ();
 		private Properties properties = new Properties ();
 
-		private ComponentElementListEditor<Deformer> deformerList;
+		private ReorderableComponentElementList<Deformer> deformerList;
 
 		private void OnEnable ()
 		{
 			properties.Update (serializedObject);
 
-			deformerList = new ComponentElementListEditor<Deformer> (serializedObject, properties.DeformerElements);
+			deformerList = new ReorderableComponentElementList<Deformer> (serializedObject, properties.DeformerElements);
 		}
 
 		public override void OnInspectorGUI ()

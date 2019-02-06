@@ -97,14 +97,14 @@ namespace DeformEditor
 		private Content content = new Content ();
 		private Properties properties = new Properties ();
 
-		private ComponentElementListEditor<Deformer> deformerList;
+		private ReorderableComponentElementList<Deformer> deformerList;
 
 		private void OnEnable ()
 		{
 			content.Update ();
 			properties.Update (serializedObject);
 
-			deformerList = new ComponentElementListEditor<Deformer> (serializedObject, serializedObject.FindProperty ("deformerElements"));
+			deformerList = new ReorderableComponentElementList<Deformer> (serializedObject, serializedObject.FindProperty ("deformerElements"));
 		}
 
 		public override void OnInspectorGUI ()

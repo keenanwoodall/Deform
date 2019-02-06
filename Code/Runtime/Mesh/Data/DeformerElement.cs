@@ -6,7 +6,7 @@ namespace Deform
 	/// Contains a reference to a deformer, and a bool, Active, that determines if the deformer should be allowed to process data.
 	/// </summary>
 	[System.Serializable]
-	public struct DeformerElement : IComponentElement<Deformer>
+	public class DeformerElement : IComponentElement<Deformer>
 	{
 		public Deformer Component { get => component; set => component = value; }
 		public bool Active { get => active; set => active = value; }
