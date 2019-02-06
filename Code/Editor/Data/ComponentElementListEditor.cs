@@ -6,6 +6,10 @@ using Deform;
 
 namespace DeformEditor
 {
+	/// <summary>
+	/// Draws a reorderabe list of IComponentElements.
+	/// </summary>
+	/// <typeparam name="T">The type of component the element holds.</typeparam>
 	public class ComponentElementListEditor<T> where T : Component
 	{
 		private const int PADDING = 5;
@@ -82,6 +86,7 @@ namespace DeformEditor
 			{
 				list.DoLayoutList ();
 			}
+			// If an error is thrown, the serialized object was modified but not marked as dirty so we need to force it to sync back up with the targets.
 			catch (InvalidOperationException)
 			{
 				var so = list.serializedProperty.serializedObject;
