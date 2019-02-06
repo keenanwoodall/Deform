@@ -140,7 +140,7 @@ namespace Deform
 		{
 			foreach (var element in DeformerElements)
 			{
-				var deformer = element.Deformer;
+				var deformer = element.Component;
 				if (deformer != null && deformer.CanProcess ())
 					deformer.PreProcess ();
 			}
@@ -170,7 +170,7 @@ namespace Deform
 			for (int i = 0; i < deformerElements.Count; i++)
 			{
 				var element = deformerElements[i];
-				var deformer = element.Deformer;
+				var deformer = element.Component;
 
 				// Only add the current deformer to the dependency chain if it wants to update.
 				if (element.CanProcess ())

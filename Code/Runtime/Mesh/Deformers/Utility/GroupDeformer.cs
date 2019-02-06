@@ -24,7 +24,7 @@ namespace Deform
 		{
 			foreach (var element in deformerElements)
 				if (element.CanProcess ())
-					element.Deformer.PreProcess ();
+					element.Component.PreProcess ();
 		}
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
@@ -35,7 +35,7 @@ namespace Deform
 			{
 				if (element.CanProcess ())
 				{
-					var deformer = element.Deformer;
+					var deformer = element.Component;
 					dependency = deformer.Process (data, dependency);
 					dataFlags |= deformer.DataFlags;
 				}

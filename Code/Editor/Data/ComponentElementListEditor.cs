@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using Deform;
-using Object = UnityEngine.Object;
 
 namespace DeformEditor
 {
-	public class DeformerListEditor
+	public class ComponentElementListEditor<T> where T : Component
 	{
 		private const int PADDING = 5;
-
-		private readonly string LIST_TITLE = "Deformers";
-		private readonly string ACTIVE_PROP = "Active";
-		private readonly string DEFORMER_PROP = "Deformer";
 
 		private class Styles
 		{
@@ -46,12 +40,15 @@ namespace DeformEditor
 		private Styles styles = new Styles ();
 		private Content content = new Content ();
 
-		public DeformerListEditor (SerializedObject serializedObject, SerializedProperty elements)
+		/// <summary>
+		/// Make sure your implementation of IComponentElement has serialized backing fields for the Active and Component properties called "active" and "component."
+		/// </summary>
+		public ComponentElementListEditor (SerializedObject serializedObject, SerializedProperty elements)
 		{
 			list = new ReorderableList (serializedObject, elements);
 			list.elementHeight = EditorGUIUtility.singleLineHeight;
 
-			list.drawHeaderCallback += (r) => GUI.Label (r, new GUIContent (LIST_TITLE));
+			list.drawHeaderCallback += (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
 			list.drawElementCallback += (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
 				if (styles == null)
@@ -60,10 +57,10 @@ namespace DeformEditor
 					content = new Content ();
 
 				var elementProperty = list.serializedProperty.GetArrayElementAtIndex (index);
-				var activeProperty = elementProperty.FindPropertyRelative (ACTIVE_PROP);
-				var deformerProperty = elementProperty.FindPropertyRelative (DEFORMER_PROP);
+				var activeProperty = elementProperty.FindPropertyRelative ("active");
+				var componentProperty = elementProperty.FindPropertyRelative ("component");
 
-				if (deformerProperty.objectReferenceValue != null)
+				if (componentProperty.objectReferenceValue != null)
 				{
 					var activeRect = new Rect (rect);
 					var activeContent = activeProperty.boolValue ? content.ToggleOn : content.ToggleOff;
@@ -74,7 +71,7 @@ namespace DeformEditor
 
 				var objectRect = new Rect (rect);
 				objectRect.xMin += EditorGUIUtility.singleLineHeight + PADDING;
-				EditorGUI.ObjectField (objectRect, deformerProperty, GUIContent.none);
+				EditorGUI.ObjectField (objectRect, componentProperty, GUIContent.none);
 			};
 		}
 

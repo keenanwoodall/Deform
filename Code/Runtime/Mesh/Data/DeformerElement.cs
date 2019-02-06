@@ -1,23 +1,28 @@
-﻿namespace Deform
+﻿using UnityEngine;
+
+namespace Deform
 {
 	/// <summary>
 	/// Contains a reference to a deformer, and a bool, Active, that determines if the deformer should be allowed to process data.
 	/// </summary>
 	[System.Serializable]
-	public struct DeformerElement
+	public struct DeformerElement : IComponentElement<Deformer>
 	{
-		public Deformer Deformer;
-		public bool Active;
+		public Deformer Component { get => component; set => component = value; }
+		public bool Active { get => active; set => active = value; }
 
-		public DeformerElement (Deformer deformer, bool active = true)
+		[SerializeField] private Deformer component;
+		[SerializeField] private bool active;
+
+		public DeformerElement (Deformer component, bool active = true)
 		{
-			Deformer = deformer;
-			Active = active;
+			this.component = component;
+			this.active = active;
 		}
 
 		public bool CanProcess ()
 		{
-			return Active && Deformer != null && Deformer.CanProcess ();
+			return Active && Component != null && Component.CanProcess ();
 		}
 	}
 }

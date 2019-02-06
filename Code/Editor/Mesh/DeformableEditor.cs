@@ -97,14 +97,14 @@ namespace DeformEditor
 		private Content content = new Content ();
 		private Properties properties = new Properties ();
 
-		private DeformerListEditor deformerList;
+		private ComponentElementListEditor<Deformer> deformerList;
 
 		private void OnEnable ()
 		{
 			content.Update ();
 			properties.Update (serializedObject);
 
-			deformerList = new DeformerListEditor (serializedObject, serializedObject.FindProperty ("deformerElements"));
+			deformerList = new ComponentElementListEditor<Deformer> (serializedObject, serializedObject.FindProperty ("deformerElements"));
 		}
 
 		public override void OnInspectorGUI ()
@@ -245,7 +245,7 @@ namespace DeformEditor
 				{
 					Undo.RecordObjects (targets, "Cleaned Deformers");
 					foreach (var t in targets)
-						((Deformable)t).DeformerElements.RemoveAll (d => d.Deformer == null);
+						((Deformable)t).DeformerElements.RemoveAll (d => d.Component == null);
 				}
 				if (GUILayout.Button (content.SaveObj, EditorStyles.miniButtonMid))
 				{
