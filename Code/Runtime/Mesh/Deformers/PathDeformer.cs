@@ -12,10 +12,10 @@ namespace Deform
 	[Deformer (Name = "Path", Description = "Orients and stretches mesh along a curve based on each vertices distance along an axis.", Type = typeof (PathDeformer), Category = Category.Normal)]
 	public class PathDeformer : Deformer
 	{
-		public float Scale
+		public Vector3 Scale
 		{
 			get => scale;
-			set => scale = Mathf.Max (value, 0f);
+			set => scale = value;
 		}
 		public float Offset
 		{
@@ -48,7 +48,7 @@ namespace Deform
 			set => axis = value;
 		}
 
-		[SerializeField, HideInInspector] private float scale = 1f;
+		[SerializeField, HideInInspector] private Vector3 scale = Vector3.one;
 		[SerializeField, HideInInspector] private float offset = 0f;
 		[SerializeField, HideInInspector] private float twist = 0f;
 		[SerializeField, HideInInspector] private float speed = 0f;
@@ -118,7 +118,7 @@ namespace Deform
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
 		private struct PathJob : IJobParallelFor
 		{
-			public float scale;
+			public float3 scale;
 			public float offset;
 			public float twist;
 			public bool loop;
@@ -136,7 +136,7 @@ namespace Deform
 			{
 				var axisPoint = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
 
-				var t = axisPoint.z * scale + offset;
+				var t = axisPoint.z * scale.z + offset;
 
 				var endInstruction = loop ? EndOfPathInstruction.Loop : EndOfPathInstruction.Stop;
 
@@ -148,7 +148,7 @@ namespace Deform
 				var angle = atan2 (axisPoint.x, axisPoint.y) + t * twist;
 				var radius = length (axisPoint.xy);
 
-				var worldPoint = worldPosition + (worldRight * cos (angle) + worldUp * sin (angle)) * radius;
+				var worldPoint = worldPosition + ((worldRight * scale.x) * cos (angle) + (worldUp * scale.y) * sin (angle)) * radius;
 				if (any (isnan (worldPoint)) || any (isinf (worldPoint)))
 					return;
 

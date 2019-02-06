@@ -83,7 +83,7 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			DeformEditorGUILayout.MinField (properties.Scale, 0f, content.Scale);
+			EditorGUILayout.PropertyField (properties.Scale, content.Scale);
 			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
 			EditorGUILayout.PropertyField (properties.Twist, content.Twist);
 			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
