@@ -12,19 +12,80 @@ namespace DeformEditor
 			if (Event.current.type != EventType.Repaint)
 				return;
 			rect.xMin = 0f;
+			rect.xMax = Screen.width;
 			var color = DeformEditorGUIUtility.EditorLowlightColor;
 			color.a = GUI.color.a;
 			EditorGUI.DrawRect (rect, color);
 		}
 
-		public static bool Foldout (bool foldout, string text)
+		public class FoldoutWideScope : System.IDisposable
 		{
-			var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
-			toggleRect.xMin = 0;
-			EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.EditorHighlightColor);
-			EditorGUI.LabelField (toggleRect, text, EditorStyles.centeredGreyMiniLabel);
-			using (new EditorGUI.IndentLevelScope (1))
-				return EditorGUI.Foldout (toggleRect, foldout, GUIContent.none, true);
+			private static GUIStyle DefaultLabelStyle;
+			static FoldoutWideScope ()
+			{
+				DefaultLabelStyle = new GUIStyle (EditorStyles.label);
+				DefaultLabelStyle.alignment = TextAnchor.MiddleLeft;
+			}
+
+			public bool isOpen;
+			private readonly string text;
+
+			public FoldoutWideScope (ref bool isOpen, string text) : this (ref isOpen, text, DefaultLabelStyle) { }
+			public FoldoutWideScope (ref bool isOpen, string text, GUIStyle labelStyle)
+			{
+				this.isOpen = isOpen;
+				this.text = text;
+
+				Splitter ();
+
+				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
+				toggleRect.xMin = 0;
+				toggleRect.xMax = Screen.width;
+				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.EditorHighlightColor);
+				EditorGUI.indentLevel++;
+				EditorGUI.LabelField (toggleRect, text, labelStyle);
+				isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+				EditorGUI.indentLevel--;
+			}
+
+			public void Dispose ()
+			{
+				Splitter ();
+			}
+		}
+
+		public class FoldoutContainerScope : System.IDisposable
+		{
+			public static GUIStyle DefaultContainerStyle;
+			public static GUIStyle DefaultLabelStyle;
+
+			static FoldoutContainerScope ()
+			{
+				DefaultContainerStyle = new GUIStyle (EditorStyles.helpBox);
+				DefaultLabelStyle = new GUIStyle (EditorStyles.foldout);
+				DefaultLabelStyle.font = EditorStyles.boldFont;
+			}
+
+			public bool isOpen;
+			private readonly string text;
+
+			public FoldoutContainerScope (ref bool isOpen, string text) : this (ref isOpen, text, DefaultContainerStyle, DefaultLabelStyle) { }
+			public FoldoutContainerScope (ref bool isOpen, string text, GUIStyle containerStyle, GUIStyle labelStyle)
+			{
+				this.isOpen = isOpen;
+				this.text = text;
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginVertical (containerStyle);
+				GUILayout.Space (3);
+				isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+			}
+
+			public void Dispose ()
+			{
+				GUILayout.Space (3);
+				EditorGUILayout.EndVertical ();
+				EditorGUI.indentLevel--;
+			}
 		}
 
 		/// <summary>

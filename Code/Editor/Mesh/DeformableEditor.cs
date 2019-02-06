@@ -288,10 +288,9 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			DeformEditorGUILayout.Splitter ();
-			if (ShowDebug = DeformEditorGUILayout.Foldout (ShowDebug, "Debug Info"))
+			using (var foldout = new DeformEditorGUILayout.FoldoutWideScope (ref ShowDebug, "Debug Info"))
 			{
-				using (new EditorGUI.IndentLevelScope ())
+				if (foldout.isOpen)
 				{
 					var vertexCount = 0;
 					var modifiedData = DataFlags.None;
@@ -304,12 +303,10 @@ namespace DeformEditor
 							vertexCount += deformable.GetMesh ().vertexCount;
 						modifiedData |= deformable.ModifiedDataFlags;
 					}
-					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}", EditorStyles.miniLabel);
-					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}", EditorStyles.miniLabel);
+					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
+					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
 				}
 			}
-			DeformEditorGUILayout.Splitter ();
-
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
