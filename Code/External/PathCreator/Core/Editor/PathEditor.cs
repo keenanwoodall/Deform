@@ -49,6 +49,7 @@ namespace PathCreationEditor
         int selectedSegmentIndex;
         int draggingHandleIndex;
         int mouseOverHandleIndex;
+		int selectionIndex;
         int handleIndexToDisplayAsTransform;
 
         bool shiftLastFrame;
@@ -128,16 +129,49 @@ namespace PathCreationEditor
                     bezierPath.IsClosed = EditorGUILayout.Toggle("Closed Path", bezierPath.IsClosed);
                     data.pathTransformationEnabled = EditorGUILayout.Toggle(new GUIContent("Enable Transforms"), data.pathTransformationEnabled);
 
-                    if (GUILayout.Button("Reset Path"))
+					// If a point has been selected
+					if (selectionIndex >= 0)
+					{
+						EditorGUILayout.LabelField ("Selected Point");
+
+						using (new EditorGUI.IndentLevelScope ())
+						{
+							var currentPosition = creator.bezierPath[selectionIndex];
+							var newPosition = EditorGUILayout.Vector3Field ("Position", currentPosition);
+							if (newPosition != currentPosition)
+							{
+								Undo.RecordObject (creator, "Move point");
+								creator.bezierPath.MovePoint (selectionIndex, newPosition);
+							}
+							// Don't draw the angle field if we aren't selecting an anchor point.
+							if (selectionIndex % 3 == 0)
+							{
+								// Disable the angle field if the path's space isn't 3D b/c the angle will be ignored.
+								using (new EditorGUI.DisabledScope (creator.bezierPath.Space != PathSpace.xyz))
+								{
+									var anchorIndex = selectionIndex / 3;
+									var currentAngle = creator.bezierPath.GetAnchorNormalAngle (anchorIndex);
+									var newAngle = EditorGUILayout.FloatField ("Angle", currentAngle);
+									if (newAngle != currentAngle)
+									{
+										Undo.RecordObject (creator, "Set Angle");
+										creator.bezierPath.SetAnchorNormalAngle (anchorIndex, newAngle);
+									}
+								}
+							}
+						}
+					}
+
+					if (GUILayout.Button("Reset Path"))
                     {
                         Undo.RecordObject(creator, "Reset Path");
                         bool in2DEditorMode = EditorSettings.defaultBehaviorMode == EditorBehaviorMode.Mode2D;
                         data.ResetBezierPath(creator.transform.position, in2DEditorMode);
-                    }
+						EditorApplication.QueuePlayerLoopUpdate ();
+					}
 
                     GUILayout.Space(inspectorSectionSpacing);
-                }
-
+				}
 
                 data.showNormals = EditorGUILayout.Foldout(data.showNormals, new GUIContent("Normals Options"), true, boldFoldoutStyle);
                 if (data.showNormals)
@@ -173,7 +207,7 @@ namespace PathCreationEditor
                     DrawGlobalDisplaySettingsInspector();
                 }
 
-                if (check.changed)
+				if (check.changed)
                 {
                     SceneView.RepaintAll();
 					EditorApplication.QueuePlayerLoopUpdate ();
@@ -382,7 +416,7 @@ namespace PathCreationEditor
                         handleIndexToDisplayAsTransform = -1;
                     }
                     mouseOverHandleIndex = -1;
-
+					Repaint ();
                 }
             }
 
@@ -624,12 +658,15 @@ namespace PathCreationEditor
             {
                 case PathHandle.HandleInputType.LMBDrag:
                     draggingHandleIndex = i;
-                    handleIndexToDisplayAsTransform = -1;
-                    break;
+					selectionIndex = i;
+					handleIndexToDisplayAsTransform = -1;
+					Repaint ();
+					break;
                 case PathHandle.HandleInputType.LMBRelease:
                     draggingHandleIndex = -1;
                     handleIndexToDisplayAsTransform = -1;
-                    break;
+					Repaint ();
+					break;
                 case PathHandle.HandleInputType.LMBClick:
                     if (Event.current.shift)
                     {
@@ -640,18 +677,22 @@ namespace PathCreationEditor
                         if (handleIndexToDisplayAsTransform == i)
                         {
                             handleIndexToDisplayAsTransform = -1; // disable move tool if clicking on point under move tool
-                        }
+							selectionIndex = -1;
+						}
                         else
                         {
                             handleIndexToDisplayAsTransform = i;
-                        }
+							selectionIndex = i;
+						}
                     }
-                    break;
+					Repaint ();
+					break;
                 case PathHandle.HandleInputType.LMBPress:
                     if (handleIndexToDisplayAsTransform != i)
                     {
                         handleIndexToDisplayAsTransform = -1;
-                    }
+						Repaint ();
+					}
                     break;
             }
 
@@ -660,7 +701,37 @@ namespace PathCreationEditor
             {
                 Undo.RecordObject(creator, "Move point");
                 bezierPath.MovePoint(i, handlePosition);
-            }
+
+				// If the use is holding alt, try and mirror the control point.
+				if (Event.current.modifiers == EventModifiers.Alt)
+				{
+					// If the control point we're selecting isn't at the beginning or end of the path
+					if (i > 1 && i < bezierPath.NumPoints - 2)
+					{
+						// 0 = Anchor, 1 = Left Control, 2 = Right Control
+						var pointType = i % 3;
+
+						// If we are selecting a control point
+						if (pointType != 0)
+						{
+							// If we are selecting the left control point
+							if (pointType == 2)
+							{
+								var anchorIndex = i + 1;
+								var anchorPoint = bezierPath[anchorIndex];
+								bezierPath.MovePoint (anchorIndex + 1, anchorPoint - (handlePosition - anchorPoint));
+							}
+							// If we are selecting the right control point
+							else if (pointType == 1)
+							{
+								var anchorIndex = i - 1;
+								var anchorPoint = bezierPath[anchorIndex];
+								bezierPath.MovePoint (anchorIndex - 1, anchorPoint - (handlePosition - anchorPoint));
+							}
+						}
+					}
+				}
+			}
 
         }
 
@@ -749,6 +820,7 @@ namespace PathCreationEditor
             draggingHandleIndex = -1;
             mouseOverHandleIndex = -1;
             handleIndexToDisplayAsTransform = -1;
+			selectionIndex = -1;
             hasUpdatedScreenSpaceLine = false;
             hasUpdatedNormalsVertexPath = false;
             bezierPath.Pivot = bezierPath.PathBounds.center;
@@ -757,7 +829,8 @@ namespace PathCreationEditor
             bezierPath.OnModified += OnPathModifed;
 
             SceneView.RepaintAll();
-        }
+			EditorApplication.QueuePlayerLoopUpdate ();
+		}
 
 
         void OnPathModifed()

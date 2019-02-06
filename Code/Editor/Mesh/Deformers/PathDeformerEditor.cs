@@ -74,24 +74,8 @@ namespace DeformEditor
 
 		private void OnEnable ()
 		{
-			Undo.undoRedoPerformed += MarkTargetPathsDirty;
-
 			content.Update ();
 			properties.Update (serializedObject);
-		}
-
-		private void OnDisable ()
-		{
-			Undo.undoRedoPerformed -= MarkTargetPathsDirty;
-		}
-
-		private void MarkTargetPathsDirty ()
-		{
-			foreach (var t in targets)
-			{
-				var pathDeformer = (PathDeformer)t;
-				pathDeformer.SetPathDataDirty ();
-			}
 		}
 
 		public override void OnInspectorGUI ()
