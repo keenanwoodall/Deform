@@ -45,7 +45,8 @@ namespace DeformEditor
 		private readonly ReorderableList list;
 		private Styles styles = new Styles ();
 		private Content content = new Content ();
-		
+
+		private SerializedProperty selectedProperty;
 		private Deformer selectedDeformer;
 		private GUIContent selectedEditorLabel;
 		private Editor selectedEditor;
@@ -88,39 +89,18 @@ namespace DeformEditor
 				objectRect.xMin += EditorGUIUtility.singleLineHeight + PADDING;
 				EditorGUI.ObjectField (objectRect, deformerProperty, GUIContent.none);
 			};
-			list.onSelectCallback += l =>
-			{
-				//On select, create the Editor for the selected Deformer so it can be displayed below the list.
-				if (l.index >= 0)
-				{
-					var elementProperty = l.serializedProperty.GetArrayElementAtIndex (l.index);
-					var deformerProperty = elementProperty.FindPropertyRelative (DEFORMER_PROP);
-
-					if (deformerProperty.objectReferenceValue != null)
-					{
-						selectedDeformer = (Deformer)deformerProperty.objectReferenceValue;
-						//Create the editor
-						if (selectedEditor != null)
-							Object.DestroyImmediate (selectedEditor, true);
-						selectedEditor = Editor.CreateEditor (deformerProperty.objectReferenceValue);
-
-						//Get the OnSceneGUI method so it can be called from this editor
-						selectedEditorOnSceneGUI = selectedEditor.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-						//Create foldout content
-						selectedEditorLabel = new GUIContent ("Selection Properties");
-						return;
-					}
-				}
-				if (selectedEditor != null)
-					Object.DestroyImmediate (selectedEditor, true);
-			};
+			list.onSelectCallback += InitializeSelectedEditor;
 		}
 
 		private void SceneGUI (SceneView sceneView)
 		{
 			if (selectedDeformer == null)
+			{
 				DisposeSelectedEditor ();
+				return;
+			}
+			if (selectedProperty != list.serializedProperty.GetArrayElementAtIndex (list.index))
+				InitializeSelectedEditor ();
 
 			//Display the selected Editor's OnSceneGUI content if expanded
 			if (selectedEditorExpanded)
@@ -143,11 +123,40 @@ namespace DeformEditor
 #endif
 		}
 
+		private void InitializeSelectedEditor () => InitializeSelectedEditor (list);
+		private void InitializeSelectedEditor (ReorderableList list)
+		{
+			//On select, create the Editor for the selected Deformer so it can be displayed below the list.
+			if (list.index >= 0)
+			{
+				selectedProperty = list.serializedProperty.GetArrayElementAtIndex (list.index);
+				var deformerProperty = selectedProperty.FindPropertyRelative (DEFORMER_PROP);
+
+				if (deformerProperty.objectReferenceValue != null)
+				{
+					selectedDeformer = (Deformer)deformerProperty.objectReferenceValue;
+					//Create the editor
+					if (selectedEditor != null)
+						Object.DestroyImmediate (selectedEditor, true);
+					selectedEditor = Editor.CreateEditor (deformerProperty.objectReferenceValue);
+
+					//Get the OnSceneGUI method so it can be called from this editor
+					selectedEditorOnSceneGUI = selectedEditor.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+					//Create foldout content
+					selectedEditorLabel = new GUIContent ("Selection Properties");
+					return;
+				}
+			}
+			if (selectedEditor != null)
+				Object.DestroyImmediate (selectedEditor, true);
+		}
+
 		/// <summary>
 		/// Cleanup the instantiated Editor ScriptableObject
 		/// and reset of any other related content
 		/// </summary>
-		void DisposeSelectedEditor ()
+		private void DisposeSelectedEditor ()
 		{
 			if (selectedEditor != null)
 				Object.DestroyImmediate (selectedEditor, true);
