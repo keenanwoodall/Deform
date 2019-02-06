@@ -167,7 +167,13 @@ namespace DeformEditor
 				so.Update ();
 			}
 
-			if (drawSelectedEditor && selectedEditor != null)
+			if (drawSelectedEditor)
+				DoSelectedInspector ();
+		}
+
+		public void DoSelectedInspector ()
+		{
+			if (selectedEditor != null)
 			{
 				if (list.index < 0)
 				{

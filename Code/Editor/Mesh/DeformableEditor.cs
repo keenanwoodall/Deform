@@ -142,7 +142,7 @@ namespace DeformEditor
 				}
 			}
 
-			deformerList.DoLayoutList ();
+			deformerList.DoLayoutList (false);
 
 			EditorGUILayout.Space ();
 
@@ -309,6 +309,8 @@ namespace DeformEditor
 					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
 				}
 			}
+
+			deformerList.DoSelectedInspector ();
 
 			serializedObject.ApplyModifiedProperties ();
 
