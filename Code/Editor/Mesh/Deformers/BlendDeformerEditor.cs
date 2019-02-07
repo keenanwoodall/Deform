@@ -5,45 +5,32 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (BlendDeformer)), CanEditMultipleObjects]
-	public class BlendDeformerEditor : Editor
+	public class BlendDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Cache;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Cache = new GUIContent
-				(
-					text: "Cache",
-					tooltip: "The vertex cache to blend towards. It must have the same vertex count as the deformable."
-				);
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Cache = new GUIContent (text: "Cache", tooltip: "The vertex cache to blend towards. It must have the same vertex count as the deformable.");
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				Cache;
+			public SerializedProperty Factor;
+			public SerializedProperty Cache;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Cache	= obj.FindProperty ("cache");
 			}
 		}
 
-		Content content = new Content ();
-		Properties properties = new Properties ();
+		Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -51,11 +38,12 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
+
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				EditorGUILayout.ObjectField (properties.Cache, content.Cache);
+				EditorGUILayout.ObjectField (properties.Cache, Content.Cache);
 				if (check.changed)
 				{
 					// need to apply properties early if the cache was changed so that cache's value change occurs before Initialize()
@@ -64,6 +52,7 @@ namespace DeformEditor
 						((BlendDeformer)t).Initialize ();
 				}
 			}
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

@@ -5,52 +5,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (WaveDeformer)), CanEditMultipleObjects]
-	public class WaveDeformerEditor : Editor
+	public class WaveDeformerEditor : DeformerEditor
 	{
 		private class Content
-		{
-			public GUIContent 
-				WaveLength, 
-				Steepness, 
-				Speed,
-				Offset,
-				Axis;
-
-			public void Update ()
-			{
-				WaveLength = new GUIContent 
-				(
-					text: "Wave Length",
-					tooltip: "The period and magnitude of the wave."
-				);
-				Steepness = new GUIContent 
-				(
-					text: "Steepness",
-					tooltip: "The sharpness and height of the wave peaks."
-				);
-				Speed = new GUIContent 
-				(
-					text: "Speed",
-					tooltip: "The amount of change in the phase offset per second."
-				);
-				Offset = new GUIContent 
-				(
-					text: "Offset", tooltip: "The wave's phase offset."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+		{ 
+			public static readonly GUIContent WaveLength = new GUIContent (text: "Wave Length", tooltip: "The period and magnitude of the wave.");
+			public static readonly GUIContent Steepness = new GUIContent (text: "Steepness", tooltip: "The sharpness and height of the wave peaks.");
+			public static readonly GUIContent Speed = new GUIContent (text: "Speed", tooltip: "The amount of change in the phase offset per second.");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset", tooltip: "The wave's phase offset.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				WaveLength,
-				Steepness, 
-				Speed, 
-				Offset,
-				Axis;
+			public SerializedProperty WaveLength;
+			public SerializedProperty Steepness;
+			public SerializedProperty Speed;
+			public SerializedProperty Offset;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				WaveLength	= obj.FindProperty ("waveLength");
 				Steepness	= obj.FindProperty ("steepness");
@@ -60,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -74,11 +47,13 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			DeformEditorGUILayout.MinField (properties.WaveLength, 0f, content.WaveLength);
-			EditorGUILayout.Slider (properties.Steepness, 0f, 1f, content.Steepness);
-			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			DeformEditorGUILayout.MinField (properties.WaveLength, 0f, Content.WaveLength);
+			EditorGUILayout.Slider (properties.Steepness, 0f, 1f, Content.Steepness);
+			EditorGUILayout.PropertyField (properties.Speed, Content.Speed);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			DeformEditorGUILayout.WIPAlert ();

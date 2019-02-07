@@ -5,81 +5,34 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (RippleDeformer)), CanEditMultipleObjects]
-	public class RippleDeformerEditor : Editor
+	public class RippleDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Frequency, 
-				Magnitude,
-				Mode, 
-				Falloff, 
-				InnerRadius, 
-				OuterRadius, 
-				Speed, 
-				Offset, 
-				Axis;
-
-			public void Update ()
-			{
-				Frequency = new GUIContent
-				(
-					text: "Frequency",
-					tooltip: "Higher values mean more ripples."
-				);
-				Magnitude = new GUIContent
-				(
-					text: "Magnitude",
-					tooltip: "The strength of the ripples,"
-				);
-				Mode = new GUIContent
-				(
-					text: "Mode",
-					tooltip: "Unlimited: Entire mesh is rippled.\nLimited: Mesh only ripples between bounds."
-				);
-				Falloff = new GUIContent
-				(
-					text: "Falloff",
-					tooltip: "When at 0, vertices outside the bounds will match the height of the bounds edge.\nWhen at 1, vertices outside the bounds will be unchanged."
-				);
-				InnerRadius = new GUIContent
-				(
-					text: "Inner Radius",
-					tooltip: "Vertices within this radius don't ripple."
-				);
-				OuterRadius = new GUIContent
-				(
-					text: "Outer Radius",
-					tooltip: "Vertices outside this radius don't ripple."
-				);
-				Speed = new GUIContent
-				(
-					text: "Speed",
-					tooltip: "How fast the offset changes."
-				);
-				Offset = new GUIContent
-				(
-					text: "Offset",
-					tooltip: "Offset of the ripple curve."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Frequency = new GUIContent (text: "Frequency", tooltip: "Higher values mean more ripples.");
+			public static readonly GUIContent Magnitude = new GUIContent (text: "Magnitude", tooltip: "The strength of the ripples,");
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: Entire mesh is rippled.\nLimited: Mesh only ripples between bounds.");
+			public static readonly GUIContent Falloff = new GUIContent (text: "Falloff", tooltip: "When at 0, vertices outside the bounds will match the height of the bounds edge.\nWhen at 1, vertices outside the bounds will be unchanged.");
+			public static readonly GUIContent InnerRadius = new GUIContent (text: "Inner Radius", tooltip: "Vertices within this radius don't ripple.");
+			public static readonly GUIContent OuterRadius = new GUIContent (text: "Outer Radius", tooltip: "Vertices outside this radius don't ripple.");
+			public static readonly GUIContent Speed = new GUIContent (text: "Speed", tooltip: "How fast the offset changes.");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset", tooltip: "Offset of the ripple curve.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty
-				Frequency,
-				Magnitude, 
-				Mode, 
-				Falloff,
-				InnerRadius,
-				OuterRadius, 
-				Speed, 
-				Offset,
-				Axis;
+			public SerializedProperty Frequency;
+			public SerializedProperty Magnitude;
+			public SerializedProperty Mode;
+			public SerializedProperty Falloff;
+			public SerializedProperty InnerRadius;
+			public SerializedProperty OuterRadius;
+			public SerializedProperty Speed;
+			public SerializedProperty Offset;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Frequency	= obj.FindProperty ("frequency");
 				Magnitude	= obj.FindProperty ("magnitude");
@@ -93,13 +46,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -107,32 +59,33 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Frequency, content.Frequency);
-			EditorGUILayout.PropertyField (properties.Magnitude, content.Magnitude);
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
+
+			EditorGUILayout.PropertyField (properties.Frequency, Content.Frequency);
+			EditorGUILayout.PropertyField (properties.Magnitude, Content.Magnitude);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
 			using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
 			{
 				using (new EditorGUI.IndentLevelScope ())
 				{
-					EditorGUILayout.Slider (properties.Falloff, 0f, 1f, content.Falloff);
-					DeformEditorGUILayout.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, content.InnerRadius);
-					DeformEditorGUILayout.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, content.OuterRadius);
+					EditorGUILayout.Slider (properties.Falloff, 0f, 1f, Content.Falloff);
+					DeformEditorGUILayout.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, Content.InnerRadius);
+					DeformEditorGUILayout.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, Content.OuterRadius);
 				}
 			}
 
-			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Speed, Content.Speed);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var ripple = target as RippleDeformer;
 

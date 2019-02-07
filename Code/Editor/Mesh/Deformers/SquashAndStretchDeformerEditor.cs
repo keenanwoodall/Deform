@@ -5,41 +5,26 @@ using Deform;
 namespace DeformEditor
 {
     [CustomEditor (typeof (SquashAndStretchDeformer)), CanEditMultipleObjects]
-    public class SquashAndStretchDeformerEditor : Editor
+    public class SquashAndStretchDeformerEditor : DeformerEditor
     {
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Curvature,
-				Top, 
-				Bottom,
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Curvature = new GUIContent
-				(
-					text: "Curvature",
-					tooltip: "How much the mesh is bulged when squashed and squeezed when stretched."
-				);
-				Top = DeformEditorGUIUtility.DefaultContent.Top;
-				Bottom = DeformEditorGUIUtility.DefaultContent.Bottom;
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Curvature = new GUIContent (text: "Curvature", tooltip: "How much the mesh is bulged when squashed and squeezed when stretched.");
+			public static readonly GUIContent Top = DeformEditorGUIUtility.DefaultContent.Top;
+			public static readonly GUIContent Bottom = DeformEditorGUIUtility.DefaultContent.Bottom;
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor,
-				Curvature,
-				Top, 
-				Bottom,
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Curvature;
+			public SerializedProperty Top;
+			public SerializedProperty Bottom;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor		= obj.FindProperty ("factor");
 				Curvature	= obj.FindProperty ("curvature");
@@ -49,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI()
@@ -63,25 +47,24 @@ namespace DeformEditor
             base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Curvature, content.Curvature);
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Curvature, Content.Curvature);
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, content.Top);
-				DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, content.Bottom);
+				DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+				DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 			}
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
         }
 
-        private void OnSceneGUI ()
+        public override void OnSceneGUI ()
         {
-            if (target == null)
-                return;
+			base.OnSceneGUI ();
 
             var stretch = target as SquashAndStretchDeformer;
 

@@ -5,45 +5,32 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (InflateDeformer)), CanEditMultipleObjects]
-	public class InflateDeformerEditor : Editor
+	public class InflateDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				UseUpdatedNormals;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				UseUpdatedNormals = new GUIContent
-				(
-					text: "Use Updated Normals",
-					tooltip: "When true, the normals will be recalculated before the vertices are inflated. This is an expensive operation and will result in a split where adjacent triangles don't share vertices."
-				);
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent UseUpdatedNormals = new GUIContent (text: "Use Updated Normals", tooltip: "When true, the normals will be recalculated before the vertices are inflated. This is an expensive operation and will result in a split where adjacent triangles don't share vertices.");
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				UseUpdatedNormals;
+			public SerializedProperty Factor;
+			public SerializedProperty UseUpdatedNormals;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor				= obj.FindProperty ("factor");
 				UseUpdatedNormals	= obj.FindProperty ("useUpdatedNormals");
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -51,8 +38,10 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.UseUpdatedNormals, content.UseUpdatedNormals);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.UseUpdatedNormals, Content.UseUpdatedNormals);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

@@ -5,35 +5,22 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (CylindrifyDeformer)), CanEditMultipleObjects]
-	public class CylindrifyDeformerEditor : Editor
+	public class CylindrifyDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Radius, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Radius = new GUIContent
-				(
-					text: "Radius",
-					tooltip: "The cylinder radius."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Radius = new GUIContent (text: "Radius", tooltip: "The cylinder radius.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				Radius, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Radius; 
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Radius	= obj.FindProperty ("radius");
@@ -41,13 +28,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -55,16 +41,20 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Radius, content.Radius);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Radius, Content.Radius);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
+			base.OnSceneGUI ();
+
 			if (target == null)
 				return;
 

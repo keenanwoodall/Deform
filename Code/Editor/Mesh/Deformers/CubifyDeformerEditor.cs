@@ -6,49 +6,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (CubifyDeformer)), CanEditMultipleObjects]
-	public class CubifyDeformerEditor : Editor
+	public class CubifyDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Width, 
-				Height, 
-				Length, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Width = new GUIContent
-				(
-					text: "Width",
-					tooltip: "The width of the cube."
-				);
-				Height = new GUIContent
-				(
-					text: "Height",
-					tooltip: "The height of the cube."
-				);
-				Length = new GUIContent
-				(
-					text: "Length",
-					tooltip: "The length of the cube."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Width = new GUIContent (text: "Width", tooltip: "The width of the cube.");
+			public static readonly GUIContent Height = new GUIContent (text: "Height", tooltip: "The height of the cube.");
+			public static readonly GUIContent Length = new GUIContent (text: "Length", tooltip: "The length of the cube.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				Width, 
-				Height, 
-				Length, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Width;
+			public SerializedProperty Height;
+			public SerializedProperty Length;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Width	= obj.FindProperty ("width");
@@ -58,15 +35,14 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
 		private BoxBoundsHandle boundsHandle = new BoxBoundsHandle ();
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -74,20 +50,21 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
-			EditorGUILayout.PropertyField (properties.Width, content.Width);
-			EditorGUILayout.PropertyField (properties.Height, content.Height);
-			EditorGUILayout.PropertyField (properties.Length, content.Length);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Width, Content.Width);
+			EditorGUILayout.PropertyField (properties.Height, Content.Height);
+			EditorGUILayout.PropertyField (properties.Length, Content.Length);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var cubify = target as CubifyDeformer;
 

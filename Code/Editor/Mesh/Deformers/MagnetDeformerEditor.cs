@@ -5,39 +5,22 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (MagnetDeformer)), CanEditMultipleObjects]
-	public class MagnetDeformerEditor : Editor
+	public class MagnetDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor,
-				Falloff, 
-				Center;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Falloff = new GUIContent
-				(
-					text: "Falloff",
-					tooltip: "The sharpness of the effect's transition."
-				);
-				Center = new GUIContent
-				(
-					text: "Center",
-					tooltip: DeformEditorGUIUtility.Strings.AxisTooltip
-				);
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Falloff = new GUIContent (text: "Falloff", tooltip: "The sharpness of the effect's transition.");
+			public static readonly GUIContent Center = new GUIContent (text: "Center", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
 		}
 
 		private class Properties
 		{
-			public SerializedProperty
-				Factor,
-				Falloff, 
-				Center;
+			public SerializedProperty Factor;
+			public SerializedProperty Falloff;
+			public SerializedProperty Center;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Falloff = obj.FindProperty ("falloff");
@@ -45,13 +28,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -59,9 +41,11 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
-			EditorGUILayout.PropertyField (properties.Center, content.Center);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			DeformEditorGUILayout.MinField (properties.Falloff, 0f, Content.Falloff);
+			EditorGUILayout.PropertyField (properties.Center, Content.Center);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

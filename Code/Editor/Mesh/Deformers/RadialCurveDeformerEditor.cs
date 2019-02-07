@@ -5,43 +5,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (RadialCurveDeformer)), CanEditMultipleObjects]
-	public class RadialCurveDeformerEditor : Editor
+	public class RadialCurveDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Offset, 
-				Falloff,
-				Curve, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Offset = new GUIContent
-				(
-					text: "Offset"
-				);
-				Falloff = DeformEditorGUIUtility.DefaultContent.Falloff;
-				Curve = new GUIContent
-				(
-					text: "Curve"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
+			public static readonly GUIContent Falloff = DeformEditorGUIUtility.DefaultContent.Falloff;
+			public static readonly GUIContent Curve = new GUIContent (text: "Curve");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor,
-				Offset, 
-				Falloff,
-				Curve,
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Offset;
+			public SerializedProperty Falloff;
+			public SerializedProperty Curve;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Offset	= obj.FindProperty ("offset");
@@ -51,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -65,11 +47,13 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
-			EditorGUILayout.PropertyField (properties.Curve, content.Curve);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			DeformEditorGUILayout.MinField (properties.Falloff, 0f, Content.Falloff);
+			EditorGUILayout.PropertyField (properties.Curve, Content.Curve);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

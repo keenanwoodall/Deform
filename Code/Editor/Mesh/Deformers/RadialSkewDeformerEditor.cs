@@ -5,49 +5,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (RadialSkewDeformer)), CanEditMultipleObjects]
-	public class RadialSkewDeformerEditor : Editor
+	public class RadialSkewDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent
-				Factor, 
-				Mode, 
-				Top, 
-				Bottom,
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Mode = new GUIContent
-				(
-					text: "Mode",
-					tooltip: "Unlimited: Entire mesh is skewed.\nLimited: Mesh is only skewed between bounds."
-				);
-				Top = new GUIContent
-				(
-					text: "Top",
-					tooltip: "Any vertices above this will be unskewed."
-				);
-				Bottom = new GUIContent
-				(
-					text: "Bottom",
-					tooltip: "Any vertices below this will be unskewed."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: Entire mesh is skewed.\nLimited: Mesh is only skewed between bounds.");
+			public static readonly GUIContent Top = new GUIContent (text: "Top", tooltip: "Any vertices above this will be unskewed.");
+			public static readonly GUIContent Bottom = new GUIContent (text: "Bottom", tooltip: "Any vertices below this will be unskewed.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		public class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				Mode, 
-				Top, 
-				Bottom, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Mode;
+			public SerializedProperty Top;
+			public SerializedProperty Bottom;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Mode	= obj.FindProperty ("mode");
@@ -57,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -71,20 +47,22 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
 			using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
 			{
 				using (new EditorGUI.IndentLevelScope ())
 				{
-					DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, content.Top);
-					DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, content.Bottom);
+					DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+					DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 				}
 			}
 
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			DeformEditorGUILayout.WIPAlert ();
@@ -92,10 +70,9 @@ namespace DeformEditor
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var skew = target as RadialSkewDeformer;
 

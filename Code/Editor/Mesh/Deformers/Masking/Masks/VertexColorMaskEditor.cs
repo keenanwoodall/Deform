@@ -5,40 +5,24 @@ using Deform.Masking;
 namespace DeformEditor.Masking
 {
 	[CustomEditor (typeof (VertexColorMask)), CanEditMultipleObjects]
-	public class VertexColorMaskEditor : Editor
+	public class VertexColorMaskEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor,
-				Falloff, 
-				Invert, 
-				Channel;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Falloff = DeformEditorGUIUtility.DefaultContent.Falloff;
-				Invert = new GUIContent
-				(
-					text: "Invert"
-				);
-				Channel = new GUIContent
-				(
-					text: "Channel"
-				);
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Falloff = DeformEditorGUIUtility.DefaultContent.Falloff;
+			public static readonly GUIContent Invert = new GUIContent (text: "Invert");
+			public static readonly GUIContent Channel = new GUIContent (text: "Channel");
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor,
-				Falloff,
-				Invert, 
-				Channel;
+			public SerializedProperty Factor;
+			public SerializedProperty Falloff;
+			public SerializedProperty Invert;
+			public SerializedProperty Channel;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Falloff = obj.FindProperty ("falloff");
@@ -47,13 +31,12 @@ namespace DeformEditor.Masking
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -61,10 +44,12 @@ namespace DeformEditor.Masking
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f, content.Falloff);
-			EditorGUILayout.PropertyField (properties.Invert, content.Invert);
-			EditorGUILayout.PropertyField (properties.Channel, content.Channel);
+
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+			DeformEditorGUILayout.MinField (properties.Falloff, 0f, Content.Falloff);
+			EditorGUILayout.PropertyField (properties.Invert, Content.Invert);
+			EditorGUILayout.PropertyField (properties.Channel, Content.Channel);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

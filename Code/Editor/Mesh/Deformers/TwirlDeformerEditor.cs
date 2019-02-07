@@ -6,58 +6,30 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (TwirlDeformer)), CanEditMultipleObjects]
-	public class TwirlDeformerEditor : Editor
+	public class TwirlDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Angle, 
-				Factor, 
-				Mode, 
-				Smooth,
-				Inner,
-				Outer, 
-				Axis;
-
-			public void Update ()
-			{
-				Angle = new GUIContent
-				(
-					text: "Angle",
-					tooltip: "How many degrees each vertice will rotate around the axis based on distance between the inner and outer bounds."
-				);
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Mode = new GUIContent
-				(
-					text: "Mode",
-					tooltip: "Unlimited: The entire mesh will twirl.\nLimited: Only vertices between the bounds will twirl."
-				);
-				Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
-				Inner = new GUIContent
-				(
-					text: "Inner",
-					tooltip: "Vertices closer to the axis than the inner radius won't be twirled when the mode is limited."
-				);
-				Outer = new GUIContent
-				(
-					text: "Outer", tooltip: "Vertices further from the axis than the outer radius won't be twirled when the mode is limited."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Angle = new GUIContent (text: "Angle", tooltip: "How many degrees each vertice will rotate around the axis based on distance between the inner and outer bounds.");
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: The entire mesh will twirl.\nLimited: Only vertices between the bounds will twirl.");
+			public static readonly GUIContent Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
+			public static readonly GUIContent Inner = new GUIContent (text: "Inner", tooltip: "Vertices closer to the axis than the inner radius won't be twirled when the mode is limited.");
+			public static readonly GUIContent Outer = new GUIContent (text: "Outer", tooltip: "Vertices further from the axis than the outer radius won't be twirled when the mode is limited.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Angle, 
-				Factor,
-				Mode,
-				Smooth,
-				Inner, 
-				Outer, 
-				Axis;
+			public SerializedProperty Angle;
+			public SerializedProperty Factor;
+			public SerializedProperty Mode;
+			public SerializedProperty Smooth;
+			public SerializedProperty Inner;
+			public SerializedProperty Outer; 
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Angle	= obj.FindProperty ("angle");
 				Factor	= obj.FindProperty ("factor");
@@ -69,15 +41,14 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
 		private ArcHandle angleHandle = new ArcHandle ();
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -85,31 +56,32 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Angle, content.Angle);
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
+
+			EditorGUILayout.PropertyField (properties.Angle, Content.Angle);
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
 				using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
 				{
-					DeformEditorGUILayout.MaxField (properties.Inner, properties.Outer.floatValue, content.Inner);
-					DeformEditorGUILayout.MinField (properties.Outer, properties.Inner.floatValue, content.Outer);
+					DeformEditorGUILayout.MaxField (properties.Inner, properties.Outer.floatValue, Content.Inner);
+					DeformEditorGUILayout.MinField (properties.Outer, properties.Inner.floatValue, Content.Outer);
 
-					EditorGUILayout.PropertyField (properties.Smooth, content.Smooth);
+					EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 				}
 			}
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var twirl = target as TwirlDeformer;
 			

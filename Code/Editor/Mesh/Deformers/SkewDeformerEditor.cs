@@ -5,41 +5,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (SkewDeformer)), CanEditMultipleObjects]
-	public class SkewDeformerEditor : Editor
+	public class SkewDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Mode, 
-				Top,
-				Bottom,
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Mode = new GUIContent
-				(
-					text: "Mode",
-					tooltip: "Unlimited: The entire mesh is skewed.\nLimited: Only vertices between the bounds are skewed."
-				);
-				Top = DeformEditorGUIUtility.DefaultContent.Top;
-				Bottom = DeformEditorGUIUtility.DefaultContent.Bottom;
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: The entire mesh is skewed.\nLimited: Only vertices between the bounds are skewed.");
+			public static readonly GUIContent Top = DeformEditorGUIUtility.DefaultContent.Top;
+			public static readonly GUIContent Bottom = DeformEditorGUIUtility.DefaultContent.Bottom;
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty
-				Factor,
-				Mode,
-				Top, 
-				Bottom,
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Mode;
+			public SerializedProperty Top;
+			public SerializedProperty Bottom;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Mode	= obj.FindProperty ("mode");
@@ -49,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -63,28 +47,27 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
 			using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
 			{
 				using (new EditorGUI.IndentLevelScope ())
 				{
-					DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, content.Top);
-					DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, content.Bottom);
+					DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+					DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 				}
 			}
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var skew = target as SkewDeformer;
 

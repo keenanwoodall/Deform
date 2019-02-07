@@ -6,74 +6,36 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (TwistDeformer)), CanEditMultipleObjects]
-	public class TwistDeformerEditor : Editor
+	public class TwistDeformerEditor : DeformerEditor
 	{
 		private const float ANGLE_HANDLE_RADIUS = 1.25f;
 
 		private class Content
 		{
-			public GUIContent 
-				StartAngle, 
-				EndAngle, 
-				Offset,
-				Factor, 
-				Mode, 
-				Smooth,
-				Top,
-				Bottom,
-				Axis;
-
-			public void Update ()
-			{
-				StartAngle = new GUIContent
-				(
-					text: "Start Angle",
-					tooltip: "When mode is limited this is how many degrees the vertices are twisted at the bottom bounds. When unlimited the vertices are twisted based on the different between the start and end angle."
-				);
-				EndAngle = new GUIContent
-				(
-					text: "End Angle",
-					tooltip: "When mode is limited this is how many degrees the vertices are twisted at the top bounds. When unlimited the vertices are twisted based on the different between the start and end angle."
-				);
-				Offset = new GUIContent
-				(
-					text: "Offset",
-					tooltip: "The base angle offset applied to the twist."
-				);
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Mode = new GUIContent
-				(
-					text: "Mode",
-					tooltip: "Unlimited: Entire mesh is twisted based on the difference between the start and end angle.\nLimited: Vertices are only twisted within the bounds."
-				);
-				Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
-				Top = new GUIContent
-				(
-					text: "Top",
-					tooltip: "Vertices above this will be untwisted when the mode is limited."
-				);
-				Bottom = new GUIContent
-				(
-					text: "Bottom", tooltip: "Vertices below this will be untwisted when the mode is limited."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent StartAngle = new GUIContent (text: "Start Angle", tooltip: "When mode is limited this is how many degrees the vertices are twisted at the bottom bounds. When unlimited the vertices are twisted based on the different between the start and end angle.");
+			public static readonly GUIContent EndAngle = new GUIContent (text: "End Angle", tooltip: "When mode is limited this is how many degrees the vertices are twisted at the top bounds. When unlimited the vertices are twisted based on the different between the start and end angle.");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset", tooltip: "The base angle offset applied to the twist.");
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: Entire mesh is twisted based on the difference between the start and end angle.\nLimited: Vertices are only twisted within the bounds.");
+			public static readonly GUIContent Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
+			public static readonly GUIContent Top = new GUIContent (text: "Top", tooltip: "Vertices above this will be untwisted when the mode is limited.");
+			public static readonly GUIContent Bottom = new GUIContent (text: "Bottom", tooltip: "Vertices below this will be untwisted when the mode is limited.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				StartAngle, 
-				EndAngle,
-				Offset, 
-				Factor, 
-				Mode,
-				Smooth,
-				Top,
-				Bottom,
-				Axis;
+			public SerializedProperty StartAngle;
+			public SerializedProperty EndAngle;
+			public SerializedProperty Offset;
+			public SerializedProperty Factor;
+			public SerializedProperty Mode;
+			public SerializedProperty Smooth;
+			public SerializedProperty Top;
+			public SerializedProperty Bottom;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				StartAngle	= obj.FindProperty ("startAngle");
 				EndAngle	= obj.FindProperty ("endAngle");
@@ -87,16 +49,15 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
 		private ArcHandle startAngleHandle = new ArcHandle ();
 		private ArcHandle endAngleHandle = new ArcHandle ();
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -104,22 +65,23 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.StartAngle, content.StartAngle);
-			EditorGUILayout.PropertyField (properties.EndAngle, content.EndAngle);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
+
+			EditorGUILayout.PropertyField (properties.StartAngle, Content.StartAngle);
+			EditorGUILayout.PropertyField (properties.EndAngle, Content.EndAngle);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, content.Top);
-				DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, content.Bottom);
+				DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+				DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 
 				using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasChildren))
-					EditorGUILayout.PropertyField (properties.Smooth, content.Smooth);
+					EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 			}
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
@@ -127,8 +89,7 @@ namespace DeformEditor
 
 		private void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var twist = target as TwistDeformer;
 

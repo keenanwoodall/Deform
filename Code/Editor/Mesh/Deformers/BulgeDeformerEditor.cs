@@ -5,37 +5,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (BulgeDeformer)), CanEditMultipleObjects]
-	public class BulgeDeformerEditor : Editor
+	public class BulgeDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Top, 
-				Bottom, 
-				Smooth, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor	= DeformEditorGUIUtility.DefaultContent.Factor;
-				Top		= DeformEditorGUIUtility.DefaultContent.Top;
-				Bottom	= DeformEditorGUIUtility.DefaultContent.Bottom;
-				Smooth	= DeformEditorGUIUtility.DefaultContent.Smooth;
-				Axis	= DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Top = DeformEditorGUIUtility.DefaultContent.Top;
+			public static readonly GUIContent Bottom = DeformEditorGUIUtility.DefaultContent.Bottom;
+			public static readonly GUIContent Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor,
-				Top, 
-				Bottom, 
-				Smooth,
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Top;
+			public SerializedProperty Bottom;
+			public SerializedProperty Smooth;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Top		= obj.FindProperty ("top");
@@ -45,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -59,18 +47,22 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, content.Top);
-			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, content.Bottom);
-			EditorGUILayout.PropertyField (properties.Smooth, content.Smooth);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
+			base.OnSceneGUI ();
+
 			if (target == null)
 				return;
 

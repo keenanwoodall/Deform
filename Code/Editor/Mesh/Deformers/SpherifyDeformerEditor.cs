@@ -5,42 +5,24 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (SpherifyDeformer)), CanEditMultipleObjects]
-	public class SpherifyDeformerEditor : Editor
+	public class SpherifyDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Radius, 
-				Smooth, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Radius = new GUIContent
-				(
-					text: "Radius",
-					tooltip: "The radius of the sphere that the points are pushed towards."
-				);
-				Smooth = new GUIContent
-				(
-					text: "Smooth",
-					tooltip: "Should the interpolation towards the sphere be smoothed."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Radius = new GUIContent (text: "Radius", tooltip: "The radius of the sphere that the points are pushed towards.");
+			public static readonly GUIContent Smooth = new GUIContent (text: "Smooth", tooltip: "Should the interpolation towards the sphere be smoothed.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				Radius, 
-				Smooth, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Radius;
+			public SerializedProperty Smooth;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Radius	= obj.FindProperty ("radius");
@@ -49,13 +31,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -63,19 +44,20 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
-			EditorGUILayout.PropertyField (properties.Radius, content.Radius);
-			EditorGUILayout.PropertyField (properties.Smooth, content.Smooth);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Radius, Content.Radius);
+			EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnEnable ();
 
 			var spherify = target as SpherifyDeformer;
 

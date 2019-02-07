@@ -6,58 +6,32 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (TextureDisplaceDeformer)), CanEditMultipleObjects]
-	public class TextureDisplaceDeformerEditor : Editor
+	public class TextureDisplaceDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Repeat,
-				Mode,
-				Offset,
-				Tiling, 
-				Texture, 
-				Axis;
+			public static readonly string NotReadableWarning = "Texture is not marked as readable.";
 
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Repeat = new GUIContent
-				(
-					text: "Repeat"
-				);
-				Mode = new GUIContent
-				(
-					text: "Mode"
-				);
-				Offset = new GUIContent
-				(
-					text: "Offset"
-				);
-				Tiling = new GUIContent
-				(
-					text: "Tiling"
-				);
-				Texture = new GUIContent
-				(
-					text: "Texture"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Repeat = new GUIContent (text: "Repeat");
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
+			public static readonly GUIContent Tiling = new GUIContent (text: "Tiling");
+			public static readonly GUIContent Texture = new GUIContent (text: "Texture");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				Repeat, 
-				Mode,
-				Offset, 
-				Tiling,
-				Texture,
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Repeat;
+			public SerializedProperty Mode;
+			public SerializedProperty Offset;
+			public SerializedProperty Tiling;
+			public SerializedProperty Texture;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Repeat	= obj.FindProperty ("repeat");
@@ -69,15 +43,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private readonly string NotReadableWarning = "Texture is not marked as readable.";
-
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -85,29 +56,31 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Repeat, content.Repeat);
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Tiling, content.Tiling);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Repeat, Content.Repeat);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Tiling, Content.Tiling);
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				EditorGUILayout.PropertyField (properties.Texture, content.Texture);
+				EditorGUILayout.PropertyField (properties.Texture, Content.Texture);
 				if (check.changed)
 				{
-					// need to apply properties early if the texture  was changed so that texture's value change occurs before Initialize()
+					// need to apply properties early if the texture was changed so that the texture's value change occurs before Initialize()
 					serializedObject.ApplyModifiedProperties ();
 					foreach (var t in targets)
 						((TextureDisplaceDeformer)t).Initialize ();
 				}
 			}
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			if (targets.Where (t => ((TextureDisplaceDeformer)t).Texture != null).Any (t => !((TextureDisplaceDeformer)t).Texture.isReadable))
-				EditorGUILayout.HelpBox (NotReadableWarning, MessageType.Error, true);
+				EditorGUILayout.HelpBox (Content.NotReadableWarning, MessageType.Error, true);
 
 			DeformEditorGUILayout.WIPAlert ();
 

@@ -6,46 +6,26 @@ using UnityEditor.IMGUI.Controls;
 namespace DeformEditor.Masking
 {
 	[CustomEditor (typeof (BoxMask)), CanEditMultipleObjects]
-	public class BoxMaskEditor : Editor
+	public class BoxMaskEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				InnerBounds,
-				OuterBounds, 
-				Invert,
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Axis;
-				InnerBounds = new GUIContent
-				(
-					text: "Inner Bounds"
-				);
-				OuterBounds = new GUIContent
-				(
-					text: "Outer Bounds"
-				);
-				Invert = new GUIContent
-				(
-					text: "Invert"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent InnerBounds = new GUIContent (text: "Inner Bounds");
+			public static readonly GUIContent OuterBounds = new GUIContent (text: "Outer Bounds");
+			public static readonly GUIContent Invert = new GUIContent (text: "Invert");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor, 
-				InnerBounds,
-				OuterBounds, 
-				Invert, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty InnerBounds;
+			public SerializedProperty OuterBounds;
+			public SerializedProperty Invert;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor		= obj.FindProperty ("factor");
 				InnerBounds = obj.FindProperty ("innerBounds");
@@ -55,15 +35,14 @@ namespace DeformEditor.Masking
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
 		private BoxBoundsHandle boxHandle = new BoxBoundsHandle ();
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -71,18 +50,22 @@ namespace DeformEditor.Masking
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
-			EditorGUILayout.PropertyField (properties.InnerBounds, content.InnerBounds);
-			EditorGUILayout.PropertyField (properties.OuterBounds, content.OuterBounds);
-			EditorGUILayout.PropertyField (properties.Invert, content.Invert);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+			EditorGUILayout.PropertyField (properties.InnerBounds, Content.InnerBounds);
+			EditorGUILayout.PropertyField (properties.OuterBounds, Content.OuterBounds);
+			EditorGUILayout.PropertyField (properties.Invert, Content.Invert);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
+			base.OnSceneGUI ();
+
 			var boxMask = target as BoxMask;
 
 			DrawInnerBoundsHandle (boxMask);

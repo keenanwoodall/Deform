@@ -4,43 +4,41 @@ using Deform;
 
 namespace DeformEditor
 {
-	[CustomEditor (typeof (ScaleDeformer))]
-	public class ScaleDeformerEditor : DeformerEditor
+	[CustomEditor (typeof (Deformer), true), CanEditMultipleObjects]
+	public class DeformerEditor : Editor
 	{
 		private class Content
 		{
-			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
+			public static readonly GUIContent Update = new GUIContent (text: "Update");
 		}
 
 		private class Properties
 		{
-			public SerializedProperty Axis;
+			public SerializedProperty Update;
 
 			public Properties (SerializedObject obj)
 			{
-				Axis = obj.FindProperty ("axis");
+				Update = obj.FindProperty ("update");
 			}
 		}
 
 		private Properties properties;
 
-		protected override void OnEnable ()
+		protected virtual void OnEnable ()
 		{
-			base.OnEnable ();
 			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
 		{
-			base.OnInspectorGUI ();
-
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+			EditorGUILayout.PropertyField (properties.Update, Content.Update);
 
 			serializedObject.ApplyModifiedProperties ();
-
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
+
+		public virtual void OnSceneGUI () { }
 	}
 }

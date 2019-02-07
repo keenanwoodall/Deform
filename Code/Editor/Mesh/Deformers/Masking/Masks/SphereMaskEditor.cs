@@ -5,46 +5,26 @@ using Deform.Masking;
 namespace DeformEditor.Masking
 {
 	[CustomEditor (typeof (SphereMask)), CanEditMultipleObjects]
-	public class SphereMaskEditor : Editor
+	public class SphereMaskEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				InnerRadius,
-				OuterRadius, 
-				Invert, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				InnerRadius = new GUIContent
-				(
-					text: "Inner Radius"
-				);
-				OuterRadius = new GUIContent
-				(
-					text: "Outer Radius"
-				);
-				Invert = new GUIContent
-				(
-					text: "Invert"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent InnerRadius = new GUIContent (text: "Inner Radius");
+			public static readonly GUIContent OuterRadius = new GUIContent (text: "Outer Radius");
+			public static readonly GUIContent Invert = new GUIContent (text: "Inner Radius");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty
-				Factor, 
-				InnerRadius, 
-				OuterRadius, 
-				Invert, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty InnerRadius;
+			public SerializedProperty OuterRadius;
+			public SerializedProperty Invert;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor		= obj.FindProperty ("factor");
 				InnerRadius = obj.FindProperty ("innerRadius");
@@ -54,13 +34,12 @@ namespace DeformEditor.Masking
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -68,18 +47,22 @@ namespace DeformEditor.Masking
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, content.Factor);
-			DeformEditorGUILayout.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, content.InnerRadius);
-			DeformEditorGUILayout.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, content.OuterRadius);
-			EditorGUILayout.PropertyField (properties.Invert, content.Invert);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+			DeformEditorGUILayout.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, Content.InnerRadius);
+			DeformEditorGUILayout.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, Content.OuterRadius);
+			EditorGUILayout.PropertyField (properties.Invert, Content.Invert);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
+			base.OnSceneGUI ();
+
 			var sphereMask = target as SphereMask;
 
 			DrawOuterRadiusHandle (sphereMask);

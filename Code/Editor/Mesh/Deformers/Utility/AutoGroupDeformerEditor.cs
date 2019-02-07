@@ -6,16 +6,16 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (AutoGroupDeformer)), CanEditMultipleObjects]
-	public class AutoGroupDeformerEditor : Editor
+	public class AutoGroupDeformerEditor : DeformerEditor
 	{
-		private readonly string MIXED_VALUE = "-";
 
 		private class Content
 		{
-			public GUIContent RefreshGroup = new GUIContent
+			public static readonly string MixedValue = "-";
+			public static readonly GUIContent RefreshGroup = new GUIContent
 			(
-				"Refresh Group",
-				"Should child deformers be found every time this deformer updates?\n-\nFor improved performance, set this to false when you know child deformers haven't been added or removed."
+				text: "Refresh Group",
+				tooltip: "Should child deformers be found every time this deformer updates?\n-\nFor improved performance, set this to false when you know child deformers haven't been added or removed."
 			);
 		}
 
@@ -23,18 +23,18 @@ namespace DeformEditor
 		{
 			public SerializedProperty RefreshGroup;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				RefreshGroup = obj.FindProperty ("refreshGroup");
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -42,13 +42,15 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.RefreshGroup, content.RefreshGroup);
+
+			EditorGUILayout.PropertyField (properties.RefreshGroup, Content.RefreshGroup);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			var targetsHaveDifferentGroupSize = targets.Any (t => ((AutoGroupDeformer)t).GetGroupSize () != ((AutoGroupDeformer)target).GetGroupSize ());
 
 			var firstGroup = (AutoGroupDeformer)target;
-			EditorGUILayout.LabelField ($"Deformer Count: {(targetsHaveDifferentGroupSize ? MIXED_VALUE : firstGroup.GetGroupSize ().ToString ())}", EditorStyles.miniLabel);
+			EditorGUILayout.LabelField ($"Deformer Count: {(targetsHaveDifferentGroupSize ? Content.MixedValue : firstGroup.GetGroupSize ().ToString ())}", EditorStyles.miniLabel);
 			if (!targetsHaveDifferentGroupSize && firstGroup.GetGroupSize () == 0)
 				EditorGUILayout.HelpBox ("Add deformers to child game objects for this deformer to have an effect.", MessageType.Info);
 

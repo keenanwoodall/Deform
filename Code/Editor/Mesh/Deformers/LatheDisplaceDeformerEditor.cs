@@ -5,46 +5,26 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (LatheDisplaceDeformer)), CanEditMultipleObjects]
-	public class LatheDisplaceDeformerEditor : Editor
+	public class LatheDisplaceDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent
-				Factor, 
-				Bias, 
-				Offset, 
-				Curve, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Bias = new GUIContent
-				(
-					text: "Bias"
-				);
-				Offset = new GUIContent
-				(
-					text: "Offset"
-				);
-				Curve = new GUIContent
-				(
-					text: "Curve"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Bias = new GUIContent (text: "Bias");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
+			public static readonly GUIContent Curve = new GUIContent (text: "Curve");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor,
-				Bias,
-				Offset,
-				Curve, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Bias;
+			public SerializedProperty Offset;
+			public SerializedProperty Curve;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Bias	= obj.FindProperty ("bias");
@@ -54,13 +34,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -68,18 +47,22 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Bias, content.Bias);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Curve, content.Curve);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Bias, Content.Bias);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Curve, Content.Curve);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
+			base.OnSceneGUI ();
+
 			var lathe = target as LatheDisplaceDeformer;
 
 			DeformHandles.Curve (lathe.Curve, lathe.Axis, lathe.Factor * 0.5f, lathe.Offset, lathe.Bias * 0.5f);

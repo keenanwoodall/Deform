@@ -5,31 +5,29 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (UVOffsetDeformer)), CanEditMultipleObjects]
-	public class UVOffsetDeformerEditor : Editor
+	public class UVOffsetDeformerEditor : DeformerEditor
 	{
-		private static class Content
+		private class Content
 		{
-			public static GUIContent Offset = new GUIContent
-			(
-				text: "Offset"
-			);
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
 		}
 
 		private class Properties
 		{
 			public SerializedProperty Offset;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Offset = obj.FindProperty ("offset");
 			}
 		}
 
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -37,7 +35,9 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
+
 			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

@@ -18,7 +18,7 @@ namespace DeformEditor
 
 			EditorGUI.showMixedValue = targetsHaveDifferentVertexCount;
 			EditorGUILayout.LabelField ($"Vertex Count: {firstVertexCache.Data.Vertices.Length}");
-			EditorGUI.showMixedValue = true;
+			EditorGUI.showMixedValue = false;
 		}
 	}
 }

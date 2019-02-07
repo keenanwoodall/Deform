@@ -5,40 +5,24 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (CurveDisplaceDeformer)), CanEditMultipleObjects]
-	public class CurveDisplaceDeformerEditor : Editor
+	public class CurveDisplaceDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Factor, 
-				Offset, 
-				Curve, 
-				Axis;
-
-			public void Update ()
-			{
-				Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-				Offset = new GUIContent
-				(
-					text: "Offset"
-				);
-				Curve = new GUIContent
-				(
-					text: "Curve"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
+			public static readonly GUIContent Curve = new GUIContent (text: "Curve");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Factor,
-				Offset,
-				Curve, 
-				Axis;
+			public SerializedProperty Factor;
+			public SerializedProperty Offset;
+			public SerializedProperty Curve;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Factor	= obj.FindProperty ("factor");
 				Offset	= obj.FindProperty ("offset");
@@ -47,13 +31,11 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -61,17 +43,21 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Factor, content.Factor);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Curve, content.Curve);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Curve, Content.Curve);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
+			base.OnSceneGUI ();
+
 			var curveDisplace = target as CurveDisplaceDeformer;
 
 			if (curveDisplace.Curve == null || curveDisplace.Curve.length < 1)

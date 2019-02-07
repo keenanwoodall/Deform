@@ -5,60 +5,29 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (PathDeformer)), CanEditMultipleObjects]
-	public class PathDeformerEditor : Editor
+	public class PathDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Scale, 
-				Offset, 
-				Twist, 
-				Speed, 
-				Path, 
-				Axis,
-				CreatePath;
-
-			public void Update ()
-			{
-				Scale = new GUIContent
-				(
-					text: "Scale"
-				);
-				Offset = new GUIContent
-				(
-					text: "Offset"
-				);
-				Twist = new GUIContent
-				(
-					text: "Twist"
-				);
-				Speed = new GUIContent
-				(
-					text: "Speed"
-				);
-				Path = new GUIContent
-				(
-					text: "Path"
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-				CreatePath = new GUIContent
-				(
-					text: "Create Path"
-				);
-			}
+			public static readonly GUIContent Scale = new GUIContent (text: "Scale");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
+			public static readonly GUIContent Twist = new GUIContent (text: "Twist");
+			public static readonly GUIContent Speed = new GUIContent (text: "Speed");
+			public static readonly GUIContent Path = new GUIContent (text: "Path");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
+			public static readonly GUIContent CreatePath = new GUIContent (text: "Create Path");
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Scale, 
-				Offset, 
-				Twist, 
-				Speed, 
-				Path, 
-				Axis;
+			public SerializedProperty Scale;
+			public SerializedProperty Offset;
+			public SerializedProperty Twist;
+			public SerializedProperty Speed;
+			public SerializedProperty Path;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Scale	= obj.FindProperty ("scale");
 				Offset	= obj.FindProperty ("offset");
@@ -69,13 +38,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -83,16 +51,17 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Scale, content.Scale);
-			EditorGUILayout.PropertyField (properties.Offset, content.Offset);
-			EditorGUILayout.PropertyField (properties.Twist, content.Twist);
-			EditorGUILayout.PropertyField (properties.Speed, content.Speed);
-			EditorGUILayout.PropertyField (properties.Path, content.Path);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			EditorGUILayout.PropertyField (properties.Scale, Content.Scale);
+			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
+			EditorGUILayout.PropertyField (properties.Twist, Content.Twist);
+			EditorGUILayout.PropertyField (properties.Speed, Content.Speed);
+			EditorGUILayout.PropertyField (properties.Path, Content.Path);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 
 			if (properties.Path.objectReferenceValue == null && !properties.Path.hasMultipleDifferentValues)
 			{
-				if (GUILayout.Button (content.CreatePath))
+				if (GUILayout.Button (Content.CreatePath))
 				{
 					var pathDeformer = (PathDeformer)target;
 					if (targets.Length == 1)
@@ -106,6 +75,7 @@ namespace DeformEditor
 					}
 				}
 			}
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

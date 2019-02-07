@@ -5,16 +5,16 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (GroupDeformer)), CanEditMultipleObjects]
-	public class GroupDeformerEditor : Editor
+	public class GroupDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent ClearDeformers = new GUIContent 
+			public static readonly GUIContent ClearDeformers = new GUIContent 
 			(
 				text: "Clear",
 				tooltip: "Removes all elements."
 			);
-			public GUIContent CleanDeformers = new GUIContent
+			public static readonly GUIContent CleanDeformers = new GUIContent
 			(
 				text: "Clean",
 				tooltip: "Removes all empty elements."
@@ -25,22 +25,26 @@ namespace DeformEditor
 		{
 			public SerializedProperty DeformerElements;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				DeformerElements = obj.FindProperty ("deformerElements");
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
 		private ReorderableComponentElementList<Deformer> deformerList;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			properties.Update (serializedObject);
-
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 			deformerList = new ReorderableComponentElementList<Deformer> (serializedObject, properties.DeformerElements);
+		}
+
+		private void OnDisable ()
+		{
+			deformerList.Dispose ();
 		}
 
 		public override void OnInspectorGUI ()
@@ -48,7 +52,9 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
+
 			deformerList.DoLayoutList ();
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorGUILayout.Space ();
@@ -69,14 +75,14 @@ namespace DeformEditor
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
-				if (GUILayout.Button (content.ClearDeformers, EditorStyles.miniButtonLeft))
+				if (GUILayout.Button (Content.ClearDeformers, EditorStyles.miniButtonLeft))
 				{
 					Undo.RecordObjects (targets, "Cleared Deformers");
 					foreach (var t in targets)
 						((GroupDeformer)t).DeformerElements.Clear ();
 				}
 
-				if (GUILayout.Button (content.CleanDeformers, EditorStyles.miniButtonRight))
+				if (GUILayout.Button (Content.CleanDeformers, EditorStyles.miniButtonRight))
 				{
 					Undo.RecordObjects (targets, "Cleaned Deformers");
 					foreach (var t in targets)

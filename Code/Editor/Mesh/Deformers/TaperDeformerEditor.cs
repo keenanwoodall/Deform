@@ -5,63 +5,30 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (TaperDeformer)), CanEditMultipleObjects]
-	public class TaperDeformerEditor : Editor
+	public class TaperDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Top, 
-				Bottom, 
-				Curvature, 
-				Smooth, 
-				TopFactor,
-				BottomFactor,
-				Axis;
-
-			public void Update ()
-			{
-				Top = new GUIContent
-				(
-					text: "Top",
-					tooltip: "Vertices above this will be fully scaled by the top factor."
-				);
-				Bottom = new GUIContent
-				(
-					text: "Bottom",
-					tooltip: "Vertices below this will be fully scaled by the bottom factor."
-				);
-				Curvature = new GUIContent
-				(
-					text: "Curvature",
-					tooltip: "The bulge strength. Positive values make it bulge in, negative makes it bulge out."
-				);
-				Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
-				TopFactor = new GUIContent
-				(
-					text: "Top Factor",
-					tooltip: "The scale of the mesh at the top bounds."
-				);
-				BottomFactor = new GUIContent
-				(
-					text: "Bottom Factor",
-					tooltip: "The scale of the mesh at the bottom bounds."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Top = new GUIContent (text: "Top", tooltip: "Vertices above this will be fully scaled by the top factor.");
+			public static readonly GUIContent Bottom = new GUIContent (text: "Bottom", tooltip: "Vertices below this will be fully scaled by the bottom factor.");
+			public static readonly GUIContent Curvature = new GUIContent (text: "Curvature", tooltip: "The bulge strength. Positive values make it bulge in, negative makes it bulge out.");
+			public static readonly GUIContent Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
+			public static readonly GUIContent TopFactor = new GUIContent (text: "Top Factor", tooltip: "The scale of the mesh at the top bounds.");
+			public static readonly GUIContent BottomFactor = new GUIContent (text: "Bottom Factor", tooltip: "The scale of the mesh at the bottom bounds.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private struct Properties
 		{
-			public SerializedProperty 
-				Top,
-				Bottom,
-				Curvature, 
-				Smooth, 
-				TopFactor,
-				BottomFactor,
-				Axis;
+			public SerializedProperty Top;
+			public SerializedProperty Bottom;
+			public SerializedProperty Curvature;
+			public SerializedProperty Smooth;
+			public SerializedProperty TopFactor;
+			public SerializedProperty BottomFactor;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Top				= obj.FindProperty ("top");
 				Bottom			= obj.FindProperty ("bottom");
@@ -73,13 +40,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -87,22 +53,23 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, content.Top);
-			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, content.Bottom);
-			EditorGUILayout.PropertyField (properties.Curvature, content.Curvature);
-			EditorGUILayout.PropertyField (properties.TopFactor, content.TopFactor);
-			EditorGUILayout.PropertyField (properties.BottomFactor, content.BottomFactor);
-			EditorGUILayout.PropertyField (properties.Smooth, content.Smooth);
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+
+			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			EditorGUILayout.PropertyField (properties.Curvature, Content.Curvature);
+			EditorGUILayout.PropertyField (properties.TopFactor, Content.TopFactor);
+			EditorGUILayout.PropertyField (properties.BottomFactor, Content.BottomFactor);
+			EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
-			if (target == null)
-				return;
+			base.OnSceneGUI ();
 
 			var taper = target as TaperDeformer;
 

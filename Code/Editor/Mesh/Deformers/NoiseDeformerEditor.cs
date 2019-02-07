@@ -5,95 +5,37 @@ using Deform;
 namespace DeformEditor
 {
 	[CustomEditor (typeof (NoiseDeformer)), CanEditMultipleObjects]
-	public class NoiseDeformerEditor : Editor
+	public class NoiseDeformerEditor : DeformerEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				Mode, 
-				Magnitude,
-				MagnitudeScalar, 
-				MagnitudeVector, 
-				Frequency,
-				FrequencyScalar,
-				FrequencyVector, 
-				Offset, OffsetVector,
-				OffsetSpeedScalar,
-				OffsetSpeedVector,
-				Axis;
-
-			public void Update ()
-			{
-				Mode = new GUIContent
-				(
-					text: "Mode",
-					tooltip: "Derivative: Vertices move along vectors created by the difference between different noise samples.\nNormal: Vertices move along their normals.\nSpherical: Vertices get pushed away from the axis center.\nColor: Vertices get use the vertex color as a vector and move along it."
-				);
-				Magnitude = new GUIContent
-				(
-					text: "Magnitude"
-				);
-				MagnitudeScalar = new GUIContent
-				(
-					text: "Scale",
-					tooltip: "Overall strength of the noise."
-				);
-				MagnitudeVector = new GUIContent
-				(
-					text: "Vector",
-					tooltip: "Per axis strength of the noise."
-				);
-				Frequency = new GUIContent
-				(
-					text: "Frequency"
-				);
-				FrequencyScalar = new GUIContent
-				(
-					text: "Scale",
-					tooltip: "Overall frequency of the noise."
-				);
-				FrequencyVector = new GUIContent
-				(
-					text: "Vector",
-					tooltip: "Per axis frequency of the noise."
-				);
-				Offset = new GUIContent
-				(
-					text: "Offset"
-				);
-				OffsetVector = new GUIContent
-				(
-					text: "Offset",
-					tooltip: "Per axis noise offset."
-				);
-				OffsetSpeedScalar = new GUIContent
-				(
-					text: "Speed",
-					tooltip: "Total change of the offset per second."
-				);
-				OffsetSpeedVector = new GUIContent
-				(
-					text: "Velocity",
-					tooltip: "Per axis change of the offset per second."
-				);
-				Axis = DeformEditorGUIUtility.DefaultContent.Axis;
-			}
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Derivative: Vertices move along vectors created by the difference between different noise samples.\nNormal: Vertices move along their normals.\nSpherical: Vertices get pushed away from the axis center.\nColor: Vertices get use the vertex color as a vector and move along it.");
+			public static readonly GUIContent Magnitude = new GUIContent (text: "Magnitude");
+			public static readonly GUIContent MagnitudeScalar = new GUIContent (text: "Scale", tooltip: "Overall strength of the noise.");
+			public static readonly GUIContent MagnitudeVector = new GUIContent (text: "Vector", tooltip: "Per axis strength of the noise.");
+			public static readonly GUIContent Frequency = new GUIContent (text: "Frequency");
+			public static readonly GUIContent FrequencyScalar = new GUIContent (text: "Scale", tooltip: "Overall frequency of the noise.");
+			public static readonly GUIContent FrequencyVector = new GUIContent (text: "Vector", tooltip: "Per axis frequency of the noise.");
+			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
+			public static readonly GUIContent OffsetVector = new GUIContent (text: "Offset", tooltip: "Per axis noise offset.");
+			public static readonly GUIContent OffsetSpeedScalar = new GUIContent (text: "Speed", tooltip: "Total change of the offset per second.");
+			public static readonly GUIContent OffsetSpeedVector = new GUIContent (text: "Velocity", tooltip: "Per axis change of the offset per second.");
+			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				Mode, 
-				MagnitudeScalar,
-				MagnitudeVector, 
-				FrequencyScalar,
-				FrequencyVector,
-				OffsetVector, 
-				OffsetSpeedScalar, 
-				OffsetSpeedVector, 
-				Axis;
+			public SerializedProperty Mode;
+			public SerializedProperty MagnitudeScalar;
+			public SerializedProperty MagnitudeVector;
+			public SerializedProperty FrequencyScalar;
+			public SerializedProperty FrequencyVector;
+			public SerializedProperty OffsetVector;
+			public SerializedProperty OffsetSpeedScalar;
+			public SerializedProperty OffsetSpeedVector;
+			public SerializedProperty Axis;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				Mode				= obj.FindProperty ("mode");
 				MagnitudeScalar		= obj.FindProperty ("magnitudeScalar");
@@ -107,13 +49,12 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
-		private void OnEnable ()
+		protected override void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			base.OnEnable ();
+			properties = new Properties (serializedObject);
 		}
 
 		public override void OnInspectorGUI ()
@@ -121,42 +62,44 @@ namespace DeformEditor
 			base.OnInspectorGUI ();
 
 			serializedObject.UpdateIfRequiredOrScript ();
-			EditorGUILayout.PropertyField (properties.Mode, content.Mode);
 
-			EditorGUILayout.LabelField (content.Magnitude);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
+
+			EditorGUILayout.LabelField (Content.Magnitude);
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				EditorGUILayout.PropertyField (properties.MagnitudeScalar, content.MagnitudeScalar);
+				EditorGUILayout.PropertyField (properties.MagnitudeScalar, Content.MagnitudeScalar);
 
 				using (new EditorGUI.DisabledScope (!properties.Mode.hasMultipleDifferentValues && properties.Mode.enumValueIndex != 0))
-					EditorGUILayout.PropertyField (properties.MagnitudeVector, content.MagnitudeVector);
+					EditorGUILayout.PropertyField (properties.MagnitudeVector, Content.MagnitudeVector);
 			}
 
-			EditorGUILayout.LabelField (content.Frequency);
+			EditorGUILayout.LabelField (Content.Frequency);
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				EditorGUILayout.PropertyField (properties.FrequencyScalar, content.FrequencyScalar);
-				EditorGUILayout.PropertyField (properties.FrequencyVector, content.FrequencyVector);
+				EditorGUILayout.PropertyField (properties.FrequencyScalar, Content.FrequencyScalar);
+				EditorGUILayout.PropertyField (properties.FrequencyVector, Content.FrequencyVector);
 			}
 
-			EditorGUILayout.LabelField (content.Offset);
+			EditorGUILayout.LabelField (Content.Offset);
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
 				EditorGUIUtility.wideMode = true;
-				EditorGUILayout.PropertyField (properties.OffsetVector, content.OffsetVector);
+				EditorGUILayout.PropertyField (properties.OffsetVector, Content.OffsetVector);
 				EditorGUIUtility.wideMode = false;
 
-				EditorGUILayout.PropertyField (properties.OffsetSpeedScalar, content.OffsetSpeedScalar);
+				EditorGUILayout.PropertyField (properties.OffsetSpeedScalar, Content.OffsetSpeedScalar);
 
 				EditorGUIUtility.wideMode = true;
-				EditorGUILayout.PropertyField (properties.OffsetSpeedVector, content.OffsetSpeedVector);
+				EditorGUILayout.PropertyField (properties.OffsetSpeedVector, Content.OffsetSpeedVector);
 				EditorGUIUtility.wideMode = false;
 			}
 
-			EditorGUILayout.PropertyField (properties.Axis, content.Axis);
+			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
