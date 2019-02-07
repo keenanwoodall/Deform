@@ -24,7 +24,8 @@ namespace DeformEditor
 			list.drawHeaderCallback += (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
 			list.drawElementCallback += (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
-				EditorGUI.PropertyField (rect, list.serializedProperty.GetArrayElementAtIndex (index));
+				var elementProperty = list.serializedProperty.GetArrayElementAtIndex (index);
+				EditorGUI.PropertyField (rect, elementProperty);
 			};
 		}
 

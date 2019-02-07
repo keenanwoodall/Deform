@@ -9,7 +9,7 @@ namespace DeformEditor
 	{
 		private static class Content
 		{
-			public const int Padding = 5;
+			public const int MARGIN = 5;
 
 			public static readonly Texture2D ToggleOnTexture = EditorGUIUtility.FindTexture ("animationvisibilitytoggleon");
 			public static readonly Texture2D ToggleOffTexture = EditorGUIUtility.FindTexture ("animationvisibilitytoggleoff");
@@ -32,7 +32,7 @@ namespace DeformEditor
 				var activeProperty = property.FindPropertyRelative ("active");
 				var componentProperty = property.FindPropertyRelative ("component");
 
-				if (componentProperty.objectReferenceValue != null)
+				using (new EditorGUI.DisabledScope (componentProperty.objectReferenceValue == null))
 				{
 					var activeRect = new Rect (rect);
 					var activeContent = activeProperty.boolValue ? Content.ToggleOn : Content.ToggleOff;
@@ -42,7 +42,7 @@ namespace DeformEditor
 				}
 
 				var objectRect = new Rect (rect);
-				objectRect.xMin += EditorGUIUtility.singleLineHeight + Content.Padding;
+				objectRect.xMin += EditorGUIUtility.singleLineHeight + Content.MARGIN;
 				EditorGUI.ObjectField (objectRect, componentProperty, GUIContent.none);
 			}
 		}
