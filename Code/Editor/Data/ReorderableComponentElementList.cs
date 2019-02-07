@@ -11,6 +11,7 @@ namespace DeformEditor
 	/// <typeparam name="T">The type of component the element holds.</typeparam>
 	public class ReorderableComponentElementList<T> where T : Component
 	{
+		private Editor selectedComponentEditor;
 		private readonly ReorderableList list;
 
 		/// <summary>
@@ -26,6 +27,20 @@ namespace DeformEditor
 			{
 				var elementProperty = list.serializedProperty.GetArrayElementAtIndex (index);
 				EditorGUI.PropertyField (rect, elementProperty);
+
+				// get the current element's component property
+				var componentProperty = elementProperty.FindPropertyRelative ("component");
+				// and the property's object reference
+				var component = componentProperty.objectReferenceValue;
+				// if the current element is selected
+				if (!componentProperty.hasMultipleDifferentValues && index == list.index && component != null)
+				{
+					// create it's editor and draw it
+					Editor.CreateCachedEditor (component, null, ref selectedComponentEditor);
+					selectedComponentEditor.OnInspectorGUI ();
+				}
+				else
+					UnityEngine.Object.DestroyImmediate (selectedComponentEditor, true);
 			};
 		}
 
