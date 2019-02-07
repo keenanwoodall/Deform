@@ -10,78 +10,27 @@ namespace DeformEditor
 	{
 		private class Content
 		{
-			public GUIContent 
-				UpdateMode,
-				NormalsRecalculation, 
-				BoundsRecalculation,
-				ColliderRecalculation,
-				Manager,
-				ClearDeformers,
-				CleanDeformers, 
-				SaveObj, 
-				SaveAsset;
-
-			public void Update ()
-			{
-				UpdateMode = new GUIContent
-				(
-					text: "Update Mode",
-					tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager."
-				);
-				NormalsRecalculation = new GUIContent
-				(
-					text: "Normals Recalculation",
-					tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable."
-				);
-				BoundsRecalculation = new GUIContent
-				(
-					text: "Bounds Recalculation",
-					tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end."
-				);
-				ColliderRecalculation = new GUIContent
-				(
-					text: "Collider Recalculation",
-					tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated."
-				);
-				Manager = new GUIContent
-				(
-					text: "Manager",
-					tooltip: "The manager that will update this deformable. If none is assigned a default one will be created at Start."
-				);
-				ClearDeformers = new GUIContent
-				(
-					text: "Clear",
-					tooltip: "Remove all deformers from the deformer list."
-				);
-				CleanDeformers = new GUIContent
-				(
-					text: "Clean",
-					tooltip: "Remove all null deformers from the deformer list."
-				);
-				SaveObj = new GUIContent
-				(
-					text: "Save Obj",
-					tooltip: "Save the current mesh as a .obj file in the project. (Doesn't support vertex colors)"
-				);
-				SaveAsset = new GUIContent
-				(
-					text: "Save Asset",
-					tooltip: "Save the current mesh as a mesh asset file in the project."
-				);
-			}
+			public static readonly GUIContent UpdateMode = new GUIContent (text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
+			public static readonly GUIContent NormalsRecalculation = new GUIContent (text: "Normals Recalculation", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");
+			public static readonly GUIContent BoundsRecalculation = new GUIContent (text: "Bounds Recalculation", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
+			public static readonly GUIContent ColliderRecalculation = new GUIContent (text: "Collider Recalculation", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
+			public static readonly GUIContent Manager = new GUIContent (text: "Manager", tooltip: "The manager that will update this deformable. If none is assigned a default one will be created at Start.");
+			public static readonly GUIContent ClearDeformers = new GUIContent (text: "Clear", tooltip: "Remove all deformers from the deformer list.");
+			public static readonly GUIContent CleanDeformers = new GUIContent (text: "Clean", tooltip: "Remove all null deformers from the deformer list.");
+			public static readonly GUIContent SaveObj = new GUIContent (text: "Save Obj", tooltip: "Save the current mesh as a .obj file in the project. (Doesn't support vertex colors)");
+			public static readonly GUIContent SaveAsset = new GUIContent (text: "Save Asset", tooltip: "Save the current mesh as a mesh asset file in the project.");
 		}
 
 		private class Properties
 		{
-			public SerializedProperty 
-				UpdateMode, 
-				NormalsRecalculation, 
-				BoundsRecalculation, 
-				ColliderRecalculation, 
-				MeshCollider,
-				Manager;
+			public SerializedProperty UpdateMode;
+			public SerializedProperty NormalsRecalculation;
+			public SerializedProperty BoundsRecalculation;
+			public SerializedProperty ColliderRecalculation;
+			public SerializedProperty MeshCollider;
+			public SerializedProperty Manager;
 
-			public void Update (SerializedObject obj)
+			public Properties (SerializedObject obj)
 			{
 				UpdateMode				= obj.FindProperty ("updateMode");
 				NormalsRecalculation	= obj.FindProperty ("normalsRecalculation");
@@ -92,17 +41,15 @@ namespace DeformEditor
 			}
 		}
 
-		private static bool ShowDebug;
+		private bool ShowDebug;
 
-		private Content content = new Content ();
-		private Properties properties = new Properties ();
+		private Properties properties;
 
 		private ReorderableComponentElementList<Deformer> deformerList;
 
 		private void OnEnable ()
 		{
-			content.Update ();
-			properties.Update (serializedObject);
+			properties = new Properties (serializedObject);
 
 			deformerList = new ReorderableComponentElementList<Deformer> (serializedObject, serializedObject.FindProperty ("deformerElements"));
 		}
@@ -119,7 +66,7 @@ namespace DeformEditor
 			serializedObject.UpdateIfRequiredOrScript ();
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				EditorGUILayout.PropertyField (properties.UpdateMode, content.UpdateMode);
+				EditorGUILayout.PropertyField (properties.UpdateMode, Content.UpdateMode);
 				if (check.changed)
 				{
 					serializedObject.ApplyModifiedProperties ();
@@ -128,15 +75,15 @@ namespace DeformEditor
 				}
 			}
 
-			EditorGUILayout.PropertyField (properties.NormalsRecalculation, content.NormalsRecalculation);
-			EditorGUILayout.PropertyField (properties.BoundsRecalculation, content.BoundsRecalculation);
+			EditorGUILayout.PropertyField (properties.NormalsRecalculation, Content.NormalsRecalculation);
+			EditorGUILayout.PropertyField (properties.BoundsRecalculation, Content.BoundsRecalculation);
 
 			using (new EditorGUI.DisabledScope (targets.Any (t => ((Deformable)t).MeshCollider == null)))
-				EditorGUILayout.PropertyField (properties.ColliderRecalculation, content.ColliderRecalculation);
+				EditorGUILayout.PropertyField (properties.ColliderRecalculation, Content.ColliderRecalculation);
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				EditorGUILayout.PropertyField (properties.Manager, content.Manager);
+				EditorGUILayout.PropertyField (properties.Manager, Content.Manager);
 				if (check.changed)
 				{
 					serializedObject.ApplyModifiedProperties ();
@@ -240,19 +187,19 @@ namespace DeformEditor
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
-				if (GUILayout.Button (content.ClearDeformers, EditorStyles.miniButtonLeft))
+				if (GUILayout.Button (Content.ClearDeformers, EditorStyles.miniButtonLeft))
 				{
 					Undo.RecordObjects (targets, "Cleared Deformers");
 					foreach (var t in targets)
 						((Deformable)t).DeformerElements.Clear ();
 				}
-				if (GUILayout.Button (content.CleanDeformers, EditorStyles.miniButtonMid))
+				if (GUILayout.Button (Content.CleanDeformers, EditorStyles.miniButtonMid))
 				{
 					Undo.RecordObjects (targets, "Cleaned Deformers");
 					foreach (var t in targets)
 						((Deformable)t).DeformerElements.RemoveAll (d => d.Component == null);
 				}
-				if (GUILayout.Button (content.SaveObj, EditorStyles.miniButtonMid))
+				if (GUILayout.Button (Content.SaveObj, EditorStyles.miniButtonMid))
 				{
 					foreach (var t in targets)
 					{
@@ -272,7 +219,7 @@ namespace DeformEditor
 						AssetDatabase.Refresh (ImportAssetOptions.ForceSynchronousImport);
 					}
 				}
-				if (GUILayout.Button (content.SaveAsset, EditorStyles.miniButtonRight))
+				if (GUILayout.Button (Content.SaveAsset, EditorStyles.miniButtonRight))
 				{
 					foreach (var t in targets)
 					{
