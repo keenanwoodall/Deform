@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -38,10 +37,20 @@ namespace DeformEditor
 				{
 					// create it's editor and draw it
 					Editor.CreateCachedEditor (component, null, ref selectedComponentInspectorEditor);
+					SceneView.onSceneGUIDelegate -= SceneGUI;
+					SceneView.onSceneGUIDelegate += SceneGUI;
+
+					selectedComponentInspectorEditor.OnInspectorGUI ();
 				}
 				else
 					UnityEngine.Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			};
+		}
+
+		private void SceneGUI (SceneView sceneView)
+		{
+			((DeformerEditor)selectedComponentInspectorEditor).OnSceneGUI ();
+			selectedComponentInspectorEditor.Repaint ();
 		}
 
 		public void DoLayoutList ()
@@ -61,6 +70,7 @@ namespace DeformEditor
 
 		public void Dispose ()
 		{
+			SceneView.onSceneGUIDelegate -= SceneGUI;
 			UnityEngine.Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			selectedComponentInspectorEditor = null;
 		}
