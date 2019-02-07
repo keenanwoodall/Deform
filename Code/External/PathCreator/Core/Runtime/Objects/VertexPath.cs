@@ -232,6 +232,24 @@ namespace PathCreation
             return Quaternion.LookRotation(direction, normal);
         }
 
+         /// Finds the closest point on the path from any point in the world
+        public Vector3 GetClosestPointOnPath (Vector3 worldPoint) {
+            TimeOnPathData data = CalculateClosestPointOnPathData (worldPoint);
+            return Vector3.Lerp (vertices[data.previousIndex], vertices[data.nextIndex], data.percentBetweenIndices);
+        }
+
+        /// Finds the 'time' (0=start of path, 1=end of path) along the path that is closest to the given point
+        public float GetClosestTimeOnPath (Vector3 worldPoint) {
+            TimeOnPathData data = CalculateClosestPointOnPathData (worldPoint);
+            return Mathf.Lerp (times[data.previousIndex], times[data.nextIndex], data.percentBetweenIndices);
+        }
+
+        /// Finds the distance along the path that is closest to the given point
+        public float GetClosestDistanceAlongPath (Vector3 worldPoint) {
+            TimeOnPathData data = CalculateClosestPointOnPathData (worldPoint);
+            return Mathf.Lerp (cumulativeLengthAtEachVertex[data.previousIndex], cumulativeLengthAtEachVertex[data.nextIndex], data.percentBetweenIndices);
+        }
+
         #endregion
 
         #region Internal methods
@@ -288,6 +306,38 @@ namespace PathCreation
 
             float abPercent = Mathf.InverseLerp(times[prevIndex], times[nextIndex], t);
             return new TimeOnPathData(prevIndex, nextIndex, abPercent);
+        }
+
+        /// Calculate time data for closest point on the path from given world point
+        TimeOnPathData CalculateClosestPointOnPathData (Vector3 worldPoint) {
+            float minSqrDst = float.MaxValue;
+            Vector3 closestPoint = Vector3.zero;
+            int closestSegmentIndexA = 0;
+            int closestSegmentIndexB = 0;
+
+            for (int i = 0; i < vertices.Length; i++) {
+                int nextI = i + 1;
+                if (nextI >= vertices.Length) {
+                    if (isClosedLoop) {
+                        nextI %= vertices.Length;
+                    } else {
+                        break;
+                    }
+                }
+
+                Vector3 closestPointOnSegment = MathUtility.ClosestPointOnLineSegment (worldPoint, vertices[i], vertices[nextI]);
+                float sqrDst = (worldPoint - closestPointOnSegment).sqrMagnitude;
+                if (sqrDst < minSqrDst) {
+                    minSqrDst = sqrDst;
+                    closestPoint = closestPointOnSegment;
+                    closestSegmentIndexA = i;
+                    closestSegmentIndexB = nextI;
+                }
+
+            }
+            float closestSegmentLength = (vertices[closestSegmentIndexA] - vertices[closestSegmentIndexB]).magnitude;
+            float t = (closestPoint - vertices[closestSegmentIndexA]).magnitude / closestSegmentLength;
+            return new TimeOnPathData (closestSegmentIndexA, closestSegmentIndexB, t);
         }
 
         public struct TimeOnPathData

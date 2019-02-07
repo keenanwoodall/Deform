@@ -38,8 +38,6 @@ namespace PathCreation.Utility
             }
         }
 
-
-
         public static Vector2 ClosestPointOnLineSegment(Vector2 p, Vector2 a, Vector2 b)
         {
             Vector2 aB = b - a;
@@ -53,18 +51,19 @@ namespace PathCreation.Utility
             return a + aB * t;
         }
 
-        public static float DistanceToLineSegment(Vector2 p, Vector2 a, Vector2 b)
+        public static Vector3 ClosestPointOnLineSegment(Vector3 p, Vector3 a, Vector3 b)
         {
-            Vector2 aB = b - a;
-            Vector2 aP = p - a;
+            Vector3 aB = b - a;
+            Vector3 aP = p - a;
             float sqrLenAB = aB.sqrMagnitude;
 
             if (sqrLenAB == 0)
-                return aP.magnitude;
+                return a;
 
-            float t = Mathf.Clamp01(Vector2.Dot(aP, aB) / sqrLenAB);
-            return Vector2.Distance(p, a + aB * t);
+            float t = Mathf.Clamp01(Vector3.Dot(aP, aB) / sqrLenAB);
+            return a + aB * t;
         }
+
 
         public static int SideOfLine(Vector2 a, Vector2 b, Vector2 c)
         {

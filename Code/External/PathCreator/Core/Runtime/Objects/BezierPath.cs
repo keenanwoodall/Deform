@@ -386,10 +386,9 @@ namespace PathCreation
             }
 
             // Insert angle for new anchor (value should be set inbetween neighbour anchor angles)
-            int newAnchorAngleIndex = segmentIndex + 1;
+            int newAnchorAngleIndex = (segmentIndex + 1)%perAnchorNormalsAngle.Count;
             int numAngles = perAnchorNormalsAngle.Count;
-
-            float anglePrev = perAnchorNormalsAngle[(newAnchorAngleIndex - 1)];
+            float anglePrev = perAnchorNormalsAngle[segmentIndex];
             float angleNext = perAnchorNormalsAngle[newAnchorAngleIndex];
             float splitAngle = Mathf.LerpAngle(anglePrev,angleNext,splitTime);
             perAnchorNormalsAngle.Insert(newAnchorAngleIndex, splitAngle);
