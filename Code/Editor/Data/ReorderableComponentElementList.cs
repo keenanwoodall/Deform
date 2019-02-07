@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
@@ -49,7 +50,9 @@ namespace DeformEditor
 
 		private void SceneGUI (SceneView sceneView)
 		{
-			((DeformerEditor)selectedComponentInspectorEditor).OnSceneGUI ();
+			if (selectedComponentInspectorEditor == null)
+				return;
+			selectedComponentInspectorEditor.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke (selectedComponentInspectorEditor, null);
 			selectedComponentInspectorEditor.Repaint ();
 		}
 
