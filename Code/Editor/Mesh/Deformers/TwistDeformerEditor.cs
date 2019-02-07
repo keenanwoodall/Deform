@@ -87,7 +87,7 @@ namespace DeformEditor
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void OnSceneGUI ()
+		public override void OnSceneGUI ()
 		{
 			base.OnSceneGUI ();
 

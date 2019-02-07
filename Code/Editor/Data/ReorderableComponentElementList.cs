@@ -12,10 +12,7 @@ namespace DeformEditor
 	/// <typeparam name="T">The type of component the element holds.</typeparam>
 	public class ReorderableComponentElementList<T> : IDisposable where T : Component
 	{
-		private delegate void SceneGUICallback ();
-
 		private Editor selectedComponentInspectorEditor;
-		private SceneGUICallback selectedComponentSceneGUI;
 		private readonly ReorderableList list;
 
 		/// <summary>
@@ -41,43 +38,10 @@ namespace DeformEditor
 				{
 					// create it's editor and draw it
 					Editor.CreateCachedEditor (component, null, ref selectedComponentInspectorEditor);
-
-					selectedComponentInspectorEditor.OnInspectorGUI ();
-
-					selectedComponentSceneGUI = ((DeformerEditor)selectedComponentInspectorEditor).OnSceneGUI;
-					RemoveSceneGUIListener (SceneGUI);
-					AddSceneGUIListener (SceneGUI);
 				}
 				else
 					UnityEngine.Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			};
-		}
-
-		private void SceneGUI (SceneView sceneView)
-		{
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				selectedComponentSceneGUI ();
-				if (check.changed)
-					selectedComponentInspectorEditor.Repaint ();
-			}
-		}
-
-		private void AddSceneGUIListener (UnityEditor.SceneView.OnSceneFunc callback)
-		{
-#if UNITY_2019_1_OR_NEWER
-			SceneView.duringSceneGui += callback;
-#else
-			SceneView.onSceneGUIDelegate += callback;
-#endif
-		}
-		private void RemoveSceneGUIListener (UnityEditor.SceneView.OnSceneFunc callback)
-		{
-#if UNITY_2019_1_OR_NEWER
-			SceneView.duringSceneGui -= callback;
-#else
-			SceneView.onSceneGUIDelegate -= callback;
-#endif
 		}
 
 		public void DoLayoutList ()
@@ -97,7 +61,6 @@ namespace DeformEditor
 
 		public void Dispose ()
 		{
-			RemoveSceneGUIListener (SceneGUI);
 			UnityEngine.Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			selectedComponentInspectorEditor = null;
 		}
