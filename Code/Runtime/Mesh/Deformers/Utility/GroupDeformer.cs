@@ -33,6 +33,13 @@ namespace Deform
 
 			foreach (var element in deformerElements)
 			{
+#if UNITY_EDITOR
+				if (element.Component == this)
+				{
+					Debug.LogError ("Group Deformer cannot reference itself as this will create an infinite loop. Please fix this now as it will not be checked at runtime.");
+					continue;
+				}
+#endif
 				if (element.CanProcess ())
 				{
 					var deformer = element.Component;

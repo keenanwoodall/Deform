@@ -30,6 +30,14 @@ namespace Deform
 
 			var deformer = DeformerElement.Component;
 
+#if UNITY_EDITOR
+			if (deformer == this)
+			{
+				Debug.LogError ("Repeater Deformer cannot reference itself as this will create an infinite loop. Please fix this now as it will not be checked at runtime.");
+				return dependency;
+			}
+#endif
+
 			if (deformer == null || !DeformerElement.CanProcess ())
 				return dependency;
 
