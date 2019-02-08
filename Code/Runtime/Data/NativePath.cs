@@ -2,6 +2,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
+using Beans.Unity.Mathematics;
 using PathCreation;
 
 namespace Deform

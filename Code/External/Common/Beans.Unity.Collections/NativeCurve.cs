@@ -2,8 +2,9 @@
 using UnityEngine;
 using Unity.Collections;
 using static Unity.Mathematics.math;
+using Beans.Unity.Mathematics;
 
-namespace Deform
+namespace Beans.Unity.Collections
 {
 	/// <summary>
 	/// Handles the caching of animation curve data for use with the job system.

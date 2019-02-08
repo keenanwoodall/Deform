@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -69,8 +70,8 @@ namespace DeformEditor
 				using (new EditorGUI.IndentLevelScope ())
 				{
 					EditorGUILayout.Slider (properties.Falloff, 0f, 1f, Content.Falloff);
-					DeformEditorGUILayout.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, Content.InnerRadius);
-					DeformEditorGUILayout.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, Content.OuterRadius);
+					EditorGUILayoutx.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, Content.InnerRadius);
+					EditorGUILayoutx.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, Content.OuterRadius);
 				}
 			}
 

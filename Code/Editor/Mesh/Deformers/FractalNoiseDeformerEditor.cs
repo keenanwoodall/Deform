@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -74,7 +75,7 @@ namespace DeformEditor
 
 			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
-			DeformEditorGUILayout.MinField (properties.Octaves, 1, Content.Octaves);
+			EditorGUILayoutx.MinField (properties.Octaves, 1, Content.Octaves);
 			EditorGUILayout.PropertyField (properties.Persistance, Content.Persistance);
 			EditorGUILayout.PropertyField (properties.Lacunarity, Content.Lacunarity);
 
@@ -100,15 +101,15 @@ namespace DeformEditor
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				EditorGUIUtility.wideMode = true;
+				UnityEditor.EditorGUIUtility.wideMode = true;
 				EditorGUILayout.PropertyField (properties.OffsetVector, Content.OffsetVector);
-				EditorGUIUtility.wideMode = false;
+				UnityEditor.EditorGUIUtility.wideMode = false;
 
 				EditorGUILayout.PropertyField (properties.OffsetSpeedScalar, Content.OffsetSpeedScalar);
 
-				EditorGUIUtility.wideMode = true;
+				UnityEditor.EditorGUIUtility.wideMode = true;
 				EditorGUILayout.PropertyField (properties.OffsetSpeedVector, Content.OffsetSpeedVector);
-				EditorGUIUtility.wideMode = false;
+				UnityEditor.EditorGUIUtility.wideMode = false;
 			}
 
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);

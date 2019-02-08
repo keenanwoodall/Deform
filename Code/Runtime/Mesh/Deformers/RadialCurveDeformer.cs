@@ -2,6 +2,7 @@
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
+using Beans.Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 

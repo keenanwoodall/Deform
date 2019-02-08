@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -11,7 +12,7 @@ namespace DeformEditor
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Falloff = new GUIContent (text: "Falloff", tooltip: "The sharpness of the effect's transition.");
-			public static readonly GUIContent Center = new GUIContent (text: "Center", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
+			public static readonly GUIContent Center = new GUIContent (text: "Center", tooltip:DeformEditorGUIUtility.Strings.AxisTooltip);
 		}
 
 		private class Properties
@@ -43,7 +44,7 @@ namespace DeformEditor
 			serializedObject.UpdateIfRequiredOrScript ();
 
 			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f, Content.Falloff);
+			EditorGUILayoutx.MinField (properties.Falloff, 0f, Content.Falloff);
 			EditorGUILayout.PropertyField (properties.Center, Content.Center);
 
 			serializedObject.ApplyModifiedProperties ();

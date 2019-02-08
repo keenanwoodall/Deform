@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -72,13 +73,13 @@ namespace DeformEditor
 
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			DeformEditorGUILayout.MinField (properties.Factor, 0f, Content.Factor);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f);
+			EditorGUILayoutx.MinField (properties.Factor, 0f, Content.Factor);
+			EditorGUILayoutx.MinField (properties.Falloff, 0f);
 			EditorGUILayout.PropertyField (properties.Radius, Content.Radius);
 			EditorGUILayout.PropertyField (properties.UseNormals, Content.UseNormals);
 			EditorGUILayout.PropertyField (properties.ClampAtBottom, Content.ClampAtBottom);
-			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
-			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+			EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 
 			EditorGUILayout.LabelField (Content.Noise);
 			using (new EditorGUI.IndentLevelScope ())
@@ -104,7 +105,7 @@ namespace DeformEditor
 
 			serializedObject.ApplyModifiedProperties ();
 
-			DeformEditorGUILayout.WIPAlert ();
+			EditorGUILayoutx.WIPAlert ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Deform;
+using Beans.Unity.Editor;
 
 namespace DeformEditor
 {
@@ -48,7 +49,7 @@ namespace DeformEditor
 
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			DeformEditorGUILayout.MinField (properties.WaveLength, 0f, Content.WaveLength);
+			EditorGUILayoutx.MinField (properties.WaveLength, 0f, Content.WaveLength);
 			EditorGUILayout.Slider (properties.Steepness, 0f, 1f, Content.Steepness);
 			EditorGUILayout.PropertyField (properties.Speed, Content.Speed);
 			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
@@ -56,7 +57,7 @@ namespace DeformEditor
 
 			serializedObject.ApplyModifiedProperties ();
 
-			DeformEditorGUILayout.WIPAlert ();
+			EditorGUILayoutx.WIPAlert ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}

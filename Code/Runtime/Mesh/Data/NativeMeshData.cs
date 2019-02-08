@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Collections;
 using Unity.Mathematics;
+using Beans.Unity.Mathematics;
 
 namespace Deform
 {

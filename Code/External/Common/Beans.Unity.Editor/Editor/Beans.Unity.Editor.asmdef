@@ -1,10 +1,6 @@
 {
-    "name": "DeformEditor",
-    "references": [
-        "Beans.Unity.Editor",
-        "Deform",
-        "PathCreator"
-    ],
+    "name": "Beans.Unity.Editor",
+    "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"

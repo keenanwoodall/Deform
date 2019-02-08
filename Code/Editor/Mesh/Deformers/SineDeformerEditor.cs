@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -53,7 +54,7 @@ namespace DeformEditor
 
 			EditorGUILayout.PropertyField (properties.Frequency, Content.Frequency);
 			EditorGUILayout.PropertyField (properties.Magnitude, Content.Magnitude);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f, Content.Falloff);
+			EditorGUILayoutx.MinField (properties.Falloff, 0f, Content.Falloff);
 			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
 			EditorGUILayout.PropertyField (properties.Speed, Content.Speed);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);

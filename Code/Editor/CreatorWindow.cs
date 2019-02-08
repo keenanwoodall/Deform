@@ -287,7 +287,7 @@ namespace DeformEditor
 				var newGameObject = new GameObject (attribute.Name);
 				Undo.RegisterCreatedObjectUndo (newGameObject, "Created Deformer");
 
-				EditorGUIUtility.PingObject (newGameObject);
+				UnityEditor.EditorGUIUtility.PingObject (newGameObject);
 
 				var newDeformer = newGameObject.AddComponent (attribute.Type) as Deformer;
 

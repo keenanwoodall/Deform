@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform.Masking;
 
 namespace DeformEditor.Masking
@@ -49,8 +50,8 @@ namespace DeformEditor.Masking
 			serializedObject.UpdateIfRequiredOrScript ();
 
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
-			DeformEditorGUILayout.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, Content.InnerRadius);
-			DeformEditorGUILayout.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, Content.OuterRadius);
+			EditorGUILayoutx.MaxField (properties.InnerRadius, properties.OuterRadius.floatValue, Content.InnerRadius);
+			EditorGUILayoutx.MinField (properties.OuterRadius, properties.InnerRadius.floatValue, Content.OuterRadius);
 			EditorGUILayout.PropertyField (properties.Invert, Content.Invert);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 

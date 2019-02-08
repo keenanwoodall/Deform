@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Deform;
+using Beans.Unity.Editor;
 
 namespace DeformEditor
 {
@@ -39,11 +40,11 @@ namespace DeformEditor
 
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+			UnityEditor.EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
 
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (var check = new UnityEditor.EditorGUI.ChangeCheckScope ())
 			{
-				EditorGUILayout.ObjectField (properties.Cache, Content.Cache);
+				UnityEditor.EditorGUILayout.ObjectField (properties.Cache, Content.Cache);
 				if (check.changed)
 				{
 					// need to apply properties early if the cache was changed so that cache's value change occurs before Initialize()

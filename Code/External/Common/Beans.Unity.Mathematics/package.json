@@ -1,0 +1,17 @@
+{
+    "name": "com.beans.unity.mathematics",
+    "author": "Keenan Woodall",
+    "displayName": "Beans Mathematics",
+    "version": "0.0.1-preview.1",
+    "unity": "2018.3",
+    "description": "Additional Unity.Mathematics functionality",
+    "category": "Unity",
+    "keywords": 
+    [
+        "mathematics"
+    ],
+    "dependencies": 
+    {
+        "com.unity.mathematics": "0.0.12-preview.19"
+    }
+}

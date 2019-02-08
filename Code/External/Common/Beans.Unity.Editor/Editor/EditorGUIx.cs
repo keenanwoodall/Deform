@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using UnityEditor;
 
-namespace DeformEditor
+namespace Beans.Unity.Editor
 {
-	public static class DeformEditorGUI
+	public static class EditorGUIx
 	{
 		public static void DrawOutlineRect (Rect rect, Color color, int width = 1, bool inner = false)
 		{
@@ -38,10 +37,10 @@ namespace DeformEditor
 				topSide.yMax += width;
 			}
 
-			EditorGUI.DrawRect (leftSide, color);
-			EditorGUI.DrawRect (rightSide, color);
-			EditorGUI.DrawRect (bottomSide, color);
-			EditorGUI.DrawRect (topSide, color);
+			UnityEditor.EditorGUI.DrawRect (leftSide, color);
+			UnityEditor.EditorGUI.DrawRect (rightSide, color);
+			UnityEditor.EditorGUI.DrawRect (bottomSide, color);
+			UnityEditor.EditorGUI.DrawRect (topSide, color);
 		}
 	}
 }

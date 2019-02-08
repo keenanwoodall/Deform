@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -54,8 +55,8 @@ namespace DeformEditor
 
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
-			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+			EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 			EditorGUILayout.PropertyField (properties.Curvature, Content.Curvature);
 			EditorGUILayout.PropertyField (properties.TopFactor, Content.TopFactor);
 			EditorGUILayout.PropertyField (properties.BottomFactor, Content.BottomFactor);

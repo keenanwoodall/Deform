@@ -1,15 +1,9 @@
 ﻿using UnityEngine;
-using UnityEditor;
 
 namespace DeformEditor
 {
 	public static class DeformEditorGUIUtility
 	{
-		public static Color BackgroundColor => EditorGUIUtility.isProSkin ? new Color32 (56, 56, 56, 255) : new Color32 (194, 194, 194, 255);
-		public static Color HighlightColor => EditorGUIUtility.isProSkin ? new Color32 (91, 91, 91, 255) : new Color32 (222, 222, 222, 255);
-		public static Color LowlightColor => EditorGUIUtility.isProSkin ? new Color32 (30, 30, 30, 255) : new Color32 (153, 153, 153, 255);
-		public static Color SelectedBlueColor => new Color32 (62, 125, 231, 255);
-
 		public static class Strings
 		{
 			public static readonly string AxisTooltip = "This is the transform that all the calculations will be relative local to. If left blank, the component's transform will be used.\n-\nAll vertices are converted to a space relative to this transform.";

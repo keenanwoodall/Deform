@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -119,7 +120,7 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			var newDeformers = DeformEditorGUILayout.DragAndDropComponentArea<Deformer> ();
+			var newDeformers = EditorGUILayoutx.DragAndDropComponentArea<Deformer> ();
 			if (newDeformers != null && newDeformers.Count > 0)
 			{
 				Undo.RecordObjects (targets, "Added Deformers");
@@ -263,7 +264,7 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			using (var foldout = new DeformEditorGUILayout.FoldoutWideScope (ref ShowDebug, "Debug Info"))
+			using (var foldout = new EditorGUILayoutx.FoldoutWideScope (ref ShowDebug, "Debug Info"))
 			{
 				if (foldout.isOpen)
 				{

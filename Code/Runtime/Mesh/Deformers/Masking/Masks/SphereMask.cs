@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
+using Beans.Unity.Mathematics;
 
 namespace Deform.Masking
 {

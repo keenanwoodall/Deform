@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using Object = UnityEngine.Object;
+using Beans.Unity.Editor;
 
 namespace DeformEditor
 {
@@ -22,7 +23,7 @@ namespace DeformEditor
 		public ReorderableComponentElementList (SerializedObject serializedObject, SerializedProperty elements)
 		{
 			list = new ReorderableList (serializedObject, elements);
-			list.elementHeight = EditorGUIUtility.singleLineHeight;
+			list.elementHeight = UnityEditor.EditorGUIUtility.singleLineHeight;
 
 			list.drawHeaderCallback += (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
 			list.drawElementCallback += (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -42,7 +43,7 @@ namespace DeformEditor
 					SceneView.onSceneGUIDelegate -= SceneGUI;
 					SceneView.onSceneGUIDelegate += SceneGUI;
 
-					using (var foldout = new DeformEditorGUILayout.FoldoutContainerScope (list.serializedProperty, "Selected Properties"))
+					using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, "Selected Properties"))
 					{
 						if (foldout.isOpen)
 							selectedComponentInspectorEditor.OnInspectorGUI ();

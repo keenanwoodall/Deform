@@ -2,9 +2,9 @@
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace DeformEditor
+namespace Beans.Unity.Editor
 {
-	public static class DeformEditorGUILayout
+	public static class EditorGUILayoutx
 	{
 		public static void Splitter (bool wideMode = true)
 		{
@@ -16,9 +16,9 @@ namespace DeformEditor
 				rect.xMin = 0f;
 				rect.xMax = Screen.width;
 			}
-			var color = DeformEditorGUIUtility.LowlightColor;
+			var color = EditorGUIUtilityx.LowlightColor;
 			color.a = GUI.color.a;
-			EditorGUI.DrawRect (rect, color);
+			UnityEditor.EditorGUI.DrawRect (rect, color);
 		}
 
 		public class FoldoutWideScope : System.IDisposable
@@ -41,14 +41,14 @@ namespace DeformEditor
 
 				Splitter ();
 
-				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
+				var toggleRect = GUILayoutUtility.GetRect (1, UnityEditor.EditorGUIUtility.singleLineHeight);
 				toggleRect.xMin = 0;
 				toggleRect.xMax = Screen.width;
-				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.HighlightColor);
-				EditorGUI.indentLevel++;
-				EditorGUI.LabelField (toggleRect, text, labelStyle);
-				isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
-				EditorGUI.indentLevel--;
+				UnityEditor.EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
+				UnityEditor.EditorGUI.indentLevel++;
+				UnityEditor.EditorGUI.LabelField (toggleRect, text, labelStyle);
+				isOpen = UnityEditor.EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+				UnityEditor.EditorGUI.indentLevel--;
 			}
 
 			public FoldoutWideScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultLabelStyle) { }
@@ -59,19 +59,19 @@ namespace DeformEditor
 
 				Splitter ();
 
-				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
+				var toggleRect = GUILayoutUtility.GetRect (1, UnityEditor.EditorGUIUtility.singleLineHeight);
 				toggleRect.xMin = 0;
 				toggleRect.xMax = Screen.width;
-				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.HighlightColor);
-				EditorGUI.indentLevel++;
-				EditorGUI.LabelField (toggleRect, text, labelStyle);
-				using (var check = new EditorGUI.ChangeCheckScope ())
+				UnityEditor.EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
+				UnityEditor.EditorGUI.indentLevel++;
+				UnityEditor.EditorGUI.LabelField (toggleRect, text, labelStyle);
+				using (var check = new UnityEditor.EditorGUI.ChangeCheckScope ())
 				{
-					isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+					isOpen = UnityEditor.EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
 					if (check.changed)
 						isExpanded.isExpanded = isOpen;
 				}
-				EditorGUI.indentLevel--;
+				UnityEditor.EditorGUI.indentLevel--;
 			}
 
 			public void Dispose ()
@@ -99,10 +99,10 @@ namespace DeformEditor
 			{
 				this.isOpen = isOpen;
 				this.text = text;
-				EditorGUI.indentLevel++;
-				EditorGUILayout.BeginVertical (containerStyle);
+				UnityEditor.EditorGUI.indentLevel++;
+				UnityEditor.EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
-				isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+				isOpen = UnityEditor.EditorGUI.Foldout (UnityEditor.EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
 			}
 
 			public FoldoutContainerScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultContainerStyle, DefaultLabelStyle) { }
@@ -110,12 +110,12 @@ namespace DeformEditor
 			{
 				this.isOpen = isExpanded.isExpanded;
 				this.text = text;
-				EditorGUI.indentLevel++;
-				EditorGUILayout.BeginVertical (containerStyle);
+				UnityEditor.EditorGUI.indentLevel++;
+				UnityEditor.EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
-				using (var check = new EditorGUI.ChangeCheckScope ())
+				using (var check = new UnityEditor.EditorGUI.ChangeCheckScope ())
 				{
-					isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+					isOpen = UnityEditor.EditorGUI.Foldout (UnityEditor.EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
 					if (check.changed)
 						isExpanded.isExpanded = isOpen;
 				}
@@ -124,8 +124,8 @@ namespace DeformEditor
 			public void Dispose ()
 			{
 				GUILayout.Space (3);
-				EditorGUILayout.EndVertical ();
-				EditorGUI.indentLevel--;
+				UnityEditor.EditorGUILayout.EndVertical ();
+				UnityEditor.EditorGUI.indentLevel--;
 			}
 		}
 
@@ -134,13 +134,13 @@ namespace DeformEditor
 		/// </summary>
 		public static void MinField (SerializedProperty value, float min)
 		{
-			EditorGUILayout.PropertyField (value);
+			UnityEditor.EditorGUILayout.PropertyField (value);
 			value.floatValue = Mathf.Max (value.floatValue, min);
 		}
 
 		public static void MinField (SerializedProperty value, float min, GUIContent content)
 		{
-			EditorGUILayout.PropertyField (value, content);
+			UnityEditor.EditorGUILayout.PropertyField (value, content);
 			value.floatValue = Mathf.Max (value.floatValue, min);
 		}
 
@@ -149,13 +149,13 @@ namespace DeformEditor
 		/// </summary>
 		public static void MaxField (SerializedProperty value, float max)
 		{
-			EditorGUILayout.PropertyField (value);
+			UnityEditor.EditorGUILayout.PropertyField (value);
 			value.floatValue = Mathf.Min (value.floatValue, max);
 		}
 
 		public static void MaxField (SerializedProperty value, float max, GUIContent content)
 		{
-			EditorGUILayout.PropertyField (value, content);
+			UnityEditor.EditorGUILayout.PropertyField (value, content);
 			value.floatValue = Mathf.Min (value.floatValue, max);
 		}
 
@@ -164,13 +164,13 @@ namespace DeformEditor
 		/// </summary>
 		public static void MinField (SerializedProperty value, int min)
 		{
-			EditorGUILayout.PropertyField (value);
+			UnityEditor.EditorGUILayout.PropertyField (value);
 			value.intValue = Mathf.Max (value.intValue, min);
 		}
 
 		public static void MinField (SerializedProperty value, int min, GUIContent content)
 		{
-			EditorGUILayout.PropertyField (value, content);
+			UnityEditor.EditorGUILayout.PropertyField (value, content);
 			value.intValue = Mathf.Max (value.intValue, min);
 		}
 
@@ -179,13 +179,13 @@ namespace DeformEditor
 		/// </summary>
 		public static void MaxField (SerializedProperty value, int max)
 		{
-			EditorGUILayout.PropertyField (value);
+			UnityEditor.EditorGUILayout.PropertyField (value);
 			value.intValue = Mathf.Min (value.intValue, max);
 		}
 
 		public static void MaxField (SerializedProperty value, int max, GUIContent content)
 		{
-			EditorGUILayout.PropertyField (value, content);
+			UnityEditor.EditorGUILayout.PropertyField (value, content);
 			value.intValue = Mathf.Min (value.intValue, max);
 		}
 
@@ -194,7 +194,7 @@ namespace DeformEditor
 		/// </summary>
 		public static void WIPAlert ()
 		{
-			EditorGUILayout.HelpBox ("WIP", MessageType.Warning, true);
+			UnityEditor.EditorGUILayout.HelpBox ("WIP", MessageType.Warning, true);
 		}
 
 		/// <summary>

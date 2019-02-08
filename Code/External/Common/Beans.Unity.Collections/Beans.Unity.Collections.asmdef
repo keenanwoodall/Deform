@@ -1,16 +1,13 @@
 {
-    "name": "Deform",
+    "name": "Beans.Unity.Collections",
     "references": [
-        "PathCreator",
-        "Unity.Burst",
         "Unity.Mathematics",
-        "Beans.Unity.Mathematics",
-        "Beans.Unity.Collections"
+        "Beans.Unity.Mathematics"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": true,
+    "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

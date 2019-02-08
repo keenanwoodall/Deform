@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -40,7 +41,7 @@ namespace DeformEditor
 
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			DeformEditorGUILayout.MinField (properties.Iterations, 0, Content.Iterations);
+			EditorGUILayoutx.MinField (properties.Iterations, 0, Content.Iterations);
 			EditorGUILayout.PropertyField (properties.Deformer, Content.Deformer);
 
 			serializedObject.ApplyModifiedProperties ();

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -82,7 +83,7 @@ namespace DeformEditor
 			if (targets.Where (t => ((TextureDisplaceDeformer)t).Texture != null).Any (t => !((TextureDisplaceDeformer)t).Texture.isReadable))
 				EditorGUILayout.HelpBox (Content.NotReadableWarning, MessageType.Error, true);
 
-			DeformEditorGUILayout.WIPAlert ();
+			EditorGUILayoutx.WIPAlert ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}

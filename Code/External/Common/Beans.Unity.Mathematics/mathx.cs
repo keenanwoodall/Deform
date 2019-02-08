@@ -2,7 +2,7 @@
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 
-namespace Deform
+namespace Beans.Unity.Mathematics
 {
 	public static class mathx
 	{

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -9,11 +10,11 @@ namespace DeformEditor
 	{
 		private class Content
 		{
-			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-			public static readonly GUIContent Top = DeformEditorGUIUtility.DefaultContent.Top;
-			public static readonly GUIContent Bottom = DeformEditorGUIUtility.DefaultContent.Bottom;
-			public static readonly GUIContent Smooth = DeformEditorGUIUtility.DefaultContent.Smooth;
-			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
+			public static readonly GUIContent Factor	= DeformEditorGUIUtility.DefaultContent.Factor;
+			public static readonly GUIContent Top		= DeformEditorGUIUtility.DefaultContent.Top;
+			public static readonly GUIContent Bottom	= DeformEditorGUIUtility.DefaultContent.Bottom;
+			public static readonly GUIContent Smooth	= DeformEditorGUIUtility.DefaultContent.Smooth;
+			public static readonly GUIContent Axis		= DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
 		private class Properties
@@ -49,8 +50,8 @@ namespace DeformEditor
 			serializedObject.UpdateIfRequiredOrScript ();
 
 			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
-			DeformEditorGUILayout.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
-			DeformEditorGUILayout.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+			EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 			EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 

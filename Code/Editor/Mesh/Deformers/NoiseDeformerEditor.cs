@@ -87,15 +87,15 @@ namespace DeformEditor
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				EditorGUIUtility.wideMode = true;
+				UnityEditor.EditorGUIUtility.wideMode = true;
 				EditorGUILayout.PropertyField (properties.OffsetVector, Content.OffsetVector);
-				EditorGUIUtility.wideMode = false;
+				UnityEditor.EditorGUIUtility.wideMode = false;
 
 				EditorGUILayout.PropertyField (properties.OffsetSpeedScalar, Content.OffsetSpeedScalar);
 
-				EditorGUIUtility.wideMode = true;
+				UnityEditor.EditorGUIUtility.wideMode = true;
 				EditorGUILayout.PropertyField (properties.OffsetSpeedVector, Content.OffsetSpeedVector);
-				EditorGUIUtility.wideMode = false;
+				UnityEditor.EditorGUIUtility.wideMode = false;
 			}
 
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);

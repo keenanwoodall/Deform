@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 using Deform.Masking;
 
 namespace DeformEditor.Masking
@@ -46,7 +47,7 @@ namespace DeformEditor.Masking
 			serializedObject.UpdateIfRequiredOrScript ();
 
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
-			DeformEditorGUILayout.MinField (properties.Falloff, 0f, Content.Falloff);
+			EditorGUILayoutx.MinField (properties.Falloff, 0f, Content.Falloff);
 			EditorGUILayout.PropertyField (properties.Invert, Content.Invert);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 

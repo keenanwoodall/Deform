@@ -1,0 +1,18 @@
+{
+    "name": "com.beans.unity.collections",
+    "author": "Keenan Woodall",
+    "displayName": "Beans Collection Extensions",
+    "version": "0.0.1-preview.1",
+    "unity": "2018.3",
+    "description": "Additional Unity.Collections functionality",
+    "category": "Unity",
+    "keywords": 
+    [
+        "collections"
+    ],
+    "dependencies": 
+    {
+        "com.unity.mathematics": "0.0.12-preview.19",
+        "com.beans.unity.mathematics": "0.0.1-preview.1"
+    }
+}

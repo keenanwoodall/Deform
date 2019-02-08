@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+using Beans.Unity.Editor;
 using Deform;
 
 namespace DeformEditor
@@ -65,8 +66,8 @@ namespace DeformEditor
 			{
 				using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
 				{
-					DeformEditorGUILayout.MaxField (properties.Inner, properties.Outer.floatValue, Content.Inner);
-					DeformEditorGUILayout.MinField (properties.Outer, properties.Inner.floatValue, Content.Outer);
+					EditorGUILayoutx.MaxField (properties.Inner, properties.Outer.floatValue, Content.Inner);
+					EditorGUILayoutx.MinField (properties.Outer, properties.Inner.floatValue, Content.Outer);
 
 					EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 				}
