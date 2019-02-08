@@ -8,6 +8,27 @@ namespace DeformEditor
 	[CustomEditor (typeof (Deformable)), CanEditMultipleObjects]
 	public class DeformableEditor : Editor
 	{
+		private class Styles
+		{
+			public static readonly GUIStyle ButtonLeftStyle, ButtonMidStyle, ButtonRightStyle;
+
+			static Styles ()
+			{
+				ButtonLeftStyle = new GUIStyle (EditorStyles.miniButtonLeft);
+				ButtonMidStyle = new GUIStyle (EditorStyles.miniButtonMid);
+				ButtonRightStyle = new GUIStyle (EditorStyles.miniButtonRight);
+
+				var leftMargin = ButtonLeftStyle.margin;
+				var midMargin = ButtonMidStyle.margin;
+				var rightMargin = ButtonRightStyle.margin;
+
+				midMargin.left--;
+				rightMargin.left--;
+				midMargin.right--;
+				leftMargin.right--;
+			}
+		}
+
 		private class Content
 		{
 			public static readonly GUIContent UpdateMode = new GUIContent (text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
@@ -58,6 +79,8 @@ namespace DeformEditor
 		{
 			deformerList.Dispose ();
 		}
+
+		private Rect rect;
 
 		public override void OnInspectorGUI ()
 		{
@@ -187,19 +210,19 @@ namespace DeformEditor
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
-				if (GUILayout.Button (Content.ClearDeformers, EditorStyles.miniButtonLeft))
+				if (GUILayout.Button (Content.ClearDeformers, Styles.ButtonLeftStyle))
 				{
 					Undo.RecordObjects (targets, "Cleared Deformers");
 					foreach (var t in targets)
 						((Deformable)t).DeformerElements.Clear ();
 				}
-				if (GUILayout.Button (Content.CleanDeformers, EditorStyles.miniButtonMid))
+				if (GUILayout.Button (Content.CleanDeformers, Styles.ButtonMidStyle))
 				{
 					Undo.RecordObjects (targets, "Cleaned Deformers");
 					foreach (var t in targets)
 						((Deformable)t).DeformerElements.RemoveAll (d => d.Component == null);
 				}
-				if (GUILayout.Button (Content.SaveObj, EditorStyles.miniButtonMid))
+				if (GUILayout.Button (Content.SaveObj, Styles.ButtonMidStyle))
 				{
 					foreach (var t in targets)
 					{
@@ -219,7 +242,7 @@ namespace DeformEditor
 						AssetDatabase.Refresh (ImportAssetOptions.ForceSynchronousImport);
 					}
 				}
-				if (GUILayout.Button (Content.SaveAsset, EditorStyles.miniButtonRight))
+				if (GUILayout.Button (Content.SaveAsset, Styles.ButtonRightStyle))
 				{
 					foreach (var t in targets)
 					{

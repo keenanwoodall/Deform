@@ -13,18 +13,32 @@ namespace DeformEditor
 	{
 		private static List<DeformerAttribute> deformerAttributes;
 
-		private static class Styles
+		private class Styles
 		{
 			public const int MAX_LIST_BUTTON_WIDTH = 150;
 			public const int PAD_X = 5;
 			public const int PAD_Y = 2;
 
 			public static GUIStyle ListButton;
+			public static readonly GUIStyle ButtonLeftStyle, ButtonMidStyle, ButtonRightStyle;
 
 			static Styles ()
 			{
 				ListButton = new GUIStyle (EditorStyles.toolbarButton);
 				ListButton.margin = new RectOffset (PAD_X, PAD_X, PAD_Y, PAD_Y);
+
+				ButtonLeftStyle = new GUIStyle (EditorStyles.miniButtonLeft);
+				ButtonMidStyle = new GUIStyle (EditorStyles.miniButtonMid);
+				ButtonRightStyle = new GUIStyle (EditorStyles.miniButtonRight);
+
+				var leftMargin = ButtonLeftStyle.margin;
+				var midMargin = ButtonMidStyle.margin;
+				var rightMargin = ButtonRightStyle.margin;
+
+				midMargin.left--;
+				rightMargin.left--;
+				midMargin.right--;
+				leftMargin.right--;
 			}
 		}
 
@@ -100,7 +114,7 @@ namespace DeformEditor
 				var categoryCount = Content.FilterToolbar.Length;
 				for (int i = 0; i < categoryCount; i++)
 				{
-					if (GUILayout.Toggle ((int)filter == i, Content.FilterToolbar[i], (i == 0) ? EditorStyles.miniButtonLeft : (i == categoryCount - 1) ? EditorStyles.miniButtonRight : EditorStyles.miniButtonMid, GUILayout.MinWidth (0)))
+					if (GUILayout.Toggle ((int)filter == i, Content.FilterToolbar[i], (i == 0) ? Styles.ButtonLeftStyle : (i == categoryCount - 1) ? Styles.ButtonRightStyle : Styles.ButtonMidStyle, GUILayout.MinWidth (0)))
 					{
 						Undo.RecordObject (this, "Changed Category Filter");
 						filter = (FilterCategory)i;
