@@ -3,6 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using Object = UnityEngine.Object;
 
 namespace DeformEditor
 {
@@ -12,8 +13,8 @@ namespace DeformEditor
 	/// <typeparam name="T">The type of component the element holds.</typeparam>
 	public class ReorderableComponentElementList<T> : IDisposable where T : Component
 	{
-		private Editor selectedComponentInspectorEditor;
 		private readonly ReorderableList list;
+		private Editor selectedComponentInspectorEditor;
 
 		/// <summary>
 		/// Make sure your implementation of IComponentElement has a PropertyDrawer.
@@ -41,18 +42,18 @@ namespace DeformEditor
 					SceneView.onSceneGUIDelegate -= SceneGUI;
 					SceneView.onSceneGUIDelegate += SceneGUI;
 
-					selectedComponentInspectorEditor.OnInspectorGUI ();
+					using (var foldout = new DeformEditorGUILayout.FoldoutContainerScope (list.serializedProperty, "Selected Properties"))
+					{
+						if (foldout.isOpen)
+							selectedComponentInspectorEditor.OnInspectorGUI ();
+					}
 				}
-				else
-					UnityEngine.Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			};
 		}
 
 		private void SceneGUI (SceneView sceneView)
 		{
-			if (selectedComponentInspectorEditor == null)
-				return;
-			selectedComponentInspectorEditor.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke (selectedComponentInspectorEditor, null);
+			selectedComponentInspectorEditor?.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke (selectedComponentInspectorEditor, null);
 			selectedComponentInspectorEditor.Repaint ();
 		}
 

@@ -6,13 +6,16 @@ namespace DeformEditor
 {
 	public static class DeformEditorGUILayout
 	{
-		public static void Splitter ()
+		public static void Splitter (bool wideMode = true)
 		{
 			var rect = GUILayoutUtility.GetRect (1f, 1f);
 			if (Event.current.type != EventType.Repaint)
 				return;
-			rect.xMin = 0f;
-			rect.xMax = Screen.width;
+			if (wideMode)
+			{
+				rect.xMin = 0f;
+				rect.xMax = Screen.width;
+			}
 			var color = DeformEditorGUIUtility.EditorLowlightColor;
 			color.a = GUI.color.a;
 			EditorGUI.DrawRect (rect, color);
@@ -48,6 +51,29 @@ namespace DeformEditor
 				EditorGUI.indentLevel--;
 			}
 
+			public FoldoutWideScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultLabelStyle) { }
+			public FoldoutWideScope (SerializedProperty isExpanded, string text, GUIStyle labelStyle)
+			{
+				this.isOpen = isExpanded.isExpanded;
+				this.text = text;
+
+				Splitter ();
+
+				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
+				toggleRect.xMin = 0;
+				toggleRect.xMax = Screen.width;
+				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.EditorHighlightColor);
+				EditorGUI.indentLevel++;
+				EditorGUI.LabelField (toggleRect, text, labelStyle);
+				using (var check = new EditorGUI.ChangeCheckScope ())
+				{
+					isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+					if (check.changed)
+						isExpanded.isExpanded = isOpen;
+				}
+				EditorGUI.indentLevel--;
+			}
+
 			public void Dispose ()
 			{
 				Splitter ();
@@ -63,7 +89,6 @@ namespace DeformEditor
 			{
 				DefaultContainerStyle = new GUIStyle (EditorStyles.helpBox);
 				DefaultLabelStyle = new GUIStyle (EditorStyles.foldout);
-				DefaultLabelStyle.font = EditorStyles.boldFont;
 			}
 
 			public bool isOpen;
@@ -78,6 +103,22 @@ namespace DeformEditor
 				EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
 				isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+			}
+
+			public FoldoutContainerScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultContainerStyle, DefaultLabelStyle) { }
+			public FoldoutContainerScope (SerializedProperty isExpanded, string text, GUIStyle containerStyle, GUIStyle labelStyle)
+			{
+				this.isOpen = isExpanded.isExpanded;
+				this.text = text;
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginVertical (containerStyle);
+				GUILayout.Space (3);
+				using (var check = new EditorGUI.ChangeCheckScope ())
+				{
+					isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+					if (check.changed)
+						isExpanded.isExpanded = isOpen;
+				}
 			}
 
 			public void Dispose ()
