@@ -20,6 +20,11 @@ namespace Deform
 			get => radius;
 			set => radius = value;
 		}
+		public BoundsMode Mode
+		{
+			get => mode;
+			set => mode = value;
+		}
 		public bool Smooth
 		{
 			get => smooth;
@@ -38,6 +43,7 @@ namespace Deform
 
 		[SerializeField, HideInInspector] private float factor = 0f;
 		[SerializeField, HideInInspector] private float radius = 1f;
+		[SerializeField, HideInInspector] private BoundsMode mode = BoundsMode.Unlimited;
 		[SerializeField, HideInInspector] private bool smooth = false;
 		[SerializeField, HideInInspector] private Transform axis;
 
@@ -50,19 +56,53 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new SpherifyJob
+			switch (Mode)
 			{
-				factor = Factor,
-				radius = Radius,
-				smooth = Smooth,
-				meshToAxis = meshToAxis,
-				axisToMesh = meshToAxis.inverse,
-				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+				default:
+				case BoundsMode.Unlimited:
+					return new UnlimitedSpherifyJob
+					{
+						factor = Factor,
+						radius = Radius,
+						meshToAxis = meshToAxis,
+						axisToMesh = meshToAxis.inverse,
+						vertices = data.DynamicNative.VertexBuffer
+					}.Schedule (data.Length, BatchCount, dependency);
+				case BoundsMode.Limited:
+					return new LimitedSpherifyJob
+					{
+						factor = Factor,
+						radius = Radius,
+						smooth = Smooth,
+						meshToAxis = meshToAxis,
+						axisToMesh = meshToAxis.inverse,
+						vertices = data.DynamicNative.VertexBuffer
+					}.Schedule (data.Length, BatchCount, dependency);
+			}
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct SpherifyJob : IJobParallelFor
+		private struct UnlimitedSpherifyJob : IJobParallelFor
+		{
+			public float factor;
+			public float radius;
+			public float4x4 meshToAxis;
+			public float4x4 axisToMesh;
+			public NativeArray<float3> vertices;
+
+			public void Execute (int index)
+			{
+				var point = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
+				var goalPoint = normalize (point) * radius;
+
+				point = lerp (point, goalPoint, factor);
+
+				vertices[index] = mul (axisToMesh, float4 (point, 1f)).xyz;
+			}
+		}
+
+		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
+		private struct LimitedSpherifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float radius;

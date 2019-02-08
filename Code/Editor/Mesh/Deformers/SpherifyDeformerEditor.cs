@@ -11,6 +11,7 @@ namespace DeformEditor
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Radius = new GUIContent (text: "Radius", tooltip: "The radius of the sphere that the points are pushed towards.");
+			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: Vertices' from any distance will interpolate towards the nearest point on the sphere.\nLimited: Vertices will only interpolate towards the sphere's surface when within the sphere.");
 			public static readonly GUIContent Smooth = new GUIContent (text: "Smooth", tooltip: "Should the interpolation towards the sphere be smoothed.");
 			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
@@ -19,6 +20,7 @@ namespace DeformEditor
 		{
 			public SerializedProperty Factor;
 			public SerializedProperty Radius;
+			public SerializedProperty Mode;
 			public SerializedProperty Smooth;
 			public SerializedProperty Axis;
 
@@ -26,6 +28,7 @@ namespace DeformEditor
 			{
 				Factor	= obj.FindProperty ("factor");
 				Radius	= obj.FindProperty ("radius");
+				Mode	= obj.FindProperty ("mode");
 				Smooth	= obj.FindProperty ("smooth");
 				Axis	= obj.FindProperty ("axis");
 			}
@@ -47,7 +50,9 @@ namespace DeformEditor
 
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
 			EditorGUILayout.PropertyField (properties.Radius, Content.Radius);
-			EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
+			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
+			using (new EditorGUI.DisabledScope (properties.Smooth.hasMultipleDifferentValues || properties.Mode.enumValueIndex == 0))
+				EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 
 			serializedObject.ApplyModifiedProperties ();
@@ -57,7 +62,7 @@ namespace DeformEditor
 
 		public override void OnSceneGUI ()
 		{
-			base.OnEnable ();
+			base.OnSceneGUI ();
 
 			var spherify = target as SpherifyDeformer;
 

@@ -12,7 +12,7 @@ namespace Deform
 		public bool Active { get => active; set => active = value; }
 
 		[SerializeField] private Deformer component;
-		[SerializeField] private bool active;
+		[SerializeField] private bool active = true;
 
 		public DeformerElement () : this (null, true) { }
 		public DeformerElement (Deformer component, bool active = true)
