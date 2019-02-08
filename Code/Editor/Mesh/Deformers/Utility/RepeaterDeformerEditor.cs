@@ -21,7 +21,7 @@ namespace DeformEditor
 			public void Update (SerializedObject obj)
 			{
 				Iterations	= obj.FindProperty ("iterations");
-				Deformer	= obj.FindProperty ("deformer");
+				Deformer	= obj.FindProperty ("deformerElement");
 			}
 		}
 

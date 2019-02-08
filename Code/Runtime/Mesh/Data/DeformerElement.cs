@@ -14,6 +14,7 @@ namespace Deform
 		[SerializeField] private Deformer component;
 		[SerializeField] private bool active;
 
+		public DeformerElement () : this (null, true) { }
 		public DeformerElement (Deformer component, bool active = true)
 		{
 			this.component = component;

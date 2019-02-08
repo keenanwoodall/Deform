@@ -11,14 +11,14 @@ namespace Deform
 			get => iterations;
 			set => iterations = Mathf.Max (0, value);
 		}
-		public Deformer Deformer
+		public DeformerElement DeformerElement
 		{
-			get => deformer;
-			set => deformer = value;
+			get => deformerElement;
+			set => deformerElement = value;
 		}
 
 		[SerializeField, HideInInspector] private int iterations = 1;
-		[SerializeField, HideInInspector] private Deformer deformer;
+		[SerializeField, HideInInspector] private DeformerElement deformerElement = new DeformerElement (null);
 
 		private DataFlags dataFlags = DataFlags.None;
 
@@ -28,13 +28,15 @@ namespace Deform
 		{
 			dataFlags = DataFlags.None;
 
-			if (Deformer == null || !Deformer.CanProcess ())
+			var deformer = DeformerElement.Component;
+
+			if (deformer == null || !DeformerElement.CanProcess ())
 				return dependency;
 
-			dataFlags |= Deformer.DataFlags;
+			dataFlags |= deformer.DataFlags;
 
 			for (int i = 0; i < Iterations; i++)
-				dependency = Deformer.Process (data, dependency);
+				dependency = deformer.Process (data, dependency);
 
 			return dependency;
 		}

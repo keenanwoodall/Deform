@@ -9,7 +9,7 @@ namespace DeformEditor
 	{
 		private static class Content
 		{
-			public const int MARGIN = 5;
+			public const int Padding = 5;
 
 			public static readonly Texture2D ToggleOnTexture = EditorGUIUtility.FindTexture ("animationvisibilitytoggleon");
 			public static readonly Texture2D ToggleOffTexture = EditorGUIUtility.FindTexture ("animationvisibilitytoggleoff");
@@ -27,23 +27,28 @@ namespace DeformEditor
 
 		public override void OnGUI (Rect rect, SerializedProperty property, GUIContent label)
 		{
+			var indentedRect = EditorGUI.IndentedRect (rect);
 			using (new EditorGUI.PropertyScope (rect, label, property))
 			{
 				var activeProperty = property.FindPropertyRelative ("active");
 				var componentProperty = property.FindPropertyRelative ("component");
 
+				var toggleRect = new Rect (indentedRect);
+				toggleRect.xMax = toggleRect.xMin + EditorGUIUtility.singleLineHeight;
+
 				using (new EditorGUI.DisabledScope (componentProperty.objectReferenceValue == null))
 				{
-					var activeRect = new Rect (rect);
 					var activeContent = activeProperty.boolValue ? Content.ToggleOn : Content.ToggleOff;
-
-					activeRect.xMax = activeRect.xMin + EditorGUIUtility.singleLineHeight;
-					activeProperty.boolValue = GUI.Toggle (activeRect, activeProperty.boolValue, activeContent, Content.Toggle);
+					activeProperty.boolValue = GUI.Toggle (toggleRect, activeProperty.boolValue, activeContent, Content.Toggle);
 				}
 
-				var objectRect = new Rect (rect);
-				objectRect.xMin += EditorGUIUtility.singleLineHeight + Content.MARGIN;
-				EditorGUI.ObjectField (objectRect, componentProperty, GUIContent.none);
+				var componentRect = new Rect (rect);
+				// While the toggle rect needs to be indented manually, the object field rect is indented within the supplied rect.
+				// For the left of the object field rect to actually be flush to the right side of the toggle rect, we need to find the size of the indent.
+				var indentDelta = indentedRect.xMin - rect.xMin;
+				componentRect.xMin = toggleRect.xMax + Content.Padding - indentDelta;
+
+				EditorGUI.ObjectField (componentRect, componentProperty, GUIContent.none);
 			}
 		}
 	}

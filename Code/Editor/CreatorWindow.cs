@@ -315,7 +315,7 @@ namespace DeformEditor
 						if (repeater != null && !PrefabUtility.IsPartOfPrefabAsset (repeater))
 						{
 							Undo.RecordObject (repeater, "Set Deformer");
-							repeater.Deformer = newDeformer;
+							repeater.DeformerElement.Component = newDeformer;
 						}
 					}
 
