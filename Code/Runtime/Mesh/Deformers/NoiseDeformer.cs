@@ -108,7 +108,7 @@ namespace Deform
 						offset = actualOffset,
 						meshToAxis = meshToAxis,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Directional:
 					return new DirectionalNoiseDeformJob
 					{
@@ -119,7 +119,7 @@ namespace Deform
 						inverseAxisSpace = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Normal:
 					return new NormalNoiseDeformJob
 					{
@@ -129,7 +129,7 @@ namespace Deform
 						axisSpace = meshToAxis,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Spherical:
 					return new SphericalNoiseDeformJob
 					{
@@ -140,7 +140,7 @@ namespace Deform
 						inverseAxisSpace = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Color:
 					return new ColorNoiseDeformJob
 					{
@@ -151,7 +151,7 @@ namespace Deform
 						inverseAxisSpace = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer,
 						colors = data.DynamicNative.ColorBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 			}
 		}
 

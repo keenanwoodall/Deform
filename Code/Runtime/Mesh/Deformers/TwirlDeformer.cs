@@ -79,7 +79,7 @@ namespace Deform
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
 					return new LimitedTwistDeformJob
 					{
@@ -90,7 +90,7 @@ namespace Deform
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 			}
 		}
 

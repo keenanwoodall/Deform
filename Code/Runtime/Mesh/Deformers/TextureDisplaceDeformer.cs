@@ -133,7 +133,7 @@ namespace Deform
 						pixels = nativePixels,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 					break;
 				case TextureSampleMode.UV:
 					newHandle = new UVTextureDisplaceJob
@@ -148,7 +148,7 @@ namespace Deform
 						uvs = data.DynamicNative.UVBuffer,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, dependency);
+					}.Schedule (data.Length, BatchCount, dependency);
 					break;
 			}
 

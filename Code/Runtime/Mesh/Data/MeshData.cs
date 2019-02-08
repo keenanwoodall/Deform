@@ -49,7 +49,7 @@ namespace Deform
 		/// <summary>
 		/// Convenient place to get the vertex count.
 		/// </summary>
-		public int length { get; private set; }
+		public int Length { get; private set; }
 
 		public bool Initialize (GameObject targetObject)
 		{
@@ -80,7 +80,7 @@ namespace Deform
 			// (I've heard this method doesn't do anything)
 			DynamicMesh.MarkDynamic ();
 
-			length = DynamicMesh.vertexCount;
+			Length = DynamicMesh.vertexCount;
 
 			// Store mesh information in managed data.
 			originalManaged = new ManagedMeshData (DynamicMesh);

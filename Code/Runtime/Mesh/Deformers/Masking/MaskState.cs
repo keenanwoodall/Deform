@@ -17,7 +17,7 @@ namespace Deform.Masking
 			{
 				currentVertices = data.DynamicNative.VertexBuffer,
 				maskVertices = data.DynamicNative.MaskVertexBuffer
-			}.Schedule (data.length, BatchCount, dependency);
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

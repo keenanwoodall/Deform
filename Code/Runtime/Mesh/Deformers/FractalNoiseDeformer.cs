@@ -53,7 +53,7 @@ namespace Deform
 						offset = actualOffset,
 						meshToAxis = meshToAxis,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.length, BatchCount, handle);
+					}.Schedule (data.Length, BatchCount, handle);
 
 					actualMagnitude *= Persistance;
 					actualFrequency *= Lacunarity;
@@ -74,7 +74,7 @@ namespace Deform
 						inverseAxisSpace = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, handle);
+					}.Schedule (data.Length, BatchCount, handle);
 
 					actualMagnitude *= Persistance;
 					actualFrequency *= Lacunarity;
@@ -95,7 +95,7 @@ namespace Deform
 						axisSpace = meshToAxis,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, handle);
+					}.Schedule (data.Length, BatchCount, handle);
 
 					actualMagnitude *= Persistance;
 					actualFrequency *= Lacunarity;
@@ -117,7 +117,7 @@ namespace Deform
 						inverseAxisSpace = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer,
 						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.length, BatchCount, handle);
+					}.Schedule (data.Length, BatchCount, handle);
 
 					actualMagnitude *= Persistance;
 					actualFrequency *= Lacunarity;
@@ -138,7 +138,7 @@ namespace Deform
 						inverseAxisSpace = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer,
 						colors = data.DynamicNative.ColorBuffer
-					}.Schedule (data.length, BatchCount, handle);
+					}.Schedule (data.Length, BatchCount, handle);
 
 					actualMagnitude *= Persistance;
 					actualFrequency *= Lacunarity;

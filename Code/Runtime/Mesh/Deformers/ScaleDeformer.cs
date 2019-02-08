@@ -36,7 +36,7 @@ namespace Deform
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.length, BatchCount, dependency);
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		private struct ScaleDeformJob : IJobParallelFor

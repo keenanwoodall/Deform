@@ -55,7 +55,7 @@ namespace Deform
 			if (!vertices.IsCreated)
 				if (!Initialize ())
 					return dependency;
-			if (data.length != vertices.Length)
+			if (data.Length != vertices.Length)
 			{
 				Debug.LogError ($"Vertex cache has different vertex count than deformable's mesh, {data.Target.GetGameObject ().name}.");
 				return dependency;
@@ -66,7 +66,7 @@ namespace Deform
 				factor = Factor,
 				currentVertices = data.DynamicNative.VertexBuffer,
 				cachedVertices = vertices
-			}.Schedule (data.length, BatchCount, dependency);
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		private void OnDisable ()

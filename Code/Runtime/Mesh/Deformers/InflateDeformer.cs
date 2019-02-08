@@ -38,7 +38,7 @@ namespace Deform
 				factor = Factor,
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer,
-			}.Schedule (data.length, BatchCount, dependency);
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

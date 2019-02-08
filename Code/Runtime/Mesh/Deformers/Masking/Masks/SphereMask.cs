@@ -73,7 +73,7 @@ namespace Deform.Masking
 					axisToMesh = meshToAxis.inverse,
 					currentVertices = data.DynamicNative.VertexBuffer,
 					maskVertices = data.DynamicNative.MaskVertexBuffer
-				}.Schedule (data.length, BatchCount, dependency);
+				}.Schedule (data.Length, BatchCount, dependency);
 			else
 				return new InvertedSphereMaskJob
 				{
@@ -84,7 +84,7 @@ namespace Deform.Masking
 					axisToMesh = meshToAxis.inverse,
 					currentVertices = data.DynamicNative.VertexBuffer,
 					maskVertices = data.DynamicNative.MaskVertexBuffer
-				}.Schedule (data.length, BatchCount, dependency);
+				}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

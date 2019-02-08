@@ -24,7 +24,7 @@ namespace Deform
 			{
 				offset = offset,
 				uvs = data.DynamicNative.UVBuffer
-			}.Schedule (data.length, BatchCount, dependency);
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
