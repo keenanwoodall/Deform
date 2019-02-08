@@ -22,10 +22,15 @@ namespace Deform
 			get => repeat;
 			set => repeat = value;
 		}
-		public TextureSampleMode Mode
+		public TextureSampleSpace Space
 		{
-			get => mode;
-			set => mode = value; 
+			get => space;
+			set => space = value; 
+		}
+		public ColorChannel Channel
+		{
+			get => channel;
+			set => channel = value;
 		}
 		public Vector2 Offset
 		{
@@ -58,7 +63,8 @@ namespace Deform
 		}
 
 		[SerializeField, HideInInspector] private float factor;
-		[SerializeField, HideInInspector] private TextureSampleMode mode;
+		[SerializeField, HideInInspector] private TextureSampleSpace space;
+		[SerializeField, HideInInspector] private ColorChannel channel;
 		[SerializeField, HideInInspector] private bool repeat;
 		[SerializeField, HideInInspector] private Vector2 offset = Vector2.zero;
 		[SerializeField, HideInInspector] private Vector2 tiling = Vector2.one;
@@ -117,13 +123,14 @@ namespace Deform
 
 			JobHandle newHandle;
 
-			switch (Mode)
+			switch (Space)
 			{
 				default:
 					newHandle = new WorldTextureDisplaceJob
 					{
 						factor = Factor,
 						repeat = Repeat,
+						channel = (int)Channel,
 						offset = Offset,
 						tiling = Tiling,
 						width = Texture.width,
@@ -135,11 +142,12 @@ namespace Deform
 						normals = data.DynamicNative.NormalBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 					break;
-				case TextureSampleMode.UV:
+				case TextureSampleSpace.UV:
 					newHandle = new UVTextureDisplaceJob
 					{
 						factor = Factor,
 						repeat = Repeat,
+						channel = (int)Channel,
 						offset = Offset,
 						tiling = Tiling,
 						width = Texture.width,
@@ -162,6 +170,7 @@ namespace Deform
 		{
 			public float factor;
 			public bool repeat;
+			public int channel;
 			public float2 offset;
 			public float2 tiling;
 			public int width;
@@ -192,9 +201,8 @@ namespace Deform
 
 				var pixelIndex = (samplePosition.x + samplePosition.y * width);
 				var color = pixels[pixelIndex];
-				var strength = length (color.xyz);
 
-				vertices[index] += direction * (strength * factor);
+				vertices[index] += direction * (color[channel] * factor);
 			}
 
 			private int2 repeatsample (int2 p, int2 size)
@@ -221,6 +229,7 @@ namespace Deform
 		{
 			public float factor;
 			public bool repeat;
+			public int channel;
 			public float2 offset;
 			public float2 tiling;
 			public int width;
@@ -250,7 +259,7 @@ namespace Deform
 				var pixelIndex = (samplePosition.x + samplePosition.y * width);
 				var color = pixels[pixelIndex];
 
-				vertices[index] += normals[index] * (length (color.xyz) * factor);
+				vertices[index] += normals[index] * (color[channel] * factor);
 			}
 
 			private int2 repeatsample (int2 p, int2 size)

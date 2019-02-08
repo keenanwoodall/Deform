@@ -15,7 +15,8 @@ namespace DeformEditor
 
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Repeat = new GUIContent (text: "Repeat");
-			public static readonly GUIContent Mode = new GUIContent (text: "Mode");
+			public static readonly GUIContent Space = new GUIContent (text: "Space");
+			public static readonly GUIContent Channel = new GUIContent (text: "Channel");
 			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
 			public static readonly GUIContent Tiling = new GUIContent (text: "Tiling");
 			public static readonly GUIContent Texture = new GUIContent (text: "Texture");
@@ -26,7 +27,8 @@ namespace DeformEditor
 		{
 			public SerializedProperty Factor;
 			public SerializedProperty Repeat;
-			public SerializedProperty Mode;
+			public SerializedProperty Space;
+			public SerializedProperty Channel;
 			public SerializedProperty Offset;
 			public SerializedProperty Tiling;
 			public SerializedProperty Texture;
@@ -36,7 +38,8 @@ namespace DeformEditor
 			{
 				Factor	= obj.FindProperty ("factor");
 				Repeat	= obj.FindProperty ("repeat");
-				Mode	= obj.FindProperty ("mode");
+				Space	= obj.FindProperty ("space");
+				Channel = obj.FindProperty ("channel");
 				Offset	= obj.FindProperty ("offset");
 				Tiling	= obj.FindProperty ("tiling");
 				Texture = obj.FindProperty ("texture");
@@ -60,7 +63,8 @@ namespace DeformEditor
 
 			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
 			EditorGUILayout.PropertyField (properties.Repeat, Content.Repeat);
-			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
+			EditorGUILayout.PropertyField (properties.Space, Content.Space);
+			EditorGUILayout.PropertyField (properties.Channel, Content.Channel);
 			EditorGUILayout.PropertyField (properties.Offset, Content.Offset);
 			EditorGUILayout.PropertyField (properties.Tiling, Content.Tiling);
 

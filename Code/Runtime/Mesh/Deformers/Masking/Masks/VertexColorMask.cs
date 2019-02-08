@@ -10,8 +10,6 @@ namespace Deform.Masking
 	[Deformer (Name = "Vertex Color Mask", Description = "Masks vertices based on their color", Type = typeof (VertexColorMask), Category = Category.Mask)]
 	public class VertexColorMask : Deformer, IFactor
 	{
-		public enum ColorChannel { R, G, B, A }
-
 		public float Factor
 		{
 			get => factor;
@@ -47,7 +45,7 @@ namespace Deform.Masking
 				{
 					factor = Factor,
 					falloff = Falloff,
-					channel = Channel,
+					channel = (int)Channel,
 					currentVertices = data.DynamicNative.VertexBuffer,
 					maskVertices = data.DynamicNative.MaskVertexBuffer,
 					colors = data.DynamicNative.ColorBuffer,
@@ -57,7 +55,7 @@ namespace Deform.Masking
 				{
 					factor = Factor,
 					falloff = Falloff,
-					channel = Channel,
+					channel = (int)Channel,
 					currentVertices = data.DynamicNative.VertexBuffer,
 					maskVertices = data.DynamicNative.MaskVertexBuffer,
 					colors = data.DynamicNative.ColorBuffer,
@@ -69,7 +67,7 @@ namespace Deform.Masking
 		{
 			public float factor;
 			public float falloff;
-			public ColorChannel channel;
+			public int channel;
 
 			public NativeArray<float3> currentVertices;
 			[ReadOnly]
@@ -80,24 +78,7 @@ namespace Deform.Masking
 			public void Execute (int index)
 			{
 				var color = colors[index];
-				var t = 0f;
-
-				switch (channel)
-				{
-					case ColorChannel.R:
-						t = color.x;
-						break;
-					case ColorChannel.G:
-						t = color.y;
-						break;
-					case ColorChannel.B:
-						t = color.z;
-						break;
-					case ColorChannel.A:
-						t = color.w;
-						break;
-				}
-
+				var t = color[channel];
 				t = exp (-falloff * t) * factor;
 
 				currentVertices[index] = lerp (currentVertices[index], maskVertices[index], saturate (t));
@@ -109,7 +90,7 @@ namespace Deform.Masking
 		{
 			public float factor;
 			public float falloff;
-			public ColorChannel channel;
+			public int channel;
 
 			public NativeArray<float3> currentVertices;
 			[ReadOnly]
@@ -120,24 +101,7 @@ namespace Deform.Masking
 			public void Execute (int index)
 			{
 				var color = colors[index];
-				var t = 0f;
-
-				switch (channel)
-				{
-					case ColorChannel.R:
-						t = color.x;
-						break;
-					case ColorChannel.G:
-						t = color.y;
-						break;
-					case ColorChannel.B:
-						t = color.z;
-						break;
-					case ColorChannel.A:
-						t = color.w;
-						break;
-				}
-
+				var t = color[channel];
 				t = 1f - (exp (-falloff * t) * factor);
 
 				currentVertices[index] = lerp (currentVertices[index], maskVertices[index], saturate (t));
