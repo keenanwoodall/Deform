@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 using Beans.Unity.Mathematics;
+using Beans.Unity.Collections;
 using PathCreation;
 
 namespace Deform
@@ -41,10 +42,10 @@ namespace Deform
 				disposed = false;
 			}
 
-			DataUtils.CopyManagedToNative (path.vertices, points);
-			DataUtils.CopyManagedToNative (path.normals, normals);
-			DataUtils.CopyManagedToNative (path.tangents, tangents);
-			DataUtils.CopyManagedToNative (path.times, times);
+			path.vertices.MemCpy (points);
+			path.normals.MemCpy (normals);
+			path.tangents.MemCpy (tangents);
+			path.times.MemCpy (times);
 		}
 
 		public float3 GetPointAtDistance (float distance, EndOfPathInstruction endOfPathInstruction = EndOfPathInstruction.Loop)

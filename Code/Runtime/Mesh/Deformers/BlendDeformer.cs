@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
+using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -40,7 +41,7 @@ namespace Deform
 			if (Cache == null)
 				return false;
 			vertices = new NativeArray<float3> (Cache.Data.Vertices.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-			DataUtils.CopyManagedToNative (Cache.Data.Vertices, vertices);
+			vertices.MemCpy (Cache.Data.Vertices);
 			return true;
 		}
 

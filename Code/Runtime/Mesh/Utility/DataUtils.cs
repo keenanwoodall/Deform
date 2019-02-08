@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Mathematics;
+using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -23,19 +21,19 @@ namespace Deform
 			}
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
-				CopyManagedToNative (managed.Vertices, native.VertexBuffer);
+				managed.Vertices.MemCpy (native.VertexBuffer);
 			if ((dataFlags & DataFlags.Normals) != 0)
-				CopyManagedToNative (managed.Normals, native.NormalBuffer);
+				managed.Normals.MemCpy (native.NormalBuffer);
 			if ((dataFlags & DataFlags.MaskVertices) != 0)
-				CopyManagedToNative (managed.Vertices, native.MaskVertexBuffer);
+				managed.Vertices.MemCpy (native.MaskVertexBuffer);
 			if ((dataFlags & DataFlags.Tangents) != 0)
-				CopyManagedToNative (managed.Tangents, native.TangentBuffer);
+				managed.Tangents.MemCpy (native.TangentBuffer);
 			if ((dataFlags & DataFlags.UVs) != 0)
-				CopyManagedToNative (managed.UVs, native.UVBuffer);
+				managed.UVs.MemCpy (native.UVBuffer);
 			if ((dataFlags & DataFlags.Colors) != 0)
-				CopyManagedToNative (managed.Colors, native.ColorBuffer);
+				managed.Colors.MemCpy (native.ColorBuffer);
 			if ((dataFlags & DataFlags.Triangles) != 0)
-				CopyManagedToNative (managed.Triangles, native.IndexBuffer);
+				managed.Triangles.MemCpy (native.IndexBuffer);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				native.Bounds[0] = managed.Bounds;
 		}
@@ -53,17 +51,17 @@ namespace Deform
 			}
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
-				CopyNativeToManaged (managed.Vertices, native.VertexBuffer);
+				native.VertexBuffer.MemCpy (managed.Vertices);
 			if ((dataFlags & DataFlags.Normals) != 0)
-				CopyNativeToManaged (managed.Normals, native.NormalBuffer);
+				native.NormalBuffer.MemCpy (managed.Normals);
 			if ((dataFlags & DataFlags.Tangents) != 0)
-				CopyNativeToManaged (managed.Tangents, native.TangentBuffer);
+				native.TangentBuffer.MemCpy (managed.Tangents);
 			if ((dataFlags & DataFlags.UVs) != 0)
-				CopyNativeToManaged (managed.UVs, native.UVBuffer);
+				native.UVBuffer.MemCpy (managed.UVs);
 			if ((dataFlags & DataFlags.Colors) != 0)
-				CopyNativeToManaged (managed.Colors, native.ColorBuffer);
+				native.ColorBuffer.MemCpy (managed.Colors);
 			if ((dataFlags & DataFlags.Triangles) != 0)
-				CopyNativeToManaged (managed.Triangles, native.IndexBuffer);
+				native.IndexBuffer.CopyTo (managed.Triangles);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				managed.Bounds = native.Bounds[0];
 		}
@@ -96,177 +94,6 @@ namespace Deform
 				from.IndexBuffer.CopyTo (to.IndexBuffer);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				from.Bounds.CopyTo (to.Bounds);
-		}
-
-		// Managed -> Native
-
-		/// <summary>
-		/// Copies a managed int array into a native int array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyManagedToNative (int[] managed, NativeArray<int> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					source: managedArrayPointer,
-					size: managed.Length * (long)UnsafeUtility.SizeOf<int> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a managed int array into a native int array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyManagedToNative (float[] managed, NativeArray<float> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					source: managedArrayPointer,
-					size: managed.Length * (long)UnsafeUtility.SizeOf<float> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a managed Vector2 array into a native float2 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyManagedToNative (Vector2[] managed, NativeArray<float2> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					source: managedArrayPointer,
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Vector2> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a managed Vector3 array into a native float3 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyManagedToNative (Vector3[] managed, NativeArray<float3> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy 
-				(
-					destination: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native), 
-					source: managedArrayPointer, 
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Vector3> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a managed Vector4 array into a native float4 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyManagedToNative (Vector4[] managed, NativeArray<float4> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					source: managedArrayPointer,
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Vector4> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a managed Color array into a native float4 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyManagedToNative (Color[] managed, NativeArray<float4> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					source: managedArrayPointer,
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Color> ()
-				);
-			}
-		}
-
-		// Native -> Managed
-
-		/// <summary>
-		/// Copies a native int array into a managed int array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyNativeToManaged (int[] managed, NativeArray<int> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: managedArrayPointer,
-					source: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					size: managed.Length * (long)UnsafeUtility.SizeOf<int> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a native float2 array into a managed Vector2 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyNativeToManaged (Vector2[] managed, NativeArray<float2> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: managedArrayPointer,
-					source: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Vector2> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a native float3 array into a managed Vector3 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyNativeToManaged (Vector3[] managed, NativeArray<float3> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: managedArrayPointer,
-					source: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Vector3> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a native float4 array into a managed Vector4 array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyNativeToManaged (Vector4[] managed, NativeArray<float4> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: managedArrayPointer,
-					source: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Vector4> ()
-				);
-			}
-		}
-		/// <summary>
-		/// Copies a native float4 array into a managed Color array. Array lengths MUST be the same.
-		/// </summary>
-		public unsafe static void CopyNativeToManaged (Color[] managed, NativeArray<float4> native)
-		{
-			fixed (void* managedArrayPointer = managed)
-			{
-				UnsafeUtility.MemCpy
-				(
-					destination: managedArrayPointer,
-					source: NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks (native),
-					size: managed.Length * (long)UnsafeUtility.SizeOf<Color> ()
-				);
-			}
 		}
 	}
 }

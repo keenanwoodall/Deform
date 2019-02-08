@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
+using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -88,7 +89,7 @@ namespace Deform
 				nativePixels = new NativeArray<float4> (managedPixels.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
 			}
 
-			DataUtils.CopyManagedToNative (managedPixels, nativePixels);
+			managedPixels.MemCpy (nativePixels);
 
 			return true;
 		}
