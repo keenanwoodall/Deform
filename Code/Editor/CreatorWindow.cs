@@ -12,6 +12,7 @@ namespace DeformEditor
 	public class CreatorWindow : EditorWindow
 	{
 		private static List<DeformerAttribute> deformerAttributes;
+		private static List<DeformerAttribute> filteredDeformerAttributes;
 
 		private class Styles
 		{
@@ -35,6 +36,7 @@ namespace DeformEditor
 				var midMargin = ButtonMidStyle.margin;
 				var rightMargin = ButtonRightStyle.margin;
 
+				// decrease the margins of the inner sides by 1 because in a horizontal layout Unity likes to randomly add 1px of padding between elements
 				midMargin.left--;
 				rightMargin.left--;
 				midMargin.right--;
@@ -44,21 +46,11 @@ namespace DeformEditor
 
 		private static class Content
 		{
-			public static GUIContent CreateDeformable;
-			public static GUIContent[] FilterToolbar;
-
-			static Content ()
+			public static GUIContent CreateDeformable = new GUIContent (text: "Create Deformable", tooltip: "Create a deformable");
+			public static GUIContent[] FilterToolbar = new GUIContent[]
 			{
-				CreateDeformable = new GUIContent
-				(
-					text: "Create Deformable",
-					tooltip: "Create a deformable"
-				);
-				FilterToolbar = new GUIContent[]
-				{
-					new GUIContent ("A", "All"), new GUIContent ("N", "Normal"), new GUIContent ("M", "Mask"), new GUIContent ("U", "Utility")
-				};
-			}
+				new GUIContent ("A", "All"), new GUIContent ("N", "Normal"), new GUIContent ("M", "Mask"), new GUIContent ("U", "Utility")
+			};
 		}
 
 		private enum FilterCategory { All, Normal, Mask, Utility }
@@ -68,9 +60,12 @@ namespace DeformEditor
 		[SerializeField]
 		private Vector2 scrollPosition;
 		[SerializeField]
+		private SearchField searchField;
+		[SerializeField]
 		private string searchQuery;
 		[SerializeField]
-		private SearchField searchField;
+		private int searchIndex = -1;
+
 
 		[MenuItem ("Window/Deform/Creator", priority = 0)]
 		[MenuItem ("Tools/Deform/Creator", priority = 0)]
@@ -87,6 +82,9 @@ namespace DeformEditor
 
 		private void OnEnable ()
 		{
+			searchField = new SearchField ();
+			searchField.downOrUpArrowKeyPressed += SearchFieldIndexChange;
+
 			UpdateDeformerAttributes ();
 
 			Undo.undoRedoPerformed += Repaint;
@@ -99,9 +97,6 @@ namespace DeformEditor
 
 		private void OnGUI ()
 		{
-			if (searchField == null)
-				searchField = new SearchField ();
-
 			EditorGUILayout.Space ();
 
 			if (GUILayout.Button (Content.CreateDeformable, Styles.ListButton))
@@ -146,8 +141,15 @@ namespace DeformEditor
 					EditorGUILayout.LabelField ("No deformers found.", GUILayout.MinWidth (0));
 				else
 				{
-					var filteredDeformerAttributes =
-						deformerAttributes.Where (d => AttributeIncludedInFilter (d, filter)).Where (d => string.IsNullOrEmpty (searchQuery) || d.Name.ToLower ().Contains (searchQuery.ToLower ())).ToList ();
+					filteredDeformerAttributes = deformerAttributes.Where (d => AttributeIncludedInFilter (d, filter)).Where (d => string.IsNullOrEmpty (searchQuery) || d.Name.ToLower ().Contains (searchQuery.ToLower ())).ToList ();
+					filteredDeformerAttributes =
+					(
+						from d in deformerAttributes
+						where AttributeIncludedInFilter (d, filter)
+						where string.IsNullOrEmpty (searchQuery) || d.Name.ToLower ().Contains (searchQuery.ToLower ())
+						select d
+					).ToList ();
+
 					var drawnCount = 0;
 					for (int i = 0; i < filteredDeformerAttributes.Count; i++)
 					{
@@ -178,6 +180,26 @@ namespace DeformEditor
 				}
 				scrollPosition = scroll.scrollPosition;
 			}
+		}
+
+		private void SearchFieldIndexChange ()
+		{
+			var e = Event.current;
+
+			if (e.keyCode == KeyCode.UpArrow)
+			{
+				searchIndex--;
+				e.Use ();
+			}
+			else if (e.keyCode == KeyCode.DownArrow)
+			{
+				searchIndex++;
+				e.Use ();
+			}
+			if (searchIndex < 0)
+				searchIndex = filteredDeformerAttributes.Count - 1;
+			if (searchIndex > filteredDeformerAttributes.Count - 1)
+				searchIndex = 0;
 		}
 
 		private bool AttributeIncludedInFilter (DeformerAttribute attribute, FilterCategory filter)

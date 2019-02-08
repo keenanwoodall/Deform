@@ -16,7 +16,7 @@ namespace DeformEditor
 				rect.xMin = 0f;
 				rect.xMax = Screen.width;
 			}
-			var color = DeformEditorGUIUtility.EditorLowlightColor;
+			var color = DeformEditorGUIUtility.LowlightColor;
 			color.a = GUI.color.a;
 			EditorGUI.DrawRect (rect, color);
 		}
@@ -44,7 +44,7 @@ namespace DeformEditor
 				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				toggleRect.xMin = 0;
 				toggleRect.xMax = Screen.width;
-				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.EditorHighlightColor);
+				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.HighlightColor);
 				EditorGUI.indentLevel++;
 				EditorGUI.LabelField (toggleRect, text, labelStyle);
 				isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
@@ -62,7 +62,7 @@ namespace DeformEditor
 				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				toggleRect.xMin = 0;
 				toggleRect.xMax = Screen.width;
-				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.EditorHighlightColor);
+				EditorGUI.DrawRect (toggleRect, DeformEditorGUIUtility.HighlightColor);
 				EditorGUI.indentLevel++;
 				EditorGUI.LabelField (toggleRect, text, labelStyle);
 				using (var check = new EditorGUI.ChangeCheckScope ())
