@@ -69,7 +69,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new StarDeformJob
+			return new StarJob
 			{
 				frequency = Frequency,
 				magnitude = Magnitude,
@@ -81,7 +81,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct StarDeformJob : IJobParallelFor
+		private struct StarJob : IJobParallelFor
 		{
 			public float frequency;
 			public float magnitude;

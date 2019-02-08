@@ -73,7 +73,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
-					return new UnlimitedTwistDeformJob
+					return new UnlimitedTwistJob
 					{
 						angle = Angle * Factor,
 						meshToAxis = meshToAxis,
@@ -81,7 +81,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedTwistDeformJob
+					return new LimitedTwistJob
 					{
 						angle = Angle * Factor,
 						inner = Inner,
@@ -95,7 +95,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedTwistDeformJob : IJobParallelFor
+		private struct UnlimitedTwistJob : IJobParallelFor
 		{
 			public float angle;
 			public float4x4 meshToAxis;
@@ -120,7 +120,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedTwistDeformJob : IJobParallelFor
+		private struct LimitedTwistJob : IJobParallelFor
 		{
 			public float angle;
 			public float inner;

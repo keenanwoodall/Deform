@@ -56,7 +56,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new BulgeDeformJob
+			return new BulgeJob
 			{
 				factor = Factor,
 				top = Top,
@@ -69,7 +69,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct BulgeDeformJob : IJobParallelFor
+		private struct BulgeJob : IJobParallelFor
 		{
 			public float factor;
 			public float top;

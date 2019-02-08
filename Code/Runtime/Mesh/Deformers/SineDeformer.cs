@@ -80,7 +80,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new SinDeformJob
+			return new SinJob
 			{
 				frequency = Frequency,
 				magnitude = Magnitude,
@@ -93,7 +93,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct SinDeformJob : IJobParallelFor
+		private struct SinJob : IJobParallelFor
 		{
 			public float frequency;
 			public float magnitude;

@@ -20,7 +20,7 @@ namespace Deform
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			return new UVOffsetDeformJob
+			return new UVOffsetJob
 			{
 				offset = offset,
 				uvs = data.DynamicNative.UVBuffer
@@ -28,7 +28,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UVOffsetDeformJob : IJobParallelFor
+		private struct UVOffsetJob : IJobParallelFor
 		{
 			public float2 offset;
 			public NativeArray<float2> uvs;

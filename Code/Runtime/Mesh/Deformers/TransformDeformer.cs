@@ -31,7 +31,7 @@ namespace Deform
 		{
 			var dataTargetTransform = data.Target.GetTransform ();
 			var matrix = dataTargetTransform.worldToLocalMatrix * Target.worldToLocalMatrix.inverse;
-			return new TransformDeformJob
+			return new TransformJob
 			{
 				matrix = matrix,
 				vertices = data.DynamicNative.VertexBuffer
@@ -39,7 +39,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct TransformDeformJob : IJobParallelFor
+		private struct TransformJob : IJobParallelFor
 		{
 			public float4x4 matrix;
 			public NativeArray<float3> vertices;

@@ -56,7 +56,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new LimitedBulgeDeformJob
+			return new LimitedBulgeJob
 			{
 				factor = Factor,
 				curvature = (Curvature >= 0f) ? Curvature + 1f : 1f / (-Curvature + 1f),
@@ -69,7 +69,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedBulgeDeformJob : IJobParallelFor
+		private struct LimitedBulgeJob : IJobParallelFor
 		{
 			public float factor;
 			public float curvature;

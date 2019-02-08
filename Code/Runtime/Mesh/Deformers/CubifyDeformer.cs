@@ -56,7 +56,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new CubifyDeformJob
+			return new CubifyJob
 			{
 				factor = Factor,
 				width = Width,
@@ -69,7 +69,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CubifyDeformJob : IJobParallelFor
+		private struct CubifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float width;

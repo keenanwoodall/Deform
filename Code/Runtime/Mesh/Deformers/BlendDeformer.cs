@@ -61,7 +61,7 @@ namespace Deform
 				return dependency;
 			}
 
-			return new BlendDeformJob
+			return new BlendJob
 			{
 				factor = Factor,
 				currentVertices = data.DynamicNative.VertexBuffer,
@@ -76,7 +76,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct BlendDeformJob : IJobParallelFor
+		private struct BlendJob : IJobParallelFor
 		{
 			public float factor;
 

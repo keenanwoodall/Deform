@@ -76,7 +76,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			var newHandle = new RadialCurveDeformJob
+			var newHandle = new RadialCurveJob
 			{
 				factor = Factor,
 				offset = Offset,
@@ -93,7 +93,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct RadialCurveDeformJob : IJobParallelFor
+		private struct RadialCurveJob : IJobParallelFor
 		{
 			public float factor;
 			public float offset;

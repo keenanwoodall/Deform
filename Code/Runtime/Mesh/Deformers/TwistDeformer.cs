@@ -85,7 +85,7 @@ namespace Deform
 			switch (mode)
 			{
 				default:
-					return new UnlimitedTwistDeformJob
+					return new UnlimitedTwistJob
 					{
 						startAngle = StartAngle * Factor + Offset,
 						endAngle = EndAngle * Factor + Offset,
@@ -96,7 +96,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedTwistDeformJob
+					return new LimitedTwistJob
 					{
 						startAngle = StartAngle * Factor + Offset,
 						endAngle = EndAngle * Factor + Offset,
@@ -111,7 +111,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedTwistDeformJob : IJobParallelFor
+		private struct UnlimitedTwistJob : IJobParallelFor
 		{
 			public float startAngle;
 			public float endAngle;
@@ -142,7 +142,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedTwistDeformJob : IJobParallelFor
+		private struct LimitedTwistJob : IJobParallelFor
 		{
 			public float startAngle;
 			public float endAngle;

@@ -98,7 +98,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new MeltDeformJob
+			return new MeltJob
 			{
 				factor = Factor,
 				radius = Radius,
@@ -119,7 +119,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct MeltDeformJob : IJobParallelFor
+		private struct MeltJob : IJobParallelFor
 		{
 			public float factor;
 			public float radius;

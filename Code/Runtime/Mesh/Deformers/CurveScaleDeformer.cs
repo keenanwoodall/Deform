@@ -74,7 +74,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			var newHandle = new CurveScaleDeformJob
+			var newHandle = new CurveScaleJob
 			{
 				factor = Factor,
 				bias = Bias,
@@ -91,7 +91,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CurveScaleDeformJob : IJobParallelFor
+		private struct CurveScaleJob : IJobParallelFor
 		{
 			public float factor;
 			public float bias;

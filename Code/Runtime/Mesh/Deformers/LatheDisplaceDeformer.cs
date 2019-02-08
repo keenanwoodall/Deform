@@ -75,7 +75,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			var newHandle = new LatheDisplaceDeformJob
+			var newHandle = new LatheDisplaceJob
 			{
 				factor = Factor,
 				bias = Bias,
@@ -92,7 +92,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LatheDisplaceDeformJob : IJobParallelFor
+		private struct LatheDisplaceJob : IJobParallelFor
 		{
 			public float factor;
 			public float bias;

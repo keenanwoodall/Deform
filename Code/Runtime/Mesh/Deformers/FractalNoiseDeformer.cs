@@ -46,7 +46,7 @@ namespace Deform
 				var actualFrequency = scaledFrequency;
 				for (int i = 0; i < Octaves; i++)
 				{
-					handle = new DerivativeNoiseDeformJob
+					handle = new DerivativeNoiseJob
 					{
 						magnitude = actualMagnitude,
 						frequency = actualFrequency,
@@ -65,7 +65,7 @@ namespace Deform
 				var actualFrequency = scaledFrequency;
 				for (int i = 0; i < Octaves; i++)
 				{
-					handle = new DirectionalNoiseDeformJob
+					handle = new DirectionalNoiseJob
 					{
 						magnitude = actualMagnitude,
 						frequency = actualFrequency,
@@ -87,7 +87,7 @@ namespace Deform
 				for (int i = 0; i < Octaves; i++)
 				{
 
-					handle = new NormalNoiseDeformJob
+					handle = new NormalNoiseJob
 					{
 						magnitude = actualMagnitude,
 						frequency = actualFrequency,
@@ -108,7 +108,7 @@ namespace Deform
 				for (int i = 0; i < Octaves; i++)
 				{
 
-					handle = new SphericalNoiseDeformJob
+					handle = new SphericalNoiseJob
 					{
 						magnitude = actualMagnitude,
 						frequency = actualFrequency,
@@ -129,7 +129,7 @@ namespace Deform
 				var actualFrequency = scaledFrequency;
 				for (int i = 0; i < Octaves; i++)
 				{
-					handle = new ColorNoiseDeformJob
+					handle = new ColorNoiseJob
 					{
 						magnitude = actualMagnitude,
 						frequency = actualFrequency,

@@ -66,7 +66,7 @@ namespace Deform
 			switch (mode)
 			{
 				default:
-					return new UnlimitedBendDeformJob
+					return new UnlimitedBendJob
 					{
 						angle = totalAngle,
 						top = Top,
@@ -76,7 +76,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedBendDeformJob
+					return new LimitedBendJob
 					{
 						angle = totalAngle,
 						top = Top,
@@ -89,7 +89,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedBendDeformJob : IJobParallelFor
+		private struct UnlimitedBendJob : IJobParallelFor
 		{
 			public float angle;
 			public float top;
@@ -119,7 +119,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedBendDeformJob : IJobParallelFor
+		private struct LimitedBendJob : IJobParallelFor
 		{
 			public float angle;
 			public float top;

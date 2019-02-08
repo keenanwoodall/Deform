@@ -59,7 +59,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
-					return new UnlimitedSkewDeformJob
+					return new UnlimitedSkewJob
 					{
 						factor = Factor,
 						meshToAxis = meshToAxis,
@@ -67,7 +67,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedSkewDeformJob
+					return new LimitedSkewJob
 					{
 						factor = Factor,
 						top = top,
@@ -80,7 +80,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedSkewDeformJob : IJobParallelFor
+		private struct UnlimitedSkewJob : IJobParallelFor
 		{
 			public float factor;
 			public float4x4 meshToAxis;
@@ -97,7 +97,7 @@ namespace Deform
 			}
 		}
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedSkewDeformJob : IJobParallelFor
+		private struct LimitedSkewJob : IJobParallelFor
 		{
 			public float factor;
 			public float top;

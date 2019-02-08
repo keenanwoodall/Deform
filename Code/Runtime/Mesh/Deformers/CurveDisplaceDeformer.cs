@@ -69,7 +69,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			var newHandle = new CurveDisplaceDeformJob
+			var newHandle = new CurveDisplaceJob
 			{
 				factor = Factor,
 				offset = Offset,
@@ -87,7 +87,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CurveDisplaceDeformJob : IJobParallelFor
+		private struct CurveDisplaceJob : IJobParallelFor
 		{
 			public float factor;
 			public float offset;

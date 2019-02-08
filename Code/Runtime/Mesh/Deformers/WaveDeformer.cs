@@ -69,7 +69,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new WaveDeformJob
+			return new WaveJob
 			{
 				waveLength = WaveLength,
 				steepness = Steepness,
@@ -86,7 +86,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct WaveDeformJob : IJobParallelFor
+		private struct WaveJob : IJobParallelFor
 		{
 			public float waveLength;
 			public float steepness;

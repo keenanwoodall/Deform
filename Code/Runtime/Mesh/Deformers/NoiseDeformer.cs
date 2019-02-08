@@ -101,7 +101,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
-					return new DerivativeNoiseDeformJob
+					return new DerivativeNoiseJob
 					{
 						magnitude = actualMagnitude,
 						frequency = actualFrequency,
@@ -110,7 +110,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Directional:
-					return new DirectionalNoiseDeformJob
+					return new DirectionalNoiseJob
 					{
 						magnitude = MagnitudeScalar,
 						frequency = actualFrequency,
@@ -121,7 +121,7 @@ namespace Deform
 						normals = data.DynamicNative.NormalBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Normal:
-					return new NormalNoiseDeformJob
+					return new NormalNoiseJob
 					{
 						magnitude = MagnitudeScalar,
 						frequency = actualFrequency,
@@ -131,7 +131,7 @@ namespace Deform
 						normals = data.DynamicNative.NormalBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Spherical:
-					return new SphericalNoiseDeformJob
+					return new SphericalNoiseJob
 					{
 						magnitude = MagnitudeScalar,
 						frequency = actualFrequency,
@@ -142,7 +142,7 @@ namespace Deform
 						normals = data.DynamicNative.NormalBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case NoiseMode.Color:
-					return new ColorNoiseDeformJob
+					return new ColorNoiseJob
 					{
 						magnitude = MagnitudeScalar,
 						frequency = actualFrequency,
@@ -156,7 +156,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		protected struct DerivativeNoiseDeformJob : IJobParallelFor
+		protected struct DerivativeNoiseJob : IJobParallelFor
 		{
 			private const float AXIS_OFFSET = 1000f;
 
@@ -211,7 +211,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		protected struct DirectionalNoiseDeformJob : IJobParallelFor
+		protected struct DirectionalNoiseJob : IJobParallelFor
 		{
 			public float magnitude;
 			public float3 frequency;
@@ -243,7 +243,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		protected struct NormalNoiseDeformJob : IJobParallelFor
+		protected struct NormalNoiseJob : IJobParallelFor
 		{
 			public float magnitude;
 			public float3 frequency;
@@ -272,7 +272,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		protected struct SphericalNoiseDeformJob : IJobParallelFor
+		protected struct SphericalNoiseJob : IJobParallelFor
 		{
 			public float magnitude;
 			public float3 frequency;
@@ -304,7 +304,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		protected struct ColorNoiseDeformJob : IJobParallelFor
+		protected struct ColorNoiseJob : IJobParallelFor
 		{
 			public float magnitude;
 			public float3 frequency;

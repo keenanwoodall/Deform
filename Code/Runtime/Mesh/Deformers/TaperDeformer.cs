@@ -71,7 +71,7 @@ namespace Deform
 		{
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new TaperDeformJob
+			return new TaperJob
 			{
 				top = Top,
 				bottom = Bottom,
@@ -86,7 +86,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct TaperDeformJob : IJobParallelFor
+		private struct TaperJob : IJobParallelFor
 		{
 			public float top;
 			public float bottom;

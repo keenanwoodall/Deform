@@ -30,7 +30,7 @@ namespace Deform
 		{
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new ScaleDeformJob
+			return new ScaleJob
 			{
 				scale = Axis.localScale,
 				meshToAxis = meshToAxis,
@@ -39,7 +39,7 @@ namespace Deform
 			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
-		private struct ScaleDeformJob : IJobParallelFor
+		private struct ScaleJob : IJobParallelFor
 		{
 			public float3 scale;
 			public float4x4 meshToAxis;

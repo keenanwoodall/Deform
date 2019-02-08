@@ -59,7 +59,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
-					return new UnlimitedRadialSkewDeformJob
+					return new UnlimitedRadialSkewJob
 					{
 						factor = Factor,
 						meshToAxis = meshToAxis,
@@ -67,7 +67,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedRadialSkewDeformJob
+					return new LimitedRadialSkewJob
 					{
 						factor = Factor,
 						top = top,
@@ -80,7 +80,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedRadialSkewDeformJob : IJobParallelFor
+		private struct UnlimitedRadialSkewJob : IJobParallelFor
 		{
 			public float factor;
 			public float4x4 meshToAxis;
@@ -97,7 +97,7 @@ namespace Deform
 			}
 		}
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedRadialSkewDeformJob : IJobParallelFor
+		private struct LimitedRadialSkewJob : IJobParallelFor
 		{
 			public float factor;
 			public float top;

@@ -97,7 +97,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
-					return new UnlimitedRippleDeformJob
+					return new UnlimitedRippleJob
 					{
 						frequency = Frequency,
 						magnitude = Magnitude,
@@ -107,7 +107,7 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedRippleDeformJob
+					return new LimitedRippleJob
 					{
 						frequency = Frequency,
 						magnitude = Magnitude,
@@ -128,7 +128,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedRippleDeformJob : IJobParallelFor
+		private struct UnlimitedRippleJob : IJobParallelFor
 		{
 			public float frequency;
 			public float magnitude;
@@ -153,7 +153,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedRippleDeformJob : IJobParallelFor
+		private struct LimitedRippleJob : IJobParallelFor
 		{
 			public float frequency;
 			public float magnitude;

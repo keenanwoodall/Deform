@@ -44,7 +44,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Center, data.Target.GetTransform ());
 
-			return new MagnetDeformJob
+			return new MagnetJob
 			{
 				factor = Factor,
 				falloff = falloff,
@@ -55,7 +55,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct MagnetDeformJob : IJobParallelFor
+		private struct MagnetJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;

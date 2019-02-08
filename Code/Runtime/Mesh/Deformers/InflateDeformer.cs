@@ -33,7 +33,7 @@ namespace Deform
 			if (UseUpdatedNormals)
 				dependency = MeshUtils.RecalculateNormals (data.DynamicNative, dependency);
 
-			return new InflateDeformJob
+			return new InflateJob
 			{
 				factor = Factor,
 				vertices = data.DynamicNative.VertexBuffer,
@@ -42,7 +42,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct InflateDeformJob : IJobParallelFor
+		private struct InflateJob : IJobParallelFor
 		{
 			public float factor;
 			public NativeArray<float3> vertices;

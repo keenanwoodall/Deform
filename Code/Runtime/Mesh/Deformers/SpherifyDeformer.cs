@@ -50,7 +50,7 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			return new SpherifyDeformJob
+			return new SpherifyJob
 			{
 				factor = Factor,
 				radius = Radius,
@@ -62,7 +62,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct SpherifyDeformJob : IJobParallelFor
+		private struct SpherifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float radius;
