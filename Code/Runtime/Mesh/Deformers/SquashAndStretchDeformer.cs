@@ -49,7 +49,7 @@ namespace Deform
 
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
 			if (Factor == 0f || Top == Bottom)
 				return dependency;
@@ -106,7 +106,7 @@ namespace Deform
 				else
 				{
 					squashAmount = (curvature * -factor + 1f);
-					stretchAmount = (-1f / (factor - 1f));
+					stretchAmount = -1f / (factor - 1f);
 				}
 
 				var a = 4f * (1f - squashAmount);

@@ -141,7 +141,6 @@ namespace DeformEditor
 					EditorGUILayout.LabelField ("No deformers found.", GUILayout.MinWidth (0));
 				else
 				{
-					filteredDeformerAttributes = deformerAttributes.Where (d => AttributeIncludedInFilter (d, filter)).Where (d => string.IsNullOrEmpty (searchQuery) || d.Name.ToLower ().Contains (searchQuery.ToLower ())).ToList ();
 					filteredDeformerAttributes =
 					(
 						from d in deformerAttributes

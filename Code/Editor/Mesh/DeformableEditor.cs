@@ -81,8 +81,6 @@ namespace DeformEditor
 			deformerList.Dispose ();
 		}
 
-		private Rect rect;
-
 		public override void OnInspectorGUI ()
 		{
 			base.OnInspectorGUI ();
