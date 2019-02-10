@@ -48,7 +48,7 @@ namespace Deform
 
 		[SerializeField, HideInInspector] private float angle;
 		[SerializeField, HideInInspector] private float factor = 1f;
-		[SerializeField, HideInInspector] private BoundsMode mode;
+		[SerializeField, HideInInspector] private BoundsMode mode = BoundsMode.Limited;
 		[SerializeField, HideInInspector] private float top = 1f;
 		[SerializeField, HideInInspector] private float bottom = 0f;
 		[SerializeField, HideInInspector] private Transform axis;
@@ -58,7 +58,7 @@ namespace Deform
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
 			var totalAngle = Angle * Factor;
-			if (totalAngle == 0f)
+			if (totalAngle == 0f || Top == Bottom)
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
@@ -102,7 +102,7 @@ namespace Deform
 			{
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 
-				var angleRadians = radians (angle);
+				var angleRadians = radians (angle) * (1f / abs (top - bottom));
 				var scale = 1f / angleRadians;
 				var rotation = point.y * angleRadians;
 
@@ -134,7 +134,7 @@ namespace Deform
 
 				var unbentPoint = point;
 
-				var angleRadians = radians (angle);
+				var angleRadians = radians (angle) * (1f / abs (top - bottom));
 				var scale = 1f / angleRadians;
 				var rotation = clamp (point.y, bottom, top) * angleRadians;
 
