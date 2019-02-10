@@ -20,7 +20,7 @@ namespace Beans.Unity.Editor
 			}
 			var color = EditorGUIUtilityx.LowlightColor;
 			color.a = GUI.color.a;
-			UnityEditor.EditorGUI.DrawRect (rect, color);
+			EditorGUI.DrawRect (rect, color);
 		}
 
 		public class FoldoutWideScope : System.IDisposable
@@ -41,16 +41,16 @@ namespace Beans.Unity.Editor
 				this.isOpen = isOpen;
 				this.text = text;
 
-				Splitter ();
+				Splitter (wideMode: true);
 
-				var toggleRect = GUILayoutUtility.GetRect (1, UnityEditor.EditorGUIUtility.singleLineHeight);
+				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				toggleRect.xMin = 0;
 				toggleRect.xMax = Screen.width;
-				UnityEditor.EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
-				UnityEditor.EditorGUI.indentLevel++;
-				UnityEditor.EditorGUI.LabelField (toggleRect, text, labelStyle);
-				isOpen = UnityEditor.EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
-				UnityEditor.EditorGUI.indentLevel--;
+				EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
+				EditorGUI.indentLevel++;
+				EditorGUI.LabelField (toggleRect, text, labelStyle);
+				isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+				EditorGUI.indentLevel--;
 			}
 
 			public FoldoutWideScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultLabelStyle) { }
@@ -59,26 +59,26 @@ namespace Beans.Unity.Editor
 				this.isOpen = isExpanded.isExpanded;
 				this.text = text;
 
-				Splitter ();
+				Splitter (wideMode: true);
 
-				var toggleRect = GUILayoutUtility.GetRect (1, UnityEditor.EditorGUIUtility.singleLineHeight);
+				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				toggleRect.xMin = 0;
 				toggleRect.xMax = Screen.width;
-				UnityEditor.EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
-				UnityEditor.EditorGUI.indentLevel++;
-				UnityEditor.EditorGUI.LabelField (toggleRect, text, labelStyle);
-				using (var check = new UnityEditor.EditorGUI.ChangeCheckScope ())
+				EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
+				EditorGUI.indentLevel++;
+				EditorGUI.LabelField (toggleRect, text, labelStyle);
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					isOpen = UnityEditor.EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+					isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
 					if (check.changed)
 						isExpanded.isExpanded = isOpen;
 				}
-				UnityEditor.EditorGUI.indentLevel--;
+				EditorGUI.indentLevel--;
 			}
 
 			public void Dispose ()
 			{
-				Splitter ();
+				Splitter (wideMode: true);
 			}
 		}
 
@@ -101,10 +101,10 @@ namespace Beans.Unity.Editor
 			{
 				this.isOpen = isOpen;
 				this.text = text;
-				UnityEditor.EditorGUI.indentLevel++;
-				UnityEditor.EditorGUILayout.BeginVertical (containerStyle);
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
-				isOpen = UnityEditor.EditorGUI.Foldout (UnityEditor.EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+				isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
 			}
 
 			public FoldoutContainerScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultContainerStyle, DefaultLabelStyle) { }
@@ -112,12 +112,12 @@ namespace Beans.Unity.Editor
 			{
 				this.isOpen = isExpanded.isExpanded;
 				this.text = text;
-				UnityEditor.EditorGUI.indentLevel++;
-				UnityEditor.EditorGUILayout.BeginVertical (containerStyle);
+				EditorGUI.indentLevel++;
+				EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
-				using (var check = new UnityEditor.EditorGUI.ChangeCheckScope ())
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					isOpen = UnityEditor.EditorGUI.Foldout (UnityEditor.EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
+					isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
 					if (check.changed)
 						isExpanded.isExpanded = isOpen;
 				}
@@ -126,8 +126,8 @@ namespace Beans.Unity.Editor
 			public void Dispose ()
 			{
 				GUILayout.Space (3);
-				UnityEditor.EditorGUILayout.EndVertical ();
-				UnityEditor.EditorGUI.indentLevel--;
+				EditorGUILayout.EndVertical ();
+				EditorGUI.indentLevel--;
 			}
 		}
 
@@ -136,13 +136,13 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public static void MinField (SerializedProperty value, float min)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value);
+			EditorGUILayout.PropertyField (value);
 			value.floatValue = Mathf.Max (value.floatValue, min);
 		}
 
 		public static void MinField (SerializedProperty value, float min, GUIContent content)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value, content);
+			EditorGUILayout.PropertyField (value, content);
 			value.floatValue = Mathf.Max (value.floatValue, min);
 		}
 
@@ -151,13 +151,13 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public static void MaxField (SerializedProperty value, float max)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value);
+			EditorGUILayout.PropertyField (value);
 			value.floatValue = Mathf.Min (value.floatValue, max);
 		}
 
 		public static void MaxField (SerializedProperty value, float max, GUIContent content)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value, content);
+			EditorGUILayout.PropertyField (value, content);
 			value.floatValue = Mathf.Min (value.floatValue, max);
 		}
 
@@ -166,13 +166,13 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public static void MinField (SerializedProperty value, int min)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value);
+			EditorGUILayout.PropertyField (value);
 			value.intValue = Mathf.Max (value.intValue, min);
 		}
 
 		public static void MinField (SerializedProperty value, int min, GUIContent content)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value, content);
+			EditorGUILayout.PropertyField (value, content);
 			value.intValue = Mathf.Max (value.intValue, min);
 		}
 
@@ -181,13 +181,13 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public static void MaxField (SerializedProperty value, int max)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value);
+			EditorGUILayout.PropertyField (value);
 			value.intValue = Mathf.Min (value.intValue, max);
 		}
 
 		public static void MaxField (SerializedProperty value, int max, GUIContent content)
 		{
-			UnityEditor.EditorGUILayout.PropertyField (value, content);
+			EditorGUILayout.PropertyField (value, content);
 			value.intValue = Mathf.Min (value.intValue, max);
 		}
 
@@ -196,7 +196,7 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public static void WIPAlert ()
 		{
-			UnityEditor.EditorGUILayout.HelpBox ("WIP", MessageType.Warning, true);
+			EditorGUILayout.HelpBox ("WIP", MessageType.Warning, true);
 		}
 
 		/// <summary>
