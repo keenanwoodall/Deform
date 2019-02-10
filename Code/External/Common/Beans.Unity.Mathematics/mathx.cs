@@ -84,7 +84,30 @@ namespace Beans.Unity.Mathematics
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static float repeat (float t, float length)
 		{
-			return clamp (t - floor (t / length) * length, 0, length);
+			if (t > 0)
+				return t % length;
+			else
+				return length - (abs (t) % length);
+		}
+		/// <summary>
+		/// Loops t every length.
+		/// </summary>
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		public static int repeat (int t, int length)
+		{
+			length -= 1;
+			if (t > 0)
+				return t % length;
+			else
+				return length - (abs (t) % length);
+		}
+		/// <summary>
+		/// Loops t every length.
+		/// </summary>
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		public static int2 repeat (int2 t, int2 length)
+		{
+			return int2 (repeat (t.x, length.x), repeat (t.y, length.y));
 		}
 
 		/// <summary>

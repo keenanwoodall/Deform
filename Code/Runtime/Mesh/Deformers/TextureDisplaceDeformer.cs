@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 using Beans.Unity.Collections;
+using Beans.Unity.Mathematics;
 
 namespace Deform
 {
@@ -12,6 +13,8 @@ namespace Deform
 	[Deformer (Name = "Texture Displace", Description = "Displaces mesh based off a texture", Type = typeof (TextureDisplaceDeformer), XRotation = -90f)]
 	public class TextureDisplaceDeformer : Deformer, IFactor
 	{
+		private const float _1OVER255 = 1f / 255f;
+
 		public float Factor
 		{
 			get => factor;
@@ -21,6 +24,11 @@ namespace Deform
 		{
 			get => repeat;
 			set => repeat = value;
+		}
+		public bool Bilinear
+		{
+			get => bilinear;
+			set => bilinear = value;
 		}
 		public TextureSampleSpace Space
 		{
@@ -47,8 +55,11 @@ namespace Deform
 			get => texture;
 			set
 			{
-				texture = value;
-				Initialize ();
+				if (value != null)
+				{
+					texture = value;
+					textureDirty = true;
+				}
 			}
 		}
 		public Transform Axis
@@ -66,57 +77,57 @@ namespace Deform
 		[SerializeField, HideInInspector] private TextureSampleSpace space;
 		[SerializeField, HideInInspector] private ColorChannel channel;
 		[SerializeField, HideInInspector] private bool repeat;
+		[SerializeField, HideInInspector] private bool bilinear;
 		[SerializeField, HideInInspector] private Vector2 offset = Vector2.zero;
 		[SerializeField, HideInInspector] private Vector2 tiling = Vector2.one;
 		[SerializeField, HideInInspector] private Texture2D texture;
 		[SerializeField, HideInInspector] private Transform axis;
 
 		private JobHandle handle;
-		private Color[] managedPixels;
-		private NativeArray<float4> nativePixels;
+		private Color32[] managedPixels;
+		private NativeTexture2D nativeTexture;
+		private bool textureDirty = false;
 
 		public override int BatchCount => 32;
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
-		public bool Initialize ()
-		{
-			if (nativePixels.IsCreated)
-				nativePixels.Dispose ();
-
-			if (Texture == null || !Texture.isReadable)
-				return false;
-
-			managedPixels = Texture.GetPixels ();
-
-			if (nativePixels.Length != managedPixels.Length)
-			{
-				if (nativePixels.IsCreated)
-					nativePixels.Dispose ();
-				nativePixels = new NativeArray<float4> (managedPixels.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-			}
-
-			managedPixels.MemCpy (nativePixels);
-
-			return true;
-		}
-
 		private void OnEnable ()
 		{
-			Initialize ();
+			textureDirty = true;
 		}
 		private void OnDisable ()
 		{
 			handle.Complete ();
-			if (nativePixels.IsCreated)
-				nativePixels.Dispose ();
+			if (nativeTexture.IsCreated)
+				nativeTexture.Dispose ();
+		}
+
+		public void MarkTextureDataDirty ()
+		{
+			textureDirty = true;
+		}
+
+		/// <summary>
+		/// Forces the native texture to update it's data based off of the current texture. Changing the `Texture` property triggers this automatically.
+		/// </summary>
+		public void ForceUpdateNativeData ()
+		{
+			if (Texture != null && Texture.isReadable)
+			{
+				managedPixels = texture.GetPixels32 ();
+				nativeTexture.Update (managedPixels, texture.width, texture.height);
+			}
+			else if (nativeTexture.IsCreated)
+				nativeTexture.Dispose ();
+			textureDirty = false;
 		}
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
-			if (!nativePixels.IsCreated)
-				if (!Initialize ())
-					return dependency;
-			if (Factor == 0f || Texture == null || !nativePixels.IsCreated)
+			if (textureDirty)
+				ForceUpdateNativeData ();
+
+			if (Factor == 0f || Texture == null || !nativeTexture.IsCreated)
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
@@ -126,37 +137,62 @@ namespace Deform
 			switch (Space)
 			{
 				default:
-					newHandle = new WorldTextureDisplaceJob
-					{
-						factor = Factor,
-						repeat = Repeat,
-						channel = (int)Channel,
-						offset = Offset,
-						tiling = Tiling,
-						width = Texture.width,
-						height = Texture.height,
-						direction = Quaternion.Inverse (data.Target.GetTransform ().rotation) * Axis.forward,
-						meshToAxis = meshToAxis,
-						pixels = nativePixels,
-						vertices = data.DynamicNative.VertexBuffer,
-						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
+					if (!Bilinear)
+						newHandle = new WorldTextureDisplaceJob
+						{
+							factor = Factor,
+							repeat = Repeat,
+							channel = (int)Channel,
+							offset = Offset,
+							tiling = Tiling,
+							direction = Quaternion.Inverse (data.Target.GetTransform ().rotation) * Axis.forward,
+							meshToAxis = meshToAxis,
+							texture = nativeTexture,
+							vertices = data.DynamicNative.VertexBuffer,
+							normals = data.DynamicNative.NormalBuffer
+						}.Schedule (data.Length, BatchCount, dependency);
+					else
+						newHandle = new WorldTextureDisplaceBilinearJob
+						{
+							factor = Factor,
+							repeat = Repeat,
+							channel = (int)Channel,
+							offset = Offset,
+							tiling = Tiling,
+							direction = Quaternion.Inverse (data.Target.GetTransform ().rotation) * Axis.forward,
+							meshToAxis = meshToAxis,
+							texture = nativeTexture,
+							vertices = data.DynamicNative.VertexBuffer,
+							normals = data.DynamicNative.NormalBuffer
+						}.Schedule (data.Length, BatchCount, dependency);
 					break;
 				case TextureSampleSpace.UV:
-					newHandle = new UVTextureDisplaceJob
-					{
-						factor = Factor,
-						repeat = Repeat,
-						channel = (int)Channel,
-						offset = Offset,
-						tiling = Tiling,
-						width = Texture.width,
-						height = Texture.height,
-						pixels = nativePixels,
-						uvs = data.DynamicNative.UVBuffer,
-						vertices = data.DynamicNative.VertexBuffer,
-						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
+					if (!Bilinear)
+						newHandle = new UVTextureDisplaceJob
+						{
+							factor = Factor,
+							repeat = Repeat,
+							channel = (int)Channel,
+							offset = Offset,
+							tiling = Tiling,
+							texture = nativeTexture,
+							uvs = data.DynamicNative.UVBuffer,
+							vertices = data.DynamicNative.VertexBuffer,
+							normals = data.DynamicNative.NormalBuffer
+						}.Schedule (data.Length, BatchCount, dependency);
+					else
+						newHandle = new UVTextureDisplaceBilinearJob
+						{
+							factor = Factor,
+							repeat = Repeat,
+							channel = (int)Channel,
+							offset = Offset,
+							tiling = Tiling,
+							texture = nativeTexture,
+							uvs = data.DynamicNative.UVBuffer,
+							vertices = data.DynamicNative.VertexBuffer,
+							normals = data.DynamicNative.NormalBuffer
+						}.Schedule (data.Length, BatchCount, dependency);
 					break;
 			}
 
@@ -173,8 +209,6 @@ namespace Deform
 			public int channel;
 			public float2 offset;
 			public float2 tiling;
-			public int width;
-			public int height;
 			public float3 direction;
 
 			public float4x4 meshToAxis;
@@ -183,44 +217,74 @@ namespace Deform
 			[ReadOnly]
 			public NativeArray<float3> normals;
 			[ReadOnly]
-			public NativeArray<float4> pixels;
+			public NativeTexture2D texture;
 
 			public void Execute (int index)
 			{
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 
-				var textureSize = int2 (width, height);
+				var textureSize = int2 (texture.width, texture.height);
 
 				var samplePosition = (int2)((point.xy + offset) * tiling * textureSize);
 				samplePosition += textureSize / 2;
 
-				if (!repeat && outsidetexture (samplePosition, textureSize))
+				if (repeat)
+					samplePosition = mathx.repeat (samplePosition, textureSize);
+				else if (OutsideTexture (samplePosition, textureSize))
 					return;
 
-				samplePosition = repeatsample (samplePosition, textureSize);
-
-				var pixelIndex = (samplePosition.x + samplePosition.y * width);
-				var color = pixels[pixelIndex];
+				var color32 = texture.GetPixel (samplePosition.x, samplePosition.y);
+				var color = float4 (color32.r * _1OVER255, color32.g * _1OVER255, color32.b * _1OVER255, color32.a * _1OVER255);
 
 				vertices[index] += direction * (color[channel] * factor);
 			}
 
-			private int2 repeatsample (int2 p, int2 size)
-			{
-				while (p.x < 0)
-					p.x += size.x;
-				while (p.y < 0)
-					p.y += size.y;
-
-				p.x %= size.x - 1;
-				p.y %= size.y - 1;
-
-				return p;
-			}
-
-			private bool outsidetexture (int2 p, int2 size)
+			private bool OutsideTexture (int2 p, int2 size)
 			{
 				return p.x < 0 || p.y < 0 || p.x >= size.x || p.y >= size.y;
+			}
+		}
+
+		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
+		private struct WorldTextureDisplaceBilinearJob : IJobParallelFor
+		{
+			public float factor;
+			public bool repeat;
+			public int channel;
+			public float2 offset;
+			public float2 tiling;
+			public float3 direction;
+
+			public float4x4 meshToAxis;
+
+			public NativeArray<float3> vertices;
+			[ReadOnly]
+			public NativeArray<float3> normals;
+			[ReadOnly]
+			public NativeTexture2D texture;
+
+			public void Execute (int index)
+			{
+				var point = mul (meshToAxis, float4 (vertices[index], 1f));
+
+				var textureSize = int2 (texture.width, texture.height);
+
+				var samplePosition = (point.xy + offset) * tiling * textureSize;
+				samplePosition += textureSize / 2;
+				samplePosition /= textureSize;
+
+				if (!repeat && OutsideTexture (samplePosition))
+					return;
+
+				var color32 = texture.GetPixelBilinear (samplePosition.x, samplePosition.y);
+				var color = float4 (color32.r * _1OVER255, color32.g * _1OVER255, color32.b * _1OVER255, color32.a * _1OVER255);
+
+				vertices[index] += direction * (color[channel] * factor);
+			}
+
+			private bool OutsideTexture (float2 p)
+			{
+				return p.x < 0 || p.y < 0 || p.x > 1f || p.y > 1f;
 			}
 		}
 
@@ -232,8 +296,6 @@ namespace Deform
 			public int channel;
 			public float2 offset;
 			public float2 tiling;
-			public int width;
-			public int height;
 
 			public NativeArray<float3> vertices;
 			[ReadOnly]
@@ -241,43 +303,66 @@ namespace Deform
 			[ReadOnly]
 			public NativeArray<float2> uvs;
 			[ReadOnly]
-			public NativeArray<float4> pixels;
+			public NativeTexture2D texture;
 
 			public void Execute (int index)
 			{
 				var uv = uvs[index];
-				var textureSize = int2 (width, height);
-
+				var textureSize = int2 (texture.width, texture.height);
 				var samplePosition = (int2)((uv + offset) * tiling * textureSize);
 
-				if (!repeat)
-					if (outsidetexture (samplePosition, textureSize))
-						return;
+				if (repeat)
+					samplePosition = mathx.repeat (samplePosition, textureSize);
+				else if (OutsideTexture (samplePosition, textureSize))
+					return;
 
-				samplePosition = repeatsample (samplePosition, textureSize);
-
-				var pixelIndex = (samplePosition.x + samplePosition.y * width);
-				var color = pixels[pixelIndex];
+				var color32 = texture.GetPixel (samplePosition.x, samplePosition.y);
+				var color = float4 (color32.r * _1OVER255, color32.g * _1OVER255, color32.b * _1OVER255, color32.a * _1OVER255);
 
 				vertices[index] += normals[index] * (color[channel] * factor);
 			}
 
-			private int2 repeatsample (int2 p, int2 size)
-			{
-				while (p.x < 0)
-					p.x += size.x;
-				while (p.y < 0)
-					p.y += size.y;
-
-				p.x %= size.x - 1;
-				p.y %= size.y - 1;
-
-				return p;
-			}
-
-			private bool outsidetexture (int2 p, int2 size)
+			private bool OutsideTexture (int2 p, int2 size)
 			{
 				return p.x < 0 || p.y < 0 || p.x >= size.x || p.y >= size.y;
+			}
+		}
+
+		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
+		private struct UVTextureDisplaceBilinearJob : IJobParallelFor
+		{
+			public float factor;
+			public bool repeat;
+			public int channel;
+			public float2 offset;
+			public float2 tiling;
+
+			public NativeArray<float3> vertices;
+			[ReadOnly]
+			public NativeArray<float3> normals;
+			[ReadOnly]
+			public NativeArray<float2> uvs;
+			[ReadOnly]
+			public NativeTexture2D texture;
+
+			public void Execute (int index)
+			{
+				var uv = uvs[index];
+				var textureSize = int2 (texture.width, texture.height);
+				var samplePosition = ((uv + offset) * tiling);
+
+				if (!repeat && OutsideTexture (samplePosition))
+					return;
+
+				var color32 = texture.GetPixelBilinear (samplePosition.x, samplePosition.y);
+				var color = float4 (color32.r * _1OVER255, color32.g * _1OVER255, color32.b * _1OVER255, color32.a * _1OVER255);
+
+				vertices[index] += normals[index] * (color[channel] * factor);
+			}
+
+			private bool OutsideTexture (float2 p)
+			{
+				return p.x < 0 || p.y < 0 || p.x > 1f || p.y > 1f;
 			}
 		}
 	}
