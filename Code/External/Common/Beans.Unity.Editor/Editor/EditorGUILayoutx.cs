@@ -6,9 +6,11 @@ namespace Beans.Unity.Editor
 {
 	public static class EditorGUILayoutx
 	{
-		public static void Splitter (bool wideMode = false)
+		public static void Splitter (float padding = 0f, bool wideMode = false)
 		{
+			GUILayoutUtility.GetRect (1f, padding);
 			var rect = GUILayoutUtility.GetRect (1f, 1f);
+			GUILayoutUtility.GetRect (1f, padding);
 			if (Event.current.type != EventType.Repaint)
 				return;
 			if (wideMode)
