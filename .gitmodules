@@ -1,0 +1,2 @@
+[submodule "docs"]
+	path = docs	url = https://github.com/keenanwoodall/Deform.wiki.git
