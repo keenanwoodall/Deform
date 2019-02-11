@@ -13,7 +13,7 @@ namespace DeformEditor.Masking
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent InnerRadius = new GUIContent (text: "Inner Radius");
 			public static readonly GUIContent OuterRadius = new GUIContent (text: "Outer Radius");
-			public static readonly GUIContent Invert = new GUIContent (text: "Inner Radius");
+			public static readonly GUIContent Invert = new GUIContent (text: "Invert");
 			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}
 
