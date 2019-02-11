@@ -102,7 +102,7 @@ namespace Deform
 			{
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 
-				var angleRadians = radians (angle) * (1f / abs (top - bottom));
+				var angleRadians = radians (angle) * (1f / (top - bottom));
 				var scale = 1f / angleRadians;
 				var rotation = point.y * angleRadians;
 
@@ -134,9 +134,9 @@ namespace Deform
 
 				var unbentPoint = point;
 
-				var angleRadians = radians (angle) * (1f / abs (top - bottom));
-				var scale = 1f / angleRadians;
-				var rotation = clamp (point.y, bottom, top) * angleRadians;
+				var angleRadians = radians (angle);
+				var scale = 1f / (angleRadians * (1f / (top - bottom)));
+				var rotation = (clamp (point.y, bottom, top) - bottom) / (top - bottom) * angleRadians;
 
 				var c = cos ((float)PI - rotation);
 				var s = sin ((float)PI - rotation);
@@ -156,6 +156,8 @@ namespace Deform
 					point.y += -c * (unbentPoint.y - bottom);
 					point.x += s * (unbentPoint.y - bottom);
 				}
+
+				point.y += bottom;
 
 				vertices[index] = mul (axisToMesh, point).xyz;
 			}
