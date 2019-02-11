@@ -54,11 +54,17 @@ namespace DeformEditor
 
 		private ArcHandle startAngleHandle = new ArcHandle ();
 		private ArcHandle endAngleHandle = new ArcHandle ();
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -94,46 +100,16 @@ namespace DeformEditor
 
 			var twist = target as TwistDeformer;
 
-			DrawBoundsHandles (twist);
+			if (boundsHandle.DrawHandle (twist.Top, twist.Bottom, twist.Axis, Vector3.forward))
+			{
+				Undo.RecordObject (twist, "Changed Bounds");
+				twist.Top = boundsHandle.top;
+				twist.Bottom = boundsHandle.bottom;
+			}
+
 			DrawAngleHandles (twist);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
-		}
-
-		private void DrawBoundsHandles (TwistDeformer twist)
-		{
-			using (new Handles.DrawingScope (Handles.matrix))
-			{
-				Handles.color = DeformEditorSettings.SolidHandleColor;
-
-				var direction = twist.Axis.forward;
-				var topWorldPosition = twist.transform.position + direction * twist.Top;
-				var botWorldPosition = twist.transform.position + direction * twist.Bottom;
-
-				DeformHandles.Line (topWorldPosition, botWorldPosition, DeformHandles.LineMode.LightDotted);
-
-				using (var check = new EditorGUI.ChangeCheckScope ())
-				{
-					var newTopWorld = DeformHandles.Slider (topWorldPosition, direction);
-					if (check.changed)
-					{
-						Undo.RecordObject (twist, "Changed Top");
-						var newTop = DeformHandlesUtility.DistanceAlongAxis (twist.Axis, twist.Axis.position, newTopWorld, Axis.Z);
-						twist.Top = newTop;
-					}
-				}
-
-				using (var check = new EditorGUI.ChangeCheckScope ())
-				{
-					var newBotWorld = DeformHandles.Slider (botWorldPosition, -direction);
-					if (check.changed)
-					{
-						Undo.RecordObject (twist, "Changed Bottom");
-						var newBot = DeformHandlesUtility.DistanceAlongAxis (twist.Axis, twist.Axis.position, newBotWorld, Axis.Z);
-						twist.Bottom = newBot;
-					}
-				}
-			}
 		}
 
 		private void DrawAngleHandles (TwistDeformer twist)

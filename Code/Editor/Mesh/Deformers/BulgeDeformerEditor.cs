@@ -36,11 +36,17 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -64,13 +70,16 @@ namespace DeformEditor
 		{
 			base.OnSceneGUI ();
 
-			if (target == null)
-				return;
-
 			var bulge = target as BulgeDeformer;
 
 			DrawFactorHandle (bulge);
-			DrawBoundsHandles (bulge);
+
+			if (boundsHandle.DrawHandle (bulge.Top, bulge.Bottom, bulge.Axis, Vector3.forward))
+			{
+				Undo.RecordObject (bulge, "Changed Bounds");
+				bulge.Top = boundsHandle.top;
+				bulge.Bottom = boundsHandle.bottom;
+			}
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
@@ -79,9 +88,10 @@ namespace DeformEditor
 		{
 			var direction = bulge.Axis.up;
 
-			var worldPosition = bulge.Axis.position + direction * ((bulge.Factor + 1f) * 0.5f);
+			var center = bulge.Axis.position + (bulge.Axis.forward * ((bulge.Top + bulge.Bottom) * 0.5f));
+			var worldPosition = center + direction * ((bulge.Factor + 1f) * 0.5f);
 
-			DeformHandles.Line (bulge.Axis.position, worldPosition, DeformHandles.LineMode.LightDotted);
+			DeformHandles.Line (center, worldPosition, DeformHandles.LineMode.LightDotted);
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
@@ -91,38 +101,6 @@ namespace DeformEditor
 					var newFactor = DeformHandlesUtility.DistanceAlongAxis (bulge.Axis, bulge.Axis.position, newWorldPosition, Axis.Y) * 2f - 1f;
 					Undo.RecordObject (bulge, "Changed Factor");
 					bulge.Factor = newFactor;
-				}
-			}
-		}
-
-		private void DrawBoundsHandles (BulgeDeformer bulge)
-		{
-			var direction = bulge.Axis.forward;
-
-			var topWorldPosition = bulge.Axis.position + direction * bulge.Top;
-			var botWorldPosition = bulge.Axis.position + direction * bulge.Bottom;
-
-			DeformHandles.Line (topWorldPosition, botWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newTopWorld = DeformHandles.Slider (topWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (bulge, "Changed Top");
-					var newTop = DeformHandlesUtility.DistanceAlongAxis (bulge.Axis, bulge.Axis.position, newTopWorld, Axis.Z);
-					bulge.Top = newTop;
-				}
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newBotWorld = DeformHandles.Slider (botWorldPosition, -direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (bulge, "Changed Bottom");
-					var newBot = DeformHandlesUtility.DistanceAlongAxis (bulge.Axis, bulge.Axis.position, newBotWorld, Axis.Z);
-					bulge.Bottom = newBot;
 				}
 			}
 		}

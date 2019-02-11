@@ -39,9 +39,6 @@ namespace DeformEditor
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		/// <summary>
-		/// Unity gets confused when OnSceneGUI is marked virtual or overwritten by subclasses.
-		/// </summary>
 		public virtual void OnSceneGUI () { }
 	}
 }

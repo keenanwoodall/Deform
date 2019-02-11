@@ -48,11 +48,17 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -91,8 +97,19 @@ namespace DeformEditor
 			var ripple = target as RippleDeformer;
 
 			DrawMagnitudeHandle (ripple);
+
 			if (ripple.Mode == BoundsMode.Limited)
-				DrawBoundsHandles (ripple);
+			{
+				if (boundsHandle.DrawHandle (ripple.OuterRadius, ripple.InnerRadius, ripple.Axis, Vector3.up))
+				{
+					Undo.RecordObject (ripple, "Changed Bounds");
+					ripple.OuterRadius = boundsHandle.top;
+					ripple.InnerRadius = boundsHandle.bottom;
+				}
+			}
+
+			DeformHandles.Circle (ripple.Axis.position, ripple.Axis.forward, ripple.Axis.right, ripple.InnerRadius);
+			DeformHandles.Circle (ripple.Axis.position, ripple.Axis.forward, ripple.Axis.right, ripple.OuterRadius);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
@@ -115,39 +132,6 @@ namespace DeformEditor
 				DeformHandles.Line (ripple.Axis.position - offset, newWorldPosition, DeformHandles.LineMode.LightDotted);
 			}
 
-		}
-
-		private void DrawBoundsHandles (RippleDeformer ripple)
-		{
-			var direction = ripple.Axis.up;
-
-			var innerWorldPosition = ripple.Axis.position + direction * ripple.InnerRadius;
-			var outerWorldPosition = ripple.Axis.position + direction * ripple.OuterRadius;
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newInnerWorldPosition = DeformHandles.Slider (innerWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (ripple, "Changed Inner Radius");
-					var newInnerRadius = DeformHandlesUtility.DistanceAlongAxis (ripple.Axis, ripple.Axis.position, newInnerWorldPosition, Axis.Y);
-					ripple.InnerRadius = newInnerRadius;
-				}
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newOuterWorldPosition = DeformHandles.Slider (outerWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (ripple, "Changed Outer Radius");
-					var newOuterRadius = DeformHandlesUtility.DistanceAlongAxis (ripple.Axis, ripple.Axis.position, newOuterWorldPosition, Axis.Y);
-					ripple.OuterRadius = newOuterRadius;
-				}
-			}
-
-			DeformHandles.Circle (ripple.Axis.position, ripple.Axis.forward, ripple.Axis.right, ripple.InnerRadius);
-			DeformHandles.Circle (ripple.Axis.position, ripple.Axis.forward, ripple.Axis.right, ripple.OuterRadius);
 		}
 	}
 }

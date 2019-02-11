@@ -36,11 +36,17 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI()
@@ -69,40 +75,27 @@ namespace DeformEditor
 
             var stretch = target as SquashAndStretchDeformer;
 
-            DrawBoundsHandles (stretch);
-
-            EditorApplication.QueuePlayerLoopUpdate ();
-        }
-
-        private void DrawBoundsHandles (SquashAndStretchDeformer stretch)
-        {
-			var direction = stretch.Axis.forward;
-			var topWorldPosition = stretch.Axis.position + direction * stretch.Top;
-			var botWorldPosition = stretch.Axis.position + direction * stretch.Bottom;
-
-			DeformHandles.Line (topWorldPosition, botWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			var topMultiplier = 0f;
+			var bottomMultiplier = 0f;
+			if (stretch.Factor >= 0)
 			{
-				var newTopWorld = DeformHandles.Slider (topWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (stretch, "Changed Top");
-					var newTop = DeformHandlesUtility.DistanceAlongAxis (stretch.Axis, stretch.Axis.position, newTopWorld, Axis.Z);
-					stretch.Top = newTop;
-				}
+				topMultiplier = 1f + stretch.Factor;
+				bottomMultiplier = 1f + stretch.Factor;
+			}
+			else
+			{
+				topMultiplier = -1f / (stretch.Factor - 1f);
+				bottomMultiplier = -1f / (stretch.Factor - 1f);
 			}
 
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			if (boundsHandle.DrawHandle (stretch.Top * topMultiplier, stretch.Bottom * bottomMultiplier, stretch.Axis, Vector3.forward))
 			{
-				var newBotWorld = DeformHandles.Slider (botWorldPosition, -direction);
-				var newBot = DeformHandlesUtility.DistanceAlongAxis (stretch.Axis, stretch.Axis.position, newBotWorld, Axis.Z);
-				if (check.changed)
-				{
-					Undo.RecordObject (stretch, "Changed Bottom");
-					stretch.Bottom = newBot;
-				}
+				Undo.RecordObject (stretch, "Changed Bounds");
+				stretch.Top = boundsHandle.top / topMultiplier;
+				stretch.Bottom = boundsHandle.bottom / bottomMultiplier;
 			}
+
+			EditorApplication.QueuePlayerLoopUpdate ();
         }
     }
 }

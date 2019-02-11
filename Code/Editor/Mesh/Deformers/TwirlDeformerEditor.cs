@@ -45,11 +45,17 @@ namespace DeformEditor
 		private Properties properties;
 
 		private ArcHandle angleHandle = new ArcHandle ();
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -85,46 +91,19 @@ namespace DeformEditor
 			base.OnSceneGUI ();
 
 			var twirl = target as TwirlDeformer;
-			
+
 			if (twirl.Mode == BoundsMode.Limited)
-				DrawBoundsHandles (twirl);
+			{
+				if (boundsHandle.DrawHandle (twirl.Outer, twirl.Inner, twirl.Axis, Vector3.right))
+				{
+					Undo.RecordObject (twirl, "Changed Bounds");
+					twirl.Outer = boundsHandle.top;
+					twirl.Inner = boundsHandle.bottom;
+				}
+			}
 			DrawAngleHandle (twirl);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
-		}
-
-		private void DrawBoundsHandles (TwirlDeformer twirl)
-		{
-			using (new Handles.DrawingScope (Handles.matrix))
-			{
-				var direction = twirl.Axis.right;
-				var innerWorldPosition = twirl.transform.position + direction * twirl.Inner;
-				var outerWorldPosition = twirl.transform.position + direction * twirl.Outer;
-
-				DeformHandles.Line (innerWorldPosition, outerWorldPosition, DeformHandles.LineMode.LightDotted);
-
-				using (var check = new EditorGUI.ChangeCheckScope ())
-				{
-					var newInnerWorld = DeformHandles.Slider (innerWorldPosition, direction);
-					if (check.changed)
-					{
-						Undo.RecordObject (twirl, "Changed Inner");
-						var newInner = DeformHandlesUtility.DistanceAlongAxis (twirl.Axis, twirl.Axis.position, newInnerWorld, Axis.X);
-						twirl.Inner = newInner;
-					}
-				}
-
-				using (var check = new EditorGUI.ChangeCheckScope ())
-				{
-					var newOuterWorld = DeformHandles.Slider (outerWorldPosition, -direction);
-					if (check.changed)
-					{
-						Undo.RecordObject (twirl, "Changed Outer");
-						var newOuter = DeformHandlesUtility.DistanceAlongAxis (twirl.Axis, twirl.Axis.position, newOuterWorld, Axis.X);
-						twirl.Outer = newOuter;
-					}
-				}
-			}
 		}
 
 		void DrawAngleHandle (TwirlDeformer twirl)

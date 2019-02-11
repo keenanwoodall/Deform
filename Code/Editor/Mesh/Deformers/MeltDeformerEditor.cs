@@ -60,11 +60,17 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -117,7 +123,13 @@ namespace DeformEditor
 			var melt = target as MeltDeformer;
 
 			DrawRadiusHandle (melt);
-			DrawBoundsHandles (melt);
+
+			if (boundsHandle.DrawHandle (melt.Top, melt.Bottom, melt.Axis, Vector3.forward))
+			{
+				Undo.RecordObject (melt, "Changed Bounds");
+				melt.Top = boundsHandle.top;
+				melt.Bottom = boundsHandle.bottom;
+			}
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
@@ -131,7 +143,7 @@ namespace DeformEditor
 			DeformHandles.Circle (bottomWorldPosition, melt.Axis.forward, melt.Axis.right, scaledRadius);
 
 			var direction = melt.Axis.up;
-			var radiusWorldPosition = melt.Axis.position + direction * scaledRadius;
+			var radiusWorldPosition = melt.Axis.position + (melt.Axis.forward * melt.Bottom) +direction * scaledRadius;
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
@@ -141,38 +153,6 @@ namespace DeformEditor
 					Undo.RecordObject (melt, "Changed Radius");
 					var newRadius = DeformHandlesUtility.DistanceAlongAxis (melt.Axis, melt.Axis.position, newRadiusWorldPosition, Axis.Y);
 					melt.Radius = (newRadius * 2f) - 1f;
-				}
-			}
-		}
-
-		private void DrawBoundsHandles (MeltDeformer melt)
-		{
-			var direction = melt.Axis.forward;
-
-			var topWorldPosition = melt.Axis.position + direction * melt.Top;
-			var bottomWorldPosition = melt.Axis.position + direction * melt.Bottom;
-
-			DeformHandles.Line (bottomWorldPosition, topWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newBottomWorldPosition = DeformHandles.Slider (bottomWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (melt, "Changed Bottom");
-					var newBottom = DeformHandlesUtility.DistanceAlongAxis (melt.Axis, melt.Axis.position, newBottomWorldPosition, Axis.Z);
-					melt.Bottom = newBottom;
-				}
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newTopWorldPosition = DeformHandles.Slider (topWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (melt, "Changed Top");
-					var newTop = DeformHandlesUtility.DistanceAlongAxis (melt.Axis, melt.Axis.position, newTopWorldPosition, Axis.Z);
-					melt.Top = newTop;
 				}
 			}
 		}

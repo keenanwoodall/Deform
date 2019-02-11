@@ -42,11 +42,17 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -74,7 +80,13 @@ namespace DeformEditor
 
 			var taper = target as TaperDeformer;
 
-			DrawBoundsHandles (taper);
+			if (boundsHandle.DrawHandle (taper.Top, taper.Bottom, taper.Axis, Vector3.forward))
+			{
+				Undo.RecordObject (taper, "Changed Bounds");
+				taper.Top = boundsHandle.top;
+				taper.Bottom = boundsHandle.bottom;
+			}
+
 			DrawTopFactorHandles (taper);
 			DrawBottomFactorHandles (taper);
 

@@ -37,22 +37,22 @@ namespace Beans.Unity.Editor
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					var topSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (topPosition)) * screenspaceHandleSize;
-					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCap, snap);
+					var bottomSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (bottomPosition)) * screenspaceHandleSize;
+					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCap, snap);
 					if (check.changed)
 					{
-						top = Vector3.Dot (direction, newTopPosition);
+						bottom = Vector3.Dot (direction, newBottomPosition);
 						return true;
 					}
 				}
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					var bottomSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (bottomPosition)) * screenspaceHandleSize;
-					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCap, snap);
+					var topSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (topPosition)) * screenspaceHandleSize;
+					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCap, snap);
 					if (check.changed)
 					{
-						bottom = Vector3.Dot (direction, newBottomPosition);
+						top = Vector3.Dot (direction, newTopPosition);
 						return true;
 					}
 				}

@@ -47,6 +47,7 @@ namespace DeformEditor
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
 
 			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
@@ -81,8 +82,6 @@ namespace DeformEditor
 		{
 			base.OnSceneGUI ();
 
-			if (target == null)
-				return;
 			var bend = target as BendDeformer;
 
 			if (boundsHandle.DrawHandle (bend.Top, bend.Bottom, bend.Axis, Vector3.up))
@@ -91,6 +90,7 @@ namespace DeformEditor
 				bend.Top = boundsHandle.top;
 				bend.Bottom = boundsHandle.bottom;
 			}
+
 			DrawAngleHandle (bend);
 
 			EditorApplication.QueuePlayerLoopUpdate ();

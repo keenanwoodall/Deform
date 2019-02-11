@@ -36,11 +36,17 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
+
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -73,63 +79,27 @@ namespace DeformEditor
 			var skew = target as SkewDeformer;
 
 			if (skew.Mode == BoundsMode.Limited)
-				DrawBoundsHandles (skew);
-			else
-				DrawAxisGuide (skew);
+			{
+				if (boundsHandle.DrawHandle (skew.Top, skew.Bottom, skew.Axis, Vector3.up))
+				{
+					Undo.RecordObject (skew, "Changed Bounds");
+					skew.Top = boundsHandle.top;
+					skew.Bottom = boundsHandle.bottom;
+				}
+			}
+
 			DrawFactorHandle (skew);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
-		private void DrawAxisGuide (SkewDeformer skew)
-		{
-			var direction = skew.Axis.up;
-
-			var top = skew.Axis.position + direction * HandleUtility.GetHandleSize (skew.Axis.position) * 2f;
-			var bottom = skew.Axis.position - direction * HandleUtility.GetHandleSize (skew.Axis.position) * 2f;
-
-			Handles.color = DeformEditorSettings.LightHandleColor;
-			Handles.DrawLine (top, bottom);
-		}
-
-		private void DrawBoundsHandles (SkewDeformer skew)
-		{
-			var direction = skew.Axis.up;
-
-			var topHandleWorldPosition = skew.Axis.position + direction * skew.Top;
-			var bottomHandleWorldPosition = skew.Axis.position + direction * skew.Bottom;
-
-			DeformHandles.Line (topHandleWorldPosition, bottomHandleWorldPosition, DeformHandles.LineMode.Light);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newTopWorldPosition = DeformHandles.Slider (topHandleWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (skew, "Changed Top");
-					var newTop = DeformHandlesUtility.DistanceAlongAxis (skew.Axis, skew.Axis.position, newTopWorldPosition, Axis.Y);
-					skew.Top = newTop;
-				}
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newBottomWorldPosition = DeformHandles.Slider (bottomHandleWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (skew, "Changed Bottom");
-					var newBottom = DeformHandlesUtility.DistanceAlongAxis (skew.Axis, skew.Axis.position, newBottomWorldPosition, Axis.Y);
-					skew.Bottom = newBottom;
-				}
-			}
-		}
-
 		private void DrawFactorHandle (SkewDeformer skew)
 		{
 			var direction = skew.Axis.forward;
-			var handleWorldPosition = skew.Axis.position + direction * skew.Factor;
+			var center = skew.Axis.position + (skew.Axis.up * ((skew.Top + skew.Bottom) * 0.5f));
+			var handleWorldPosition = center + direction * skew.Factor;
 
-			DeformHandles.Line (skew.Axis.position, handleWorldPosition, DeformHandles.LineMode.LightDotted);
+			DeformHandles.Line (center, handleWorldPosition, DeformHandles.LineMode.LightDotted);
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
