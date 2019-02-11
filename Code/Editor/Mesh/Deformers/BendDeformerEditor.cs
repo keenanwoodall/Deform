@@ -42,11 +42,16 @@ namespace DeformEditor
 		private Properties properties;
 
 		private ArcHandle angleHandle = new ArcHandle ();
+		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
 			properties = new Properties (serializedObject);
+
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -80,51 +85,15 @@ namespace DeformEditor
 				return;
 			var bend = target as BendDeformer;
 
-			DrawAxisGuide (bend);
-			DrawBoundsHandles (bend);
+			if (boundsHandle.DrawHandle (bend.Top, bend.Bottom, bend.Axis, Vector3.up))
+			{
+				Undo.RecordObject (bend, "Changed Bounds");
+				bend.Top = boundsHandle.top;
+				bend.Bottom = boundsHandle.bottom;
+			}
 			DrawAngleHandle (bend);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
-		}
-
-		private void DrawAxisGuide (BendDeformer bend)
-		{
-			var direction = bend.Axis.up;
-			var topWorldPosition = bend.Axis.position + bend.Axis.up * HandleUtility.GetHandleSize (bend.Axis.position) * 2f;
-			var bottomWorldPosition = bend.Axis.position + -bend.Axis.up * HandleUtility.GetHandleSize (bend.Axis.position) * 2f;
-
-			DeformHandles.Line (bottomWorldPosition, topWorldPosition, DeformHandles.LineMode.LightDotted);
-		}
-
-		private void DrawBoundsHandles (BendDeformer bend)
-		{
-			var direction = bend.Axis.up;
-			var topWorldPosition = bend.Axis.position + bend.Axis.up * bend.Top;
-			var bottomWorldPosition = bend.Axis.position + bend.Axis.up * bend.Bottom;
-
-			DeformHandles.Line (bottomWorldPosition, topWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newBottomWorldPosition = DeformHandles.Slider (bottomWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (bend, "Changed Bottom");
-					var newBottom = DeformHandlesUtility.DistanceAlongAxis (bend.Axis, bend.Axis.position, newBottomWorldPosition, Axis.Y);
-					bend.Bottom = newBottom;
-				}
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newTopWorldPosition = DeformHandles.Slider (topWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (bend, "Changed Top");
-					var newTop = DeformHandlesUtility.DistanceAlongAxis (bend.Axis, bend.Axis.position, newTopWorldPosition, Axis.Y);
-					bend.Top = newTop;
-				}
-			}
 		}
 
 		private void DrawAngleHandle (BendDeformer bend)
@@ -135,7 +104,7 @@ namespace DeformEditor
 
 			var direction = -bend.Axis.right;
 			var normal = -bend.Axis.forward;
-			var matrix = Matrix4x4.TRS (bend.Axis.position, Quaternion.LookRotation (direction, normal), Vector3.one);
+			var matrix = Matrix4x4.TRS (bend.Axis.position + bend.Axis.rotation * (Vector3.up * bend.Bottom), Quaternion.LookRotation (direction, normal), Vector3.one);
 
 			using (new Handles.DrawingScope (Handles.matrix))
 			{
