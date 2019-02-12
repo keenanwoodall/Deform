@@ -10,8 +10,6 @@ namespace Deform
 	[Deformer (Name = "Cellular Noise", Description = "Adds cellular noise to mesh", Type = typeof (CellularNoiseDeformer))]
 	public class CellularNoiseDeformer : NoiseDeformer, IFactor
 	{
-		//private 
-
 		protected override JobHandle CreateDerivativeNoiseJob (MeshData data, JobHandle dependency = default)
 		{
 			return new DerivativeNoiseJob
@@ -161,15 +159,19 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = float3 (0f, 0f, 1f) * noise.cellular
+				var noiseOffset = float3 (0f, 0f, 1f) * remap
 				(
-					float3
+					0f, 1f, -1f, 1f,
+					noise.cellular
 					(
-						point.x * frequency.x + offset.x,
-						point.y * frequency.y + offset.y,
-						point.z * frequency.z + offset.z
-					)
-				).x * magnitude;
+						float3
+						(
+							point.x * frequency.x + offset.x,
+							point.y * frequency.y + offset.y,
+							point.z * frequency.z + offset.z
+						)
+					).x
+				)* magnitude;
 
 				point += noiseOffset;
 
@@ -191,15 +193,19 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = float3 (0f, 0f, 1f) * noise.cellular
+				var noiseOffset = float3 (0f, 0f, 1f) * remap
 				(
-					float3
+					0f, 1f, -1f, 1f,
+					noise.cellular
 					(
-						point.x * frequency.x + offset.x,
-						point.y * frequency.y + offset.y,
-						point.z * frequency.z + offset.z
-					)
-				).x * magnitude;
+						float3
+						(
+							point.x * frequency.x + offset.x,
+							point.y * frequency.y + offset.y,
+							point.z * frequency.z + offset.z
+						)
+					).x
+					) * magnitude;
 
 				vertices[index] += noiseOffset;
 			}
@@ -220,15 +226,19 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = float3 (0f, 0f, 1f) * noise.cellular
+				var noiseOffset = float3 (0f, 0f, 1f) * remap
 				(
-					float3
+					0f, 1f, -1f, 1f,
+					noise.cellular
 					(
-						point.x * frequency.x + offset.x,
-						point.y * frequency.y + offset.y,
-						point.z * frequency.z + offset.z
-					)
-				).x * magnitude;
+						float3
+						(
+							point.x * frequency.x + offset.x,
+							point.y * frequency.y + offset.y,
+							point.z * frequency.z + offset.z
+						)
+					).x
+				)* magnitude;
 
 				point += noiseOffset;
 
@@ -251,15 +261,19 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = float3 (0f, 0f, 1f) * noise.cellular
+				var noiseOffset = float3 (0f, 0f, 1f) * remap
 				(
-					float3
+					0f, 1f, -1f, 1f,
+					noise.cellular
 					(
-						point.x * frequency.x + offset.x,
-						point.y * frequency.y + offset.y,
-						point.z * frequency.z + offset.z
-					)
-				).x * magnitude;
+						float3
+						(
+							point.x * frequency.x + offset.x,
+							point.y * frequency.y + offset.y,
+							point.z * frequency.z + offset.z
+						)
+					).x
+				) * magnitude;
 
 				point += noiseOffset;
 
