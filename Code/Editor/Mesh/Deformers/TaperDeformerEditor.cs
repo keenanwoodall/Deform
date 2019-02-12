@@ -50,8 +50,6 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
-			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
-			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
@@ -80,6 +78,8 @@ namespace DeformEditor
 
 			var taper = target as TaperDeformer;
 
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			if (boundsHandle.DrawHandle (taper.Top, taper.Bottom, taper.Axis, Vector3.forward))
 			{
 				Undo.RecordObject (taper, "Changed Bounds");
@@ -91,37 +91,6 @@ namespace DeformEditor
 			DrawBottomFactorHandles (taper);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
-		}
-
-		private void DrawBoundsHandles (TaperDeformer taper)
-		{
-			var direction = taper.Axis.forward;
-			var topWorldPosition = taper.Axis.position + direction * taper.Top;
-			var bottomWorldPosition = taper.Axis.position + direction * taper.Bottom;
-
-			DeformHandles.Line (topWorldPosition, bottomWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newTopWorldPosition = DeformHandles.Slider (topWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (taper, "Changed Top");
-					var newTop = DeformHandlesUtility.DistanceAlongAxis (taper.Axis, taper.Axis.position, newTopWorldPosition, Axis.Z);
-					taper.Top = newTop;
-				}
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newBottomWorldPosition = DeformHandles.Slider (bottomWorldPosition, direction);
-				if (check.changed)
-				{
-					Undo.RecordObject (taper, "Changed Bottom");
-					var newBottom = DeformHandlesUtility.DistanceAlongAxis (taper.Axis, taper.Axis.position, newBottomWorldPosition, Axis.Z);
-					taper.Bottom = newBottom;
-				}
-			}
 		}
 
 		private void DrawTopFactorHandles (TaperDeformer taper)

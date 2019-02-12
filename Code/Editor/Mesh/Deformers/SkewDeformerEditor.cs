@@ -44,8 +44,6 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
-			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
-			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
@@ -80,6 +78,8 @@ namespace DeformEditor
 
 			if (skew.Mode == BoundsMode.Limited)
 			{
+				boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+				boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 				if (boundsHandle.DrawHandle (skew.Top, skew.Bottom, skew.Axis, Vector3.up))
 				{
 					Undo.RecordObject (skew, "Changed Bounds");

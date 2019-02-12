@@ -68,8 +68,6 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
-			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
-			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			boundsHandle.guideLine = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
@@ -124,6 +122,8 @@ namespace DeformEditor
 
 			DrawRadiusHandle (melt);
 
+			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			if (boundsHandle.DrawHandle (melt.Top, melt.Bottom, melt.Axis, Vector3.forward))
 			{
 				Undo.RecordObject (melt, "Changed Bounds");
