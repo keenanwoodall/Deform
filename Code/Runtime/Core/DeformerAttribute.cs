@@ -2,7 +2,7 @@
 
 namespace Deform
 {
-	public enum Category
+	public enum Category : byte
 	{
 		Normal,
 		Mask,

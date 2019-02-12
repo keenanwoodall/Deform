@@ -1,6 +1,6 @@
 ﻿namespace Deform
 {
-	public enum ColorChannel
+	public enum ColorChannel : byte
 	{
 		R = 0,
 		G = 1,

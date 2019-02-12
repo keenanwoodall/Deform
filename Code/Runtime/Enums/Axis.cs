@@ -1,4 +1,9 @@
 ﻿namespace Deform
 {
-	public enum Axis { X, Y, Z }
+	public enum Axis : byte
+	{
+		X,
+		Y,
+		Z
+	}
 }

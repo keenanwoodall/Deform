@@ -7,7 +7,7 @@
 	/// Stop: Mesh is reverted to it's undeformed state until mode is switched.
 	/// Custom: Allows updates, but not from a Deformable Manager.
 	/// </summary>
-	public enum UpdateMode
+	public enum UpdateMode : byte
 	{
 		Auto,
 		Pause,
