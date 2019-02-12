@@ -133,7 +133,7 @@ namespace Deform
 					break;
 			}
 
-			float abPercent = mathx.invlerp (times[prevIndex], times[nextIndex], t);
+			float abPercent = unlerp (times[prevIndex], times[nextIndex], t);
 
 			return new VertexPath.TimeOnPathData (prevIndex, nextIndex, abPercent);
 		}

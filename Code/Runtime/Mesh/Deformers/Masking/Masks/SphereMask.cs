@@ -114,7 +114,7 @@ namespace Deform.Masking
 				else if (dist < innerRadius)
 					t = 1f;
 				else
-					t = mathx.invlerp (outerRadius, innerRadius, dist);
+					t = unlerp (outerRadius, innerRadius, dist);
 
 				t *= factor;
 
@@ -149,7 +149,7 @@ namespace Deform.Masking
 				else if (dist > outerRadius)
 					t = 1f;
 				else
-					t = mathx.invlerp (innerRadius, outerRadius, dist);
+					t = unlerp (innerRadius, outerRadius, dist);
 
 				t *= factor;
 

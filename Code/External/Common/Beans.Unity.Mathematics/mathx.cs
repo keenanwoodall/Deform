@@ -67,18 +67,6 @@ namespace Beans.Unity.Mathematics
 		}
 
 		/// <summary>
-		/// Returns t's normalized distance between a and b.
-		/// </summary>
-		[MethodImpl (MethodImplOptions.AggressiveInlining)]
-		public static float invlerp (float a, float b, float t)
-		{
-			if (a != b)
-				return saturate ((t - a) / (b - a));
-			else
-				return 0f;
-		}
-
-		/// <summary>
 		/// Loops t every length.
 		/// </summary>
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
