@@ -153,14 +153,14 @@ namespace Deform
 				else
 					point.xy += normalize (point.xy) * meltAmount * radius;
 
-				var verticalNoise = noise.cnoise (point * verticalFrequency) * verticalMagnitude;
+				var verticalNoise = noise.snoise (point * verticalFrequency) * verticalMagnitude;
 				var verticalNoiseMask = sin (saturate ((point.z - bottom) / range) * (float)PI);
 				point.z += verticalNoise * verticalNoiseMask;
 
 				if (clampAtBottom)
 					point.z = max (bottom, point.z);
 
-				var radialNoise = noise.cnoise (point.xy * radialFrequency) * radialMagnitude * meltAmount;
+				var radialNoise = noise.snoise (point.xy * radialFrequency) * radialMagnitude * meltAmount;
 				point.xy += radialNoise;
 
 				vertices[index] = mul (axisToMesh, point).xyz;

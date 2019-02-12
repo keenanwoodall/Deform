@@ -174,7 +174,7 @@ namespace Deform
 				
 				var noiseOffset = float3
 				(
-					noise.cnoise
+					noise.snoise
 					(
 						float4
 						(
@@ -184,7 +184,7 @@ namespace Deform
 							offset.w
 						)
 					),
-					noise.cnoise
+					noise.snoise
 					(
 						float4
 						(
@@ -194,7 +194,7 @@ namespace Deform
 							offset.w
 						)
 					),
-					noise.cnoise
+					noise.snoise
 					(
 						float4
 						(
@@ -225,7 +225,7 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = float3 (0f, 0f, 1f) * noise.cnoise
+				var noiseOffset = float3 (0f, 0f, 1f) * noise.snoise
 				(
 					float4
 					(
@@ -256,7 +256,7 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = normals[index] * noise.cnoise
+				var noiseOffset = normals[index] * noise.snoise
 				(
 					float4
 					(
@@ -286,7 +286,7 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = normalize (point) * noise.cnoise
+				var noiseOffset = normalize (point) * noise.snoise
 				(
 					float4
 					(
@@ -318,7 +318,7 @@ namespace Deform
 			{
 				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = colors[index].xyz * noise.cnoise
+				var noiseOffset = colors[index].xyz * noise.snoise
 				(
 					float4
 					(
