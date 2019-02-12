@@ -7,152 +7,77 @@ using static Unity.Mathematics.math;
 
 namespace Deform
 {
-	[Deformer (Name = "Noise", Description = "Adds noise to mesh", Type = typeof (NoiseDeformer))]
-	public class NoiseDeformer : Deformer, IFactor
+	[Deformer (Name = "Simplex Noise", Description = "Adds simplex noise to mesh", Type = typeof (SimplexNoiseDeformer))]
+	public class SimplexNoiseDeformer : NoiseDeformer, IFactor
 	{
-		public float Factor
+		protected override JobHandle CreateDerivativeNoiseJob (MeshData data, JobHandle dependency = default)
 		{
-			get => MagnitudeScalar;
-			set => MagnitudeScalar = value;
-		}
-
-		public NoiseMode Mode
-		{
-			get => mode;
-			set => mode = value;
-		}
-		public float MagnitudeScalar
-		{
-			get => magnitudeScalar;
-			set => magnitudeScalar = value;
-		}
-		public Vector3 MagnitudeVector
-		{
-			get => magnitudeVector;
-			set => magnitudeVector = value;
-		}
-		public float FrequencyScalar
-		{
-			get => frequencyScalar;
-			set => frequencyScalar = value;
-		}
-		public Vector3 FrequencyVector
-		{
-			get => frequencyVector;
-			set => frequencyVector = value;
-		}
-		public Vector4 OffsetVector
-		{
-			get => offsetVector;
-			set => offsetVector = value;
-		}
-		public float OffsetSpeedScalar
-		{
-			get => offsetSpeedScalar;
-			set => offsetSpeedScalar = value;
-		}
-		public Vector4 OffsetSpeedVector
-		{
-			get => offsetSpeedVector;
-			set => offsetSpeedVector = value;
-		}
-		public Transform Axis
-		{
-			get
+			return new DerivativeNoiseJob
 			{
-				if (axis == null)
-					axis = transform;
-				return axis;
-			}
-			set => axis = value;
+				magnitude = GetActualMagnitude (),
+				frequency = GetActualFrequency (),
+				offset = GetActualOffset (),
+				meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
+				vertices = data.DynamicNative.VertexBuffer
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
-		[SerializeField, HideInInspector] private NoiseMode mode = NoiseMode.Derivative;
-		[SerializeField, HideInInspector] private float magnitudeScalar = 0f;
-		[SerializeField, HideInInspector] private Vector3 magnitudeVector = Vector3.one;
-		[SerializeField, HideInInspector] private float frequencyScalar = 3f;
-		[SerializeField, HideInInspector] private Vector3 frequencyVector = Vector3.one;
-		[SerializeField, HideInInspector] private Vector4 offsetVector;
-		[SerializeField, HideInInspector] private float offsetSpeedScalar = 1f;
-		[SerializeField, HideInInspector] private Vector4 offsetSpeedVector = new Vector4 (0f, 0f, 0f);
-		[SerializeField, HideInInspector] private Transform axis;
-
-		protected Vector4 speedOffset;
-
-		public override int BatchCount => 64;
-		public override DataFlags DataFlags => DataFlags.Vertices;
-
-		private void Update ()
+		protected override JobHandle CreateDirectionalNoiseJob (MeshData data, JobHandle dependency = default)
 		{
-			speedOffset += OffsetSpeedVector * (OffsetSpeedScalar * Time.deltaTime);
-		}
-
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
-		{
-			if (MagnitudeScalar == 0f)
-				return dependency;
-
-			var actualMagnitude = MagnitudeVector * MagnitudeScalar;
-			var actualFrequency = FrequencyVector * FrequencyScalar;
-			var actualOffset = speedOffset + OffsetVector;
-
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
-
-			switch (Mode)
+			return new DirectionalNoiseJob
 			{
-				default:
-					return new DerivativeNoiseJob
-					{
-						magnitude = actualMagnitude,
-						frequency = actualFrequency,
-						offset = actualOffset,
-						meshToAxis = meshToAxis,
-						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
-				case NoiseMode.Directional:
-					return new DirectionalNoiseJob
-					{
-						magnitude = MagnitudeScalar,
-						frequency = actualFrequency,
-						offset = actualOffset,
-						axisSpace = meshToAxis,
-						inverseAxisSpace = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer,
-						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
-				case NoiseMode.Normal:
-					return new NormalNoiseJob
-					{
-						magnitude = MagnitudeScalar,
-						frequency = actualFrequency,
-						offset = actualOffset,
-						axisSpace = meshToAxis,
-						vertices = data.DynamicNative.VertexBuffer,
-						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
-				case NoiseMode.Spherical:
-					return new SphericalNoiseJob
-					{
-						magnitude = MagnitudeScalar,
-						frequency = actualFrequency,
-						offset = actualOffset,
-						axisSpace = meshToAxis,
-						inverseAxisSpace = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer,
-						normals = data.DynamicNative.NormalBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
-				case NoiseMode.Color:
-					return new ColorNoiseJob
-					{
-						magnitude = MagnitudeScalar,
-						frequency = actualFrequency,
-						offset = actualOffset,
-						axisSpace = meshToAxis,
-						inverseAxisSpace = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer,
-						colors = data.DynamicNative.ColorBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
-			}
+				magnitude = MagnitudeScalar,
+				frequency = GetActualFrequency (),
+				offset = GetActualOffset (),
+				axisSpace = meshToAxis,
+				inverseAxisSpace = meshToAxis.inverse,
+				vertices = data.DynamicNative.VertexBuffer,
+				normals = data.DynamicNative.NormalBuffer
+			}.Schedule (data.Length, BatchCount, dependency);
+		}
+
+		protected override JobHandle CreateNormalNoiseJob (MeshData data, JobHandle dependency = default)
+		{
+			return new NormalNoiseJob
+			{
+				magnitude = MagnitudeScalar,
+				frequency = GetActualFrequency (),
+				offset = GetActualOffset (),
+				axisSpace = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
+				vertices = data.DynamicNative.VertexBuffer,
+				normals = data.DynamicNative.NormalBuffer
+			}.Schedule (data.Length, BatchCount, dependency);
+		}
+
+		protected override JobHandle CreateSphericalNoiseJob (MeshData data, JobHandle dependency = default)
+		{
+			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
+			return new SphericalNoiseJob
+			{
+				magnitude = MagnitudeScalar,
+				frequency = GetActualFrequency (),
+				offset = GetActualOffset (),
+				axisSpace = meshToAxis,
+				inverseAxisSpace = meshToAxis.inverse,
+				vertices = data.DynamicNative.VertexBuffer,
+				normals = data.DynamicNative.NormalBuffer
+			}.Schedule (data.Length, BatchCount, dependency);
+		}
+
+		protected override JobHandle CreateColorNoiseJob (MeshData data, JobHandle dependency = default)
+		{
+			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
+			return new ColorNoiseJob
+			{
+				magnitude = MagnitudeScalar,
+				frequency = GetActualFrequency (),
+				offset = GetActualOffset (),
+				axisSpace = meshToAxis,
+				inverseAxisSpace = meshToAxis.inverse,
+				vertices = data.DynamicNative.VertexBuffer,
+				colors = data.DynamicNative.ColorBuffer
+			}.Schedule (data.Length, BatchCount, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
