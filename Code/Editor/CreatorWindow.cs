@@ -49,11 +49,11 @@ namespace DeformEditor
 			public static GUIContent CreateDeformable = new GUIContent (text: "Create Deformable", tooltip: "Create a deformable");
 			public static GUIContent[] FilterToolbar = new GUIContent[]
 			{
-				new GUIContent ("A", "All"), new GUIContent ("N", "Normal"), new GUIContent ("M", "Mask"), new GUIContent ("U", "Utility")
+				new GUIContent ("A", "All"), new GUIContent ("N", "Normal"), new GUIContent ("N", "Noise"), new GUIContent ("M", "Mask"), new GUIContent ("U", "Utility")
 			};
 		}
 
-		private enum FilterCategory { All, Normal, Mask, Utility }
+		private enum FilterCategory { All, Normal, Noise, Mask, Utility }
 
 		[SerializeField]
 		private FilterCategory filter;
@@ -206,6 +206,8 @@ namespace DeformEditor
 			if (filter == FilterCategory.All)
 				return true;
 			else if (filter == FilterCategory.Normal && attribute.Category == Category.Normal)
+				return true;
+			else if (filter == FilterCategory.Noise && attribute.Category == Category.Noise)
 				return true;
 			else if (filter == FilterCategory.Mask && attribute.Category == Category.Mask)
 				return true;

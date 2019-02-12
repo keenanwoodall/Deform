@@ -7,7 +7,7 @@ using static Unity.Mathematics.math;
 
 namespace Deform
 {
-	[Deformer (Name = "Cellular Noise", Description = "Adds cellular noise to mesh", Type = typeof (CellularNoiseDeformer))]
+	[Deformer (Name = "Cellular Noise", Description = "Adds cellular noise to mesh", Type = typeof (CellularNoiseDeformer), Category = Category.Noise)]
 	public class CellularNoiseDeformer : NoiseDeformer, IFactor
 	{
 		protected override JobHandle CreateDerivativeNoiseJob (MeshData data, JobHandle dependency = default)

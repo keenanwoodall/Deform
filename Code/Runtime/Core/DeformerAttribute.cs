@@ -5,6 +5,7 @@ namespace Deform
 	public enum Category : byte
 	{
 		Normal,
+		Noise,
 		Mask,
 		Utility
 	}
