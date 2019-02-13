@@ -83,8 +83,6 @@ namespace Deform
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
 		protected struct DerivativeNoiseJob : IJobParallelFor
 		{
-			private const float AXIS_OFFSET = 1000f;
-
 			public float3 magnitude;
 			public float3 frequency;
 			public float4 offset;
@@ -96,16 +94,17 @@ namespace Deform
 				var point = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
 
 				var scaledPoint = point * frequency;
-				
+				var nabla = frequency * 0.5f;
+
 				var noiseOffset = float3
 				(
 					noise.cnoise
 					(
 						float4
 						(
-							scaledPoint.x - AXIS_OFFSET + offset.x,
-							scaledPoint.y - AXIS_OFFSET + offset.y,
-							scaledPoint.z - AXIS_OFFSET + offset.z,
+							scaledPoint.x - nabla.x + offset.x,
+							scaledPoint.y - nabla.y + offset.y,
+							scaledPoint.z - nabla.z + offset.z,
 							offset.w
 						)
 					),
@@ -123,9 +122,9 @@ namespace Deform
 					(
 						float4
 						(
-							scaledPoint.x + AXIS_OFFSET + offset.x,
-							scaledPoint.y + AXIS_OFFSET + offset.y,
-							scaledPoint.z + AXIS_OFFSET + offset.z,
+							scaledPoint.x + nabla.x + offset.x,
+							scaledPoint.y + nabla.y + offset.y,
+							scaledPoint.z + nabla.z + offset.z,
 							offset.w
 						)
 					)
