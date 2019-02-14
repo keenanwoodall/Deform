@@ -32,6 +32,8 @@ namespace DeformEditor
 				ButtonMidStyle = new GUIStyle (EditorStyles.miniButtonMid);
 				ButtonRightStyle = new GUIStyle (EditorStyles.miniButtonRight);
 
+				ButtonLeftStyle.fixedHeight = ButtonMidStyle.fixedHeight = ButtonRightStyle.fixedHeight = EditorGUIUtility.singleLineHeight;
+
 				var leftMargin = ButtonLeftStyle.margin;
 				var midMargin = ButtonMidStyle.margin;
 				var rightMargin = ButtonRightStyle.margin;
@@ -47,10 +49,23 @@ namespace DeformEditor
 		private static class Content
 		{
 			public static GUIContent CreateDeformable = new GUIContent (text: "Create Deformable", tooltip: "Create a deformable");
-			public static GUIContent[] FilterToolbar = new GUIContent[]
+			public static GUIContent[] FilterToolbar;
+
+			static Content ()
 			{
-				new GUIContent ("A", "All"), new GUIContent ("N", "Normal"), new GUIContent ("N", "Noise"), new GUIContent ("M", "Mask"), new GUIContent ("U", "Utility")
-			};
+				var noiseTexture = DeformEditorResources.LoadAssetOfType<Texture2D> ("DeformNoiseIcon");
+				var maskTexture = DeformEditorResources.LoadAssetOfType<Texture2D> ("DeformMaskIcon");
+				var utilityTexture = DeformEditorResources.LoadAssetOfType<Texture2D> ("DeformUtilityIcon");
+
+				FilterToolbar = new GUIContent[]
+				{
+					new GUIContent ("All", "All"),
+					new GUIContent ("N", "Normal"),
+					new GUIContent (noiseTexture, "Noise"),
+					new GUIContent (maskTexture, "Mask"),
+					new GUIContent (utilityTexture, "Utility")
+				};
+			}
 		}
 
 		private enum FilterCategory { All, Normal, Noise, Mask, Utility }
@@ -104,18 +119,29 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			using (new EditorGUILayout.HorizontalScope ())
+			using (var check = new EditorGUI.ChangeCheckScope ())
+			{
+				var newCategoryIndex = GUILayout.Toolbar ((int)filter, Content.FilterToolbar, EditorStyles.miniButton, GUILayout.Height (EditorGUIUtility.singleLineHeight));
+				if (check.changed)
+				{
+					Undo.RecordObject (this, "Changed Category Filter");
+					filter = (FilterCategory)newCategoryIndex;
+				}
+			}
+			/*using (new EditorGUILayout.HorizontalScope ())
 			{
 				var categoryCount = Content.FilterToolbar.Length;
 				for (int i = 0; i < categoryCount; i++)
 				{
-					if (GUILayout.Toggle ((int)filter == i, Content.FilterToolbar[i], (i == 0) ? Styles.ButtonLeftStyle : (i == categoryCount - 1) ? Styles.ButtonRightStyle : Styles.ButtonMidStyle, GUILayout.MinWidth (0)))
+					var style = (i == 0) ? Styles.ButtonLeftStyle : (i == categoryCount - 1) ? Styles.ButtonRightStyle : Styles.ButtonMidStyle;
+					var content = Content.FilterToolbar[i];
+					if (GUILayout.Toggle ((int)filter == i, content, style, GUILayout.MinWidth (0), GUILayout.ExpandWidth (true)))
 					{
 						Undo.RecordObject (this, "Changed Category Filter");
 						filter = (FilterCategory)i;
 					}
 				}
-			}
+			}*/
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
@@ -157,7 +183,10 @@ namespace DeformEditor
 						if (AttributeIncludedInFilter (current, filter))
 						{
 							if (drawnCount == 0)
-								EditorGUILayout.LabelField (current.Category.ToString (), EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
+							{
+								var countInCategory = filteredDeformerAttributes.Count (t => t.Category == current.Category);
+								EditorGUILayout.LabelField ($"{current.Category.ToString ()} ({countInCategory})", EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
+							}
 
 							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.ListButton))
 								CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
@@ -170,7 +199,10 @@ namespace DeformEditor
 							{
 								var next = filteredDeformerAttributes[i + 1];
 								if (next.Category != current.Category)
-									EditorGUILayout.LabelField (next.Category.ToString (), EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
+								{
+									var countInCategory = filteredDeformerAttributes.Count (t => t.Category == next.Category);
+									EditorGUILayout.LabelField ($"{next.Category.ToString ()} ({countInCategory})", EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
+								}
 							}
 						}
 					}
