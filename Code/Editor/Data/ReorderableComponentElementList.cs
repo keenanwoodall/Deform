@@ -18,17 +18,19 @@ namespace DeformEditor
 		private Editor selectedComponentInspectorEditor;
 
 		/// <summary>
-		/// Make sure your implementation of IComponentElement has a PropertyDrawer.
+		/// Make sure your implementation of IComponentElement has a PropertyDrawer and 
+		/// serialized fields for for the component reference and active bool called "component" and "active".
 		/// </summary>
 		public ReorderableComponentElementList (SerializedObject serializedObject, SerializedProperty elements)
 		{
 			list = new ReorderableList (serializedObject, elements);
-			list.elementHeight = UnityEditor.EditorGUIUtility.singleLineHeight;
+			list.elementHeight = EditorGUIUtility.singleLineHeight;
 
-			list.drawHeaderCallback += (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
-			list.drawElementCallback += (Rect rect, int index, bool isActive, bool isFocused) =>
+			list.drawHeaderCallback = (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
+			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
 				var elementProperty = list.serializedProperty.GetArrayElementAtIndex (index);
+
 				EditorGUI.PropertyField (rect, elementProperty);
 
 				// get the current element's component property
@@ -76,7 +78,7 @@ namespace DeformEditor
 		public void Dispose ()
 		{
 			SceneView.onSceneGUIDelegate -= SceneGUI;
-			UnityEngine.Object.DestroyImmediate (selectedComponentInspectorEditor, true);
+			Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			selectedComponentInspectorEditor = null;
 		}
 	}
