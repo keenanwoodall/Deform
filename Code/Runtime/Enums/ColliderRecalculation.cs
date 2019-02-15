@@ -5,7 +5,7 @@
 	/// </summary>
 	public enum ColliderRecalculation : byte
 	{
-		None,
-		Auto
+		None = 0,
+		Auto = 1
 	}
 }

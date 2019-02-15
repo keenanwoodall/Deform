@@ -127,8 +127,6 @@ namespace Deform
 				PreSchedule ();
 				Schedule ().Complete ();
 				ApplyData ();
-				if (MeshCollider == null)
-					MeshCollider = GetComponent<MeshCollider> ();
 			}
 		}
 		#endif
@@ -254,8 +252,6 @@ namespace Deform
 		/// </summary>
 		public void RecalculateMeshCollider ()
 		{
-			if (MeshCollider == null)
-				MeshCollider = GetComponent<MeshCollider> ();
 			if (MeshCollider != null)
 				MeshCollider.sharedMesh = GetMesh ();
 		}
