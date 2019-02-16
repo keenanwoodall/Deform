@@ -81,15 +81,15 @@ namespace DeformEditor
 		private void DrawFrequencyHandle (SineDeformer sine)
 		{
 			var direction = sine.Axis.forward;
-			var frequencyHandleWorldPosition = sine.Axis.position + direction * (2f / sine.Frequency);
-
+			var frequencyHandleWorldPosition = sine.Axis.position + direction * (1f / sine.Frequency * sine.Axis.localScale.z);
+			
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
 				var newFrequencyWorldPosition = DeformHandles.Slider (frequencyHandleWorldPosition, direction);
 				if (check.changed)
 				{
 					Undo.RecordObject (sine, "Changed Frequency");
-					var newFrequency = 2f / DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newFrequencyWorldPosition, Axis.Z);
+					var newFrequency = sine.Axis.localScale.z / DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newFrequencyWorldPosition, Axis.Z);
 					sine.Frequency = newFrequency;
 				}
 			}
@@ -98,7 +98,7 @@ namespace DeformEditor
 		private void DrawMagnitudeHandle (SineDeformer sine)
 		{
 			var direction = sine.Axis.up;
-			var magnitudeHandleWorldPosition = sine.Axis.position + direction * sine.Magnitude;
+			var magnitudeHandleWorldPosition = sine.Axis.position + direction * sine.Magnitude * sine.Axis.localScale.y;
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
@@ -106,7 +106,7 @@ namespace DeformEditor
 				if (check.changed)
 				{
 					Undo.RecordObject (sine, "Changed Magnitude");
-					var newMagnitude = DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newMagnitudeWorldPosition, Axis.Y);
+					var newMagnitude = DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newMagnitudeWorldPosition, Axis.Y) / sine.Axis.localScale.y;
 					sine.Magnitude = newMagnitude;
 				}
 			}
@@ -115,10 +115,9 @@ namespace DeformEditor
 		private void DrawGuides (SineDeformer sine)
 		{
 			var direction = sine.Axis.forward;
-			var distance = (sine.Frequency != 0f) ? 2f / sine.Frequency : 100f;
-
-			var baseA = sine.Axis.position - direction * distance;
-			var baseB = sine.Axis.position + direction * distance;
+			var size = HandleUtility.GetHandleSize (sine.Axis.position) * 5f;
+			var baseA = sine.Axis.position - direction * size;
+			var baseB = sine.Axis.position + direction * size;
 
 			DeformHandles.Line (baseA, baseB, DeformHandles.LineMode.LightDotted);
 			DeformHandles.Line (baseA + sine.Axis.up * sine.Magnitude, baseB + sine.Axis.up * sine.Magnitude, DeformHandles.LineMode.LightDotted);
@@ -128,8 +127,9 @@ namespace DeformEditor
 		private void DrawCurve (SineDeformer sine)
 		{
 			var forward = sine.Axis.forward;
-			var a = sine.Axis.position - (forward * (2f / sine.Frequency));
-			var b = sine.Axis.position + (forward * (2f / sine.Frequency));
+			var size = HandleUtility.GetHandleSize (sine.Axis.position) * 5f;
+			var a = sine.Axis.position - (forward * size);
+			var b = sine.Axis.position + (forward * size);
 
 			var pointSet = false;
 			var lastPointOnCurve = Vector3.zero;
