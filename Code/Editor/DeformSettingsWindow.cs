@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Beans.Unity.Editor;
 
 namespace DeformEditor
 {
@@ -31,6 +32,7 @@ namespace DeformEditor
 
 
 		private Content content = new Content ();
+		private SerializedObject serializedAsset;
 
 		[MenuItem ("Window/Deform/Settings", priority = 1)]
 		[MenuItem ("Tools/Deform/Settings", priority = 1)]
@@ -41,59 +43,67 @@ namespace DeformEditor
 
 		private void OnEnable ()
 		{
+			serializedAsset = new SerializedObject (DeformEditorSettings.SettingsAsset);
 			Undo.undoRedoPerformed += Repaint;
 		}
 
 		private void OnDisable ()
 		{
+			serializedAsset.Dispose ();
 			Undo.undoRedoPerformed -= Repaint;
 		}
 
 		private void OnGUI ()
 		{
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (var foldout = new EditorGUILayoutx.FoldoutWideScope (serializedAsset.FindProperty ("sceneFoldoutOpen"), "Scene"))
 			{
-				var solidColor = EditorGUILayout.ColorField (content.SolidHandleColor, DeformEditorSettings.SolidHandleColor);
-				if (check.changed)
+				if (foldout.isOpen)
 				{
-					Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Solid Color Settings");
-					DeformEditorSettings.SolidHandleColor = solidColor;
-				}
-			}
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var lightColor = EditorGUILayout.ColorField (content.LightHandleColor, DeformEditorSettings.LightHandleColor);
-				if (check.changed)
-				{
-					Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Light Color Settings");
-					DeformEditorSettings.LightHandleColor = lightColor;
-				}
-			}
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var dottedLineSize = EditorGUILayout.FloatField (content.DottedLineSize, DeformEditorSettings.DottedLineSize);
-				if (check.changed)
-				{
-					Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Dotted Line Size Settings");
-					DeformEditorSettings.DottedLineSize = dottedLineSize;
-				}
-			}
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var handleSize = EditorGUILayout.FloatField (content.ScreenspaceSliderHandleCapSize, DeformEditorSettings.ScreenspaceSliderHandleCapSize);
-				if (check.changed)
-				{
-					Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Handle Size Settings");
-					DeformEditorSettings.ScreenspaceSliderHandleCapSize = handleSize;
-				}
-			}
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var angleHandleSize = EditorGUILayout.FloatField (content.ScreenspaceAngleHandleSize, DeformEditorSettings.ScreenspaceAngleHandleSize);
-				if (check.changed)
-				{
-					Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Angle Handle Size Settings");
-					DeformEditorSettings.ScreenspaceAngleHandleSize = angleHandleSize;
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var solidColor = EditorGUILayout.ColorField (content.SolidHandleColor, DeformEditorSettings.SolidHandleColor);
+						if (check.changed)
+						{
+							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Solid Color Settings");
+							DeformEditorSettings.SolidHandleColor = solidColor;
+						}
+					}
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var lightColor = EditorGUILayout.ColorField (content.LightHandleColor, DeformEditorSettings.LightHandleColor);
+						if (check.changed)
+						{
+							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Light Color Settings");
+							DeformEditorSettings.LightHandleColor = lightColor;
+						}
+					}
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var dottedLineSize = EditorGUILayout.FloatField (content.DottedLineSize, DeformEditorSettings.DottedLineSize);
+						if (check.changed)
+						{
+							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Dotted Line Size Settings");
+							DeformEditorSettings.DottedLineSize = dottedLineSize;
+						}
+					}
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var handleSize = EditorGUILayout.FloatField (content.ScreenspaceSliderHandleCapSize, DeformEditorSettings.ScreenspaceSliderHandleCapSize);
+						if (check.changed)
+						{
+							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Handle Size Settings");
+							DeformEditorSettings.ScreenspaceSliderHandleCapSize = handleSize;
+						}
+					}
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var angleHandleSize = EditorGUILayout.FloatField (content.ScreenspaceAngleHandleSize, DeformEditorSettings.ScreenspaceAngleHandleSize);
+						if (check.changed)
+						{
+							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Angle Handle Size Settings");
+							DeformEditorSettings.ScreenspaceAngleHandleSize = angleHandleSize;
+						}
+					}
 				}
 			}
 		}

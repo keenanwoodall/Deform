@@ -76,7 +76,10 @@ namespace Beans.Unity.Editor
 				{
 					isOpen = EditorGUI.Foldout (foldoutRect, isOpen, GUIContent.none, true);
 					if (check.changed)
+					{
+						isExpanded.serializedObject.ApplyModifiedPropertiesWithoutUndo ();
 						isExpanded.isExpanded = isOpen;
+					}
 				};
 			}
 
@@ -123,7 +126,10 @@ namespace Beans.Unity.Editor
 				{
 					isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);
 					if (check.changed)
+					{
+						isExpanded.serializedObject.ApplyModifiedPropertiesWithoutUndo ();
 						isExpanded.isExpanded = isOpen;
+					}
 				}
 			}
 

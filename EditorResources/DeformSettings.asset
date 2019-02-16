@@ -9,9 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0e287a1155a0174ca3a0a6c80cc4039, type: 3}
+  m_Script: {fileID: 11500000, guid: 84838e1060cbc4f45a2f463816b2d2fe, type: 3}
   m_Name: DeformSettings
   m_EditorClassIdentifier: 
+  sceneFoldoutOpen: 1
   solidHandleColor: {r: 0, g: 1, b: 0, a: 1}
   lightHandleColor: {r: 0, g: 1, b: 0, a: 0.5}
   dottedLineSize: 5
