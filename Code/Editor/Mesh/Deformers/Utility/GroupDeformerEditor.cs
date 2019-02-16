@@ -60,7 +60,7 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			var newDeformers = EditorGUILayoutx.DragAndDropComponentArea<Deformer> ();
+			var newDeformers = EditorGUILayoutx.DragAndDropArea<Deformer> ();
 			if (newDeformers != null && newDeformers.Count > 0)
 			{
 				Undo.RecordObjects (targets, "Added Deformers");

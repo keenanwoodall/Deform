@@ -199,16 +199,17 @@ namespace Beans.Unity.Editor
 			EditorGUILayout.HelpBox ("WIP", MessageType.Warning, true);
 		}
 
+
 		/// <summary>
 		/// Draws a drag n drop area and returns a list of any added components of type T.
 		/// </summary>
-		public static List<T> DragAndDropComponentArea<T> () where T : Component
+		public static List<T> DragAndDropArea<T> (params GUILayoutOption[] options) where T : Object
 		{
 			var e = Event.current;
 
-			var dropRect = GUILayoutUtility.GetRect (0f, 25f, GUILayout.ExpandWidth (true));
+			var dropRect = GUILayoutUtility.GetRect (0f, 25f, options);
 			GUI.Box (dropRect, string.Empty);
-			GUI.Label (dropRect, $"Drag {typeof (T).Name}s Here", EditorStyles.centeredGreyMiniLabel);
+			GUI.Label (dropRect, $"+ Drag {typeof (T).Name}s Here", EditorStyles.centeredGreyMiniLabel);
 
 			switch (e.type)
 			{
@@ -217,24 +218,29 @@ namespace Beans.Unity.Editor
 					if (!dropRect.Contains (e.mousePosition))
 						return null;
 
-					var components = new List<T> ();
+					var dropped = new List<T> ();
 					foreach (var o in DragAndDrop.objectReferences)
 					{
 						if (o is T)
-							components.Add ((T)o);
-						else if (o is GameObject)
-							components.AddRange (((GameObject)o).GetComponents<T> ());
+							dropped.Add ((T)o);
+						else if (typeof (T).IsSubclassOf (typeof (Component)))
+						{
+							if (o is T)
+								dropped.Add ((T)o);
+							else if (o is GameObject)
+								dropped.AddRange (((GameObject)o).GetComponents<T> ());
+						}
 					}
 
-					if (components.Count > 0)
+					if (dropped.Count > 0)
 						DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
 					else
 						DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
 
-					if (e.type == EventType.DragPerform && components.Count > 0)
+					if (e.type == EventType.DragPerform && dropped.Count > 0)
 					{
 						DragAndDrop.AcceptDrag ();
-						return components;
+						return dropped;
 					}
 
 					break;
