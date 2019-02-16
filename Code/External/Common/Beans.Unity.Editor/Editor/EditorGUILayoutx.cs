@@ -61,19 +61,23 @@ namespace Beans.Unity.Editor
 
 				Splitter (wideMode: true);
 
-				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
-				toggleRect.xMin = 0;
-				toggleRect.xMax = Screen.width;
-				EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
-				EditorGUI.indentLevel++;
-				EditorGUI.LabelField (toggleRect, text, labelStyle);
+				var foldoutRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
+				foldoutRect.xMin = 0;
+				foldoutRect.xMax = Screen.width;
+				EditorGUI.DrawRect (foldoutRect, EditorGUIUtilityx.HighlightColor);
+
+				foldoutRect = EditorGUI.IndentedRect (foldoutRect);
+
+				var labelRect = foldoutRect;
+				labelRect.xMin += EditorGUIUtility.singleLineHeight;
+				EditorGUI.LabelField (labelRect, text, labelStyle);
+
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
+					isOpen = EditorGUI.Foldout (foldoutRect, isOpen, GUIContent.none, true);
 					if (check.changed)
 						isExpanded.isExpanded = isOpen;
-				}
-				EditorGUI.indentLevel--;
+				};
 			}
 
 			public void Dispose ()
