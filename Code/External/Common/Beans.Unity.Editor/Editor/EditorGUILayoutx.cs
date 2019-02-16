@@ -219,17 +219,12 @@ namespace Beans.Unity.Editor
 						return null;
 
 					var dropped = new List<T> ();
-					foreach (var o in DragAndDrop.objectReferences)
+					foreach (var obj in DragAndDrop.objectReferences)
 					{
-						if (o is T)
-							dropped.Add ((T)o);
-						else if (typeof (T).IsSubclassOf (typeof (Component)))
-						{
-							if (o is T)
-								dropped.Add ((T)o);
-							else if (o is GameObject)
-								dropped.AddRange (((GameObject)o).GetComponents<T> ());
-						}
+						if (obj is T instance)
+							dropped.Add (instance);
+						else if (typeof (T).IsSubclassOf (typeof (Component)) && obj is GameObject gameObject)
+							dropped.AddRange (gameObject.GetComponents<T> ());
 					}
 
 					if (dropped.Count > 0)
