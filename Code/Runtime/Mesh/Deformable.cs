@@ -49,16 +49,9 @@ namespace Deform
 			get => manager;
 			set
 			{
-				if (value == null)
-				{
-					manager.RemoveDeformable (this);
-
-				}
-				if (value != null)
-				{
-					manager = value;
-					manager.AddDeformable (this);
-				}
+				manager?.RemoveDeformable (this);
+				manager = value;
+				manager?.AddDeformable (this);
 			}
 		}
 		public List<DeformerElement> DeformerElements

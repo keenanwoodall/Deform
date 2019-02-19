@@ -110,12 +110,17 @@ namespace DeformEditor
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				EditorGUILayout.PropertyField (properties.Manager, Content.Manager);
+				var differentManagers = properties.Manager.hasMultipleDifferentValues;
+
+				EditorGUI.showMixedValue = differentManagers;
+				var newManager = (DeformableManager)EditorGUILayout.ObjectField (Content.Manager, properties.Manager.objectReferenceValue, typeof (DeformableManager), true);
+				EditorGUI.showMixedValue = false;
+
 				if (check.changed)
 				{
-					serializedObject.ApplyModifiedProperties ();
+					Undo.RecordObjects (targets, "Changed Manager");
 					foreach (var t in targets)
-						((Deformable)t).Manager = (DeformableManager)properties.Manager.objectReferenceValue;
+						((Deformable)t).Manager = newManager;
 				}
 			}
 
