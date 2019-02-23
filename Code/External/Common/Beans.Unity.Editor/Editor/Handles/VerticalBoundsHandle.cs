@@ -7,17 +7,50 @@ namespace Beans.Unity.Editor
 	{
 		public delegate void LineMethod (Vector3 a, Vector3 b);
 
+		/// <summary>
+		/// The top value relative to the position.
+		/// </summary>
 		public float top;
+		/// <summary>
+		/// The bottom value relative to the position.
+		/// </summary>
 		public float bottom;
+		/// <summary>
+		/// The origin of the handle.
+		/// </summary>
 		public Vector3 position;
+		/// <summary>
+		/// The rotation of the handle.
+		/// </summary>
 		public Quaternion rotation;
+		/// <summary>
+		/// The scale of the handle.
+		/// </summary>
 		public Vector3 scale;
+		/// <summary>
+		/// The direction of the handle, relative to its rotation.
+		/// </summary>
 		public Vector3 direction;
+		/// <summary>
+		/// The granularity of control.
+		/// </summary>
 		public float snap;
+		/// <summary>
+		/// How large should the handles in screenspace.
+		/// </summary>
 		public float screenspaceHandleSize = 1f;
+		/// <summary>
+		/// The color of the handles.
+		/// </summary>
 		public Color handleColor;
-		public Handles.CapFunction handleCap = Handles.CircleHandleCap;
-		public LineMethod guideLine;
+		/// <summary>
+		/// The delegate for the handle caps.
+		/// </summary>
+		public Handles.CapFunction handleCapFunction = Handles.CircleHandleCap;
+		/// <summary>
+		/// The delegate for drawing a line between the handles.
+		/// </summary>
+		public LineMethod drawGuidelineCallback;
 
 		/// <summary>
 		/// Draws the handles.
@@ -33,12 +66,12 @@ namespace Beans.Unity.Editor
 				var topPosition = direction * top;
 				var bottomPosition = direction * bottom;
 
-				guideLine?.Invoke (topPosition, bottomPosition);
+				drawGuidelineCallback?.Invoke (topPosition, bottomPosition);
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					var bottomSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (bottomPosition)) * screenspaceHandleSize;
-					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCap, snap);
+					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCapFunction, snap);
 					if (check.changed)
 					{
 						bottom = Vector3.Dot (direction, newBottomPosition);
@@ -49,7 +82,7 @@ namespace Beans.Unity.Editor
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					var topSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (topPosition)) * screenspaceHandleSize;
-					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCap, snap);
+					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCapFunction, snap);
 					if (check.changed)
 					{
 						top = Vector3.Dot (direction, newTopPosition);
@@ -61,6 +94,10 @@ namespace Beans.Unity.Editor
 			}
 		}
 
+		/// <summary>
+		/// Draws the handles.
+		/// </summary>
+		/// <returns>Returns true if the top or bottom was changed.</returns>
 		public bool DrawHandle (float top, float bottom, Vector3 position, Quaternion rotation, Vector3 scale, Vector3 direction)
 		{
 			this.top = top;
@@ -73,6 +110,10 @@ namespace Beans.Unity.Editor
 			return DrawHandle ();
 		}
 
+		/// <summary>
+		/// Draws the handles.
+		/// </summary>
+		/// <returns>Returns true if the top or bottom was changed.</returns>
 		public bool DrawHandle (float top, float bottom, Transform axis, Vector3 direction)
 		{
 			return DrawHandle (top, bottom, axis.position, axis.rotation, axis.localScale, direction);
