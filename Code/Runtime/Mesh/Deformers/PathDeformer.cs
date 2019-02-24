@@ -134,7 +134,7 @@ namespace Deform
 
 			public void Execute (int index)
 			{
-				var axisPoint = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
+				var axisPoint = mul (meshToAxis, float4 (vertices[index], 1f));
 
 				var t = axisPoint.z * scale.z + offset;
 

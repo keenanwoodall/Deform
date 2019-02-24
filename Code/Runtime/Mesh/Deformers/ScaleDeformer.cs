@@ -48,11 +48,11 @@ namespace Deform
 
 			public void Execute (int index)
 			{
-				var point = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
+				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 
-				point *= scale;
+				point *= float4 (scale, 1f);
 
-				vertices[index] = mul (axisToMesh, float4 (point, 1f)).xyz;
+				vertices[index] = mul (axisToMesh, point).xyz;
 			}
 		}
 	}
