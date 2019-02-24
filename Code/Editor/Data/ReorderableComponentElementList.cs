@@ -45,7 +45,7 @@ namespace DeformEditor
 					SceneView.onSceneGUIDelegate -= SceneGUI;
 					SceneView.onSceneGUIDelegate += SceneGUI;
 
-					using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, "Selected Properties"))
+					using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, $"{component.name} Properties"))
 					{
 						if (foldout.isOpen)
 							selectedComponentInspectorEditor.OnInspectorGUI ();
