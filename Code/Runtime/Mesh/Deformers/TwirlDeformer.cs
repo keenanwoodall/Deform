@@ -81,16 +81,19 @@ namespace Deform
 						vertices = data.DynamicNative.VertexBuffer
 					}.Schedule (data.Length, BatchCount, dependency);
 				case BoundsMode.Limited:
-					return new LimitedTwistJob
-					{
-						angle = Angle * Factor,
-						inner = Inner,
-						outer = Outer,
-						smooth = Smooth,
-						meshToAxis = meshToAxis,
-						axisToMesh = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
+					if (Mathf.Abs (Inner - Outer) < MIN_RANGE)
+						return dependency;
+					else
+						return new LimitedTwistJob
+						{
+							angle = Angle * Factor,
+							inner = Inner,
+							outer = Outer,
+							smooth = Smooth,
+							meshToAxis = meshToAxis,
+							axisToMesh = meshToAxis.inverse,
+							vertices = data.DynamicNative.VertexBuffer
+						}.Schedule (data.Length, BatchCount, dependency);
 			}
 		}
 
@@ -133,8 +136,6 @@ namespace Deform
 			public void Execute (int index)
 			{
 				var range = abs (outer - inner);
-				if (range < MIN_RANGE)
-					return;
 
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 				var distanceFromAxis = length (point.xy);
