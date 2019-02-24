@@ -62,7 +62,7 @@ namespace Deform
 				nativeCurve.Update (curve, 32);
 		}
 
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
 			if (!nativeCurve.IsCreated || curve == null || curve.length == 0)
 				return dependency;

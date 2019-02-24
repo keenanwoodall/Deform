@@ -14,6 +14,7 @@ namespace Deform
 			get => offset;
 			set => offset = value;
 		}
+
 		[SerializeField, HideInInspector] private Vector2 offset;
 
 		public override DataFlags DataFlags => DataFlags.UVs;

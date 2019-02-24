@@ -62,7 +62,7 @@ namespace Deform
 			speedOffset += speed * Time.deltaTime;
 		}
 
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
 			if (waveLength <= 0f)
 				return dependency;

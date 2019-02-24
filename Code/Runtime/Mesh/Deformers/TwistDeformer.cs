@@ -75,7 +75,7 @@ namespace Deform
 
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
 			if (Factor == 0f)
 				return dependency;
