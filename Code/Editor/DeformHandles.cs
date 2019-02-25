@@ -13,6 +13,8 @@ namespace DeformEditor
 		public delegate void LineMethod (Vector3 a, Vector3 b);
 		public enum LineMode { Solid, Light, SolidDotted, LightDotted }
 
+		public enum CapType { Circle, Rectangle, Dot }
+
 		private static LineMethod GetLineMethod (LineMode mode)
 		{
 			switch (mode)
@@ -38,6 +40,23 @@ namespace DeformEditor
 				case LineMode.Light:
 				case LineMode.LightDotted:
 					return DeformEditorSettings.LightHandleColor;
+			}
+		}
+
+		public static void HandleCapFunction (int controlId, Vector3 position, Quaternion rotation, float size, EventType eventType)
+		{
+			switch (DeformEditorSettings.CapType)
+			{
+				default:
+				case CapType.Circle:
+					Handles.CircleHandleCap (controlId, position, rotation, size, eventType);
+					break;
+				case CapType.Rectangle:
+					Handles.RectangleHandleCap (controlId, position, rotation, size, eventType);
+					break;
+				case CapType.Dot:
+					Handles.DotHandleCap (controlId, position, rotation, size, eventType);
+					break;
 			}
 		}
 
@@ -72,7 +91,7 @@ namespace DeformEditor
 		{
 			var size = HandleUtility.GetHandleSize (position) * DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			using (new Handles.DrawingScope (DeformEditorSettings.SolidHandleColor))
-				return Handles.Slider (position, direction, size, Handles.CircleHandleCap, 0f);
+				return Handles.Slider (position, direction, size, HandleCapFunction, 0f);
 		}
 
 		/// <summary>
@@ -82,7 +101,7 @@ namespace DeformEditor
 		{
 			var size = HandleUtility.GetHandleSize (position) * DeformEditorSettings.ScreenspaceSliderHandleCapSize * 0.5f;
 			using (new Handles.DrawingScope (DeformEditorSettings.SolidHandleColor))
-				return Handles.Slider (position, direction, size, Handles.CircleHandleCap, 0f);
+				return Handles.Slider (position, direction, size, HandleCapFunction, 0f);
 		}
 
 		/// <summary>

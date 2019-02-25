@@ -28,6 +28,10 @@ namespace DeformEditor
 			(
 				text: "Angle Handle Size"
 			);
+			public GUIContent CapType = new GUIContent
+			(
+				text: "Cap Type"
+			);
 		}
 
 
@@ -102,6 +106,15 @@ namespace DeformEditor
 						{
 							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Angle Handle Size Settings");
 							DeformEditorSettings.ScreenspaceAngleHandleSize = angleHandleSize;
+						}
+					}
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var capType = (DeformHandles.CapType)EditorGUILayout.EnumPopup (content.CapType, DeformEditorSettings.CapType);
+						if (check.changed)
+						{
+							Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Cap Type Settings");
+							DeformEditorSettings.CapType = capType;
 						}
 					}
 				}

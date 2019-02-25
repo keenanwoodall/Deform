@@ -15,5 +15,6 @@ namespace DeformEditor
 		public float dottedLineSize = 5f;
 		public float screenspaceHandleCapSize = 0.25f;
 		public float screenspaceAngleHandleSize = 1.25f;
+		public DeformHandles.CapType capType = DeformHandles.CapType.Circle;
 	}
 }

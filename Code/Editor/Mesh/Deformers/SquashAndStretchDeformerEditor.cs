@@ -44,6 +44,7 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
+			boundsHandle.handleCapFunction = DeformHandles.HandleCapFunction;
 			boundsHandle.drawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 

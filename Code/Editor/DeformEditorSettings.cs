@@ -48,6 +48,12 @@ namespace DeformEditor
 			set => SettingsAsset.screenspaceAngleHandleSize = value;
 		}
 
+		public static DeformHandles.CapType CapType
+		{
+			get => settingsAsset.capType;
+			set => settingsAsset.capType = value;
+		}
+
 		public static void SelectSettingsAsset ()
 		{
 			Selection.activeObject = SettingsAsset;
