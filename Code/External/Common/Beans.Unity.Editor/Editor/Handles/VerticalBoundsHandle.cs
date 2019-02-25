@@ -53,6 +53,7 @@ namespace Beans.Unity.Editor
 		public LineMethod drawGuidelineCallback;
 
 		private float scaleCenter = 0f;
+		private float lastUnmirroredBottom, lastUnmirroredTop;
 
 		/// <summary>
 		/// Draws the handles.
@@ -83,7 +84,13 @@ namespace Beans.Unity.Editor
 					{
 						// If this is the first change, store the average of top/bottom so that if alt is held we can mirror the other control over the average.
 						if (Event.current.type == EventType.MouseDown)
+						{
+							lastUnmirroredTop = top;
 							scaleCenter = (bottom + top) * 0.5f;
+						}
+
+						if (!holdingAlt)
+							top = lastUnmirroredTop;
 
 						bottom = Vector3.Dot (direction, newBottomPosition);
 						bottom = Mathf.Min (bottom, top);
@@ -106,7 +113,13 @@ namespace Beans.Unity.Editor
 					{
 						// If this is the first change, store the average of top/bottom so that if alt is held we can mirror the other control over the average.
 						if (Event.current.type == EventType.MouseDown)
+						{
+							lastUnmirroredBottom = bottom;
 							scaleCenter = (bottom + top) * 0.5f;
+						}
+
+						if (!holdingAlt)
+							bottom = lastUnmirroredBottom;
 
 						top = Vector3.Dot (direction, newTopPosition);
 						top = Mathf.Max (top, bottom);
