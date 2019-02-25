@@ -128,20 +128,6 @@ namespace DeformEditor
 					filter = (FilterCategory)newCategoryIndex;
 				}
 			}
-			/*using (new EditorGUILayout.HorizontalScope ())
-			{
-				var categoryCount = Content.FilterToolbar.Length;
-				for (int i = 0; i < categoryCount; i++)
-				{
-					var style = (i == 0) ? Styles.ButtonLeftStyle : (i == categoryCount - 1) ? Styles.ButtonRightStyle : Styles.ButtonMidStyle;
-					var content = Content.FilterToolbar[i];
-					if (GUILayout.Toggle ((int)filter == i, content, style, GUILayout.MinWidth (0), GUILayout.ExpandWidth (true)))
-					{
-						Undo.RecordObject (this, "Changed Category Filter");
-						filter = (FilterCategory)i;
-					}
-				}
-			}*/
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
