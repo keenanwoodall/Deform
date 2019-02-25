@@ -68,10 +68,14 @@ namespace Beans.Unity.Editor
 
 				drawGuidelineCallback?.Invoke (topPosition, bottomPosition);
 
+				var holdingCtrl = (Event.current.modifiers & EventModifiers.Control) > 0;
+				var holdingAlt = (Event.current.modifiers & EventModifiers.Alt) > 0;
+				var actualSnap = holdingCtrl ? (holdingAlt ? 0.5f : 1f) : snap;
+
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					var bottomSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (bottomPosition)) * screenspaceHandleSize;
-					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCapFunction, snap);
+					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
 						bottom = Vector3.Dot (direction, newBottomPosition);
@@ -82,7 +86,7 @@ namespace Beans.Unity.Editor
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					var topSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (topPosition)) * screenspaceHandleSize;
-					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCapFunction, snap);
+					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
 						top = Vector3.Dot (direction, newTopPosition);
