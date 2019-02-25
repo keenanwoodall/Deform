@@ -64,8 +64,11 @@ namespace DeformEditor
 			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
 			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
-			EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
-			EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			using (new EditorGUI.IndentLevelScope ())
+			{
+				EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
+				EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+			}
 
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 
