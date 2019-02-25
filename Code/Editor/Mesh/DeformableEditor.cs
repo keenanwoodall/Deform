@@ -102,7 +102,7 @@ namespace DeformEditor
 			EditorGUILayout.PropertyField (properties.BoundsRecalculation, Content.BoundsRecalculation);
 
 			EditorGUILayout.PropertyField (properties.ColliderRecalculation, Content.ColliderRecalculation);
-			if (properties.ColliderRecalculation.hasMultipleDifferentValues || properties.ColliderRecalculation.enumValueIndex == 1)
+			if (properties.ColliderRecalculation.hasMultipleDifferentValues || (ColliderRecalculation)properties.ColliderRecalculation.enumValueIndex == ColliderRecalculation.Auto)
 			{
 				using (new EditorGUI.IndentLevelScope ())
 					EditorGUILayout.PropertyField (properties.MeshCollider, Content.MeshCollider);

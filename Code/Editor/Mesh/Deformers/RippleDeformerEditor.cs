@@ -70,7 +70,7 @@ namespace DeformEditor
 			EditorGUILayout.PropertyField (properties.Magnitude, Content.Magnitude);
 			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
-			using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
+			using (new EditorGUI.DisabledScope ((BoundsMode)properties.Mode.enumValueIndex == BoundsMode.Unlimited && !properties.Mode.hasMultipleDifferentValues))
 			{
 				using (new EditorGUI.IndentLevelScope ())
 				{

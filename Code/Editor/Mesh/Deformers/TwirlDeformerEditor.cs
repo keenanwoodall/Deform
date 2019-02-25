@@ -69,7 +69,7 @@ namespace DeformEditor
 
 			using (new EditorGUI.IndentLevelScope ())
 			{
-				using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasMultipleDifferentValues))
+				using (new EditorGUI.DisabledScope ((BoundsMode)properties.Mode.enumValueIndex == BoundsMode.Unlimited && !properties.Mode.hasMultipleDifferentValues))
 				{
 					EditorGUILayoutx.MaxField (properties.Inner, properties.Outer.floatValue, Content.Inner);
 					EditorGUILayoutx.MinField (properties.Outer, properties.Inner.floatValue, Content.Outer);

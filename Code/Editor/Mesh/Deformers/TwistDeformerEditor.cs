@@ -83,7 +83,7 @@ namespace DeformEditor
 				EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
 				EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
 
-				using (new EditorGUI.DisabledScope (properties.Mode.enumValueIndex == 0 && !properties.Mode.hasChildren))
+				using (new EditorGUI.DisabledScope ((BoundsMode)properties.Mode.enumValueIndex == BoundsMode.Unlimited && !properties.Mode.hasChildren))
 					EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 			}
 

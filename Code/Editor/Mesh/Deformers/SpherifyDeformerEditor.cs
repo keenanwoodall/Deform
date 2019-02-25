@@ -51,7 +51,7 @@ namespace DeformEditor
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
 			EditorGUILayout.PropertyField (properties.Radius, Content.Radius);
 			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
-			using (new EditorGUI.DisabledScope (properties.Smooth.hasMultipleDifferentValues || properties.Mode.enumValueIndex == 0))
+			using (new EditorGUI.DisabledScope (properties.Smooth.hasMultipleDifferentValues || (BoundsMode)properties.Mode.enumValueIndex == BoundsMode.Unlimited))
 				EditorGUILayout.PropertyField (properties.Smooth, Content.Smooth);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 
