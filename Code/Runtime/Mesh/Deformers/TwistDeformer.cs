@@ -77,7 +77,7 @@ namespace Deform
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			if (Factor == 0f)
+			if (Factor == 0f || Mathf.Abs (Top - Bottom) < MIN_RANGE)
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
@@ -124,11 +124,9 @@ namespace Deform
 			public void Execute (int index)
 			{
 				var range = abs (top - bottom);
-				if (range < MIN_RANGE)
-					top += MIN_RANGE;
 
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
-				var degrees = (point.z / range) * (endAngle - startAngle);
+				var degrees = ((point.z - bottom) / range) * (endAngle - startAngle);
 
 				var rads = radians (startAngle + degrees) + (float)PI;
 				point.xy = float2 
@@ -156,8 +154,6 @@ namespace Deform
 			public void Execute (int index)
 			{
 				var range = abs (top - bottom);
-				if (range < MIN_RANGE)
-					return;
 
 				var angleDifference = endAngle - startAngle;
 
