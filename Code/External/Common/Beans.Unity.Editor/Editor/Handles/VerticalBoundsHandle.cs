@@ -52,6 +52,8 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public LineMethod drawGuidelineCallback;
 
+		private float scaleCenter = 0f;
+
 		/// <summary>
 		/// Draws the handles.
 		/// </summary>
@@ -69,8 +71,9 @@ namespace Beans.Unity.Editor
 				drawGuidelineCallback?.Invoke (topPosition, bottomPosition);
 
 				var holdingCtrl = (Event.current.modifiers & EventModifiers.Control) > 0;
+				var actualSnap = holdingCtrl ? 0.5f : snap;
+
 				var holdingAlt = (Event.current.modifiers & EventModifiers.Alt) > 0;
-				var actualSnap = holdingCtrl ? (holdingAlt ? 0.5f : 1f) : snap;
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
@@ -78,7 +81,19 @@ namespace Beans.Unity.Editor
 					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
+						// If this is the first change, store the average of top/bottom so that if alt is held we can mirror the other control over the average.
+						if (Event.current.type == EventType.MouseDown)
+							scaleCenter = (bottom + top) * 0.5f;
+
 						bottom = Vector3.Dot (direction, newBottomPosition);
+						bottom = Mathf.Min (bottom, top);
+
+						if (holdingAlt)
+						{
+							var difference = Mathf.Abs (bottom - scaleCenter);
+							top = scaleCenter + difference;
+						}
+
 						return true;
 					}
 				}
@@ -89,7 +104,19 @@ namespace Beans.Unity.Editor
 					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
+						// If this is the first change, store the average of top/bottom so that if alt is held we can mirror the other control over the average.
+						if (Event.current.type == EventType.MouseDown)
+							scaleCenter = (bottom + top) * 0.5f;
+
 						top = Vector3.Dot (direction, newTopPosition);
+						top = Mathf.Max (top, bottom);
+
+						if (holdingAlt)
+						{
+							var difference = Mathf.Abs (top - scaleCenter);
+							bottom = scaleCenter - difference;
+						}
+
 						return true;
 					}
 				}
