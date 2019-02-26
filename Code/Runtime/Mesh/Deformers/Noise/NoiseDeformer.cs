@@ -62,7 +62,7 @@ namespace Deform
 			set => axis = value;
 		}
 
-		[SerializeField, HideInInspector] private NoiseMode mode = NoiseMode.Derivative;
+		[SerializeField, HideInInspector] private NoiseMode mode = NoiseMode._3D;
 		[SerializeField, HideInInspector] private float magnitudeScalar = 0f;
 		[SerializeField, HideInInspector] private Vector3 magnitudeVector = Vector3.one;
 		[SerializeField, HideInInspector] private float frequencyScalar = 3f;

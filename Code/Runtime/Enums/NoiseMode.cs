@@ -5,7 +5,7 @@
 	/// </summary>
 	public enum NoiseMode : byte
 	{
-		Derivative,
+		_3D,
 		Directional,
 		Normal,
 		Spherical,

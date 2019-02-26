@@ -89,7 +89,7 @@ namespace DeformEditor
 				else
 					EditorGUILayout.PropertyField (properties.MagnitudeScalar, Content.MagnitudeScalar);
 
-				using (new EditorGUI.DisabledScope (!properties.Mode.hasMultipleDifferentValues && (NoiseMode)properties.Mode.enumValueIndex != NoiseMode.Derivative))
+				using (new EditorGUI.DisabledScope (!properties.Mode.hasMultipleDifferentValues && (NoiseMode)properties.Mode.enumValueIndex != NoiseMode._3D))
 				{
 					if (drawMagnitudeVectorOverride != null)
 						drawMagnitudeVectorOverride (properties.MagnitudeVector, Content.MagnitudeVector);
