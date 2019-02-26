@@ -10,7 +10,7 @@ namespace Deform
 	[Deformer (Name = "Cellular Noise", Description = "Adds cellular noise to mesh", Type = typeof (CellularNoiseDeformer), Category = Category.Noise)]
 	public class CellularNoiseDeformer : NoiseDeformer, IFactor
 	{
-		protected override JobHandle CreateDerivativeNoiseJob (MeshData data, JobHandle dependency = default)
+		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)
 		{
 			return new DerivativeNoiseJob
 			{

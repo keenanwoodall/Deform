@@ -10,7 +10,7 @@ namespace Deform
 	[Deformer (Name = "Simplex Noise", Description = "Adds simplex noise to mesh", Type = typeof (SimplexNoiseDeformer), Category = Category.Noise)]
 	public class SimplexNoiseDeformer : NoiseDeformer, IFactor
 	{
-		protected override JobHandle CreateDerivativeNoiseJob (MeshData data, JobHandle dependency = default)
+		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)
 		{
 			return new DerivativeNoiseJob
 			{

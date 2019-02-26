@@ -94,7 +94,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
-					return CreateDerivativeNoiseJob (data, dependency);
+					return Create3DNoiseJob (data, dependency);
 				case NoiseMode.Directional:
 					return CreateDirectionalNoiseJob (data, dependency);
 				case NoiseMode.Normal:
@@ -106,7 +106,7 @@ namespace Deform
 			}
 		}
 
-		protected abstract JobHandle CreateDerivativeNoiseJob (MeshData data, JobHandle dependency = default);
+		protected abstract JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default);
 		protected abstract JobHandle CreateDirectionalNoiseJob (MeshData data, JobHandle dependency = default);
 		protected abstract JobHandle CreateNormalNoiseJob (MeshData data, JobHandle dependency = default);
 		protected abstract JobHandle CreateSphericalNoiseJob (MeshData data, JobHandle dependency = default);
