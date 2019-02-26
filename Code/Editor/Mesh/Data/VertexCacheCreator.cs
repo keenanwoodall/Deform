@@ -13,7 +13,7 @@ namespace DeformEditor
 		/// Returns true if a mesh asset or GameObject is selected that a vertex cache can be created from.
 		/// </summary>
 		/// <returns></returns>
-		[MenuItem ("Assets/Create/Deform/Vertex Cache", true)]
+		[MenuItem ("Assets/Create/Deform/Vertex Cache", true, 10000)]
 		private static bool CanValidateVertexCache ()
 		{
 			var selections = Selection.gameObjects;

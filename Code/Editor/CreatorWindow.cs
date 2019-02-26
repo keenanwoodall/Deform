@@ -81,9 +81,8 @@ namespace DeformEditor
 		[SerializeField]
 		private int searchIndex = -1;
 
-
-		[MenuItem ("Window/Deform/Creator", priority = 0)]
-		[MenuItem ("Tools/Deform/Creator", priority = 0)]
+		[MenuItem ("Window/Deform/Creator", priority = 10000)]
+		[MenuItem ("Tools/Deform/Creator", priority = 10000)]
 		public static void ShowWindow ()
 		{
 			GetWindow<CreatorWindow> ("Creator", true);

@@ -38,8 +38,8 @@ namespace DeformEditor
 		private Content content = new Content ();
 		private SerializedObject serializedAsset;
 
-		[MenuItem ("Window/Deform/Settings", priority = 1)]
-		[MenuItem ("Tools/Deform/Settings", priority = 1)]
+		[MenuItem ("Window/Deform/Settings", priority = 10000)]
+		[MenuItem ("Tools/Deform/Settings", priority = 10000)]
 		public static void ShowWindow ()
 		{
 			GetWindow<DeformSettingsWindow> ("Deform Settings", true);
