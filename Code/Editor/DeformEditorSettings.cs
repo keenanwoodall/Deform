@@ -5,18 +5,24 @@ namespace DeformEditor
 {
 	public static class DeformEditorSettings
 	{
+		[InitializeOnLoadMethod]
+		private static void EnsureSettingsAsset ()
+		{
+			if (settingsAsset == null)
+				settingsAsset = DeformEditorResources.LoadAssetOfType<DeformEditorSettingsAsset> (searchAssets: DeformEditorResources.SearchFilter.Assets);
+			if (settingsAsset == null)
+			{
+				settingsAsset = ScriptableObject.CreateInstance<DeformEditorSettingsAsset> ();
+				DeformEditorResources.CreateAsset (settingsAsset, "Deform/EditorResources/DeformSettings.asset");
+			}
+		}
+
 		private static DeformEditorSettingsAsset settingsAsset;
 		public static DeformEditorSettingsAsset SettingsAsset
 		{
 			get
 			{
-				if (settingsAsset == null)
-					settingsAsset = DeformEditorResources.LoadAssetOfType <DeformEditorSettingsAsset> (searchAssets: DeformEditorResources.SearchFilter.Assets);
-				if (settingsAsset == null)
-				{
-					settingsAsset = ScriptableObject.CreateInstance<DeformEditorSettingsAsset> ();
-					DeformEditorResources.CreateAsset (settingsAsset, "Deform/EditorResources/DeformSettings.asset");
-				}
+				EnsureSettingsAsset ();
 				return settingsAsset;
 			}
 		}
