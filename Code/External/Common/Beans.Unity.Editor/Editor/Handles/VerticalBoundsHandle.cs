@@ -52,9 +52,6 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public LineMethod drawGuidelineCallback;
 
-		private float scaleCenter = 0f;
-		private float lastUnmirroredBottom, lastUnmirroredTop;
-
 		/// <summary>
 		/// Draws the handles.
 		/// </summary>
@@ -74,32 +71,14 @@ namespace Beans.Unity.Editor
 				var holdingCtrl = (Event.current.modifiers & EventModifiers.Control) > 0;
 				var actualSnap = holdingCtrl ? 0.5f : snap;
 
-				var holdingAlt = (Event.current.modifiers & EventModifiers.Alt) > 0;
-
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					var bottomSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (bottomPosition)) * screenspaceHandleSize;
 					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
-						// If this is the first change, store the average of top/bottom so that if alt is held we can mirror the other control over the average.
-						if (Event.current.type == EventType.MouseDown)
-						{
-							lastUnmirroredTop = top;
-							scaleCenter = (bottom + top) * 0.5f;
-						}
-
-						if (!holdingAlt)
-							top = lastUnmirroredTop;
-
 						bottom = Vector3.Dot (direction, newBottomPosition);
 						bottom = Mathf.Min (bottom, top);
-
-						if (holdingAlt)
-						{
-							var difference = Mathf.Abs (bottom - scaleCenter);
-							top = scaleCenter + difference;
-						}
 
 						return true;
 					}
@@ -111,24 +90,8 @@ namespace Beans.Unity.Editor
 					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
-						// If this is the first change, store the average of top/bottom so that if alt is held we can mirror the other control over the average.
-						if (Event.current.type == EventType.MouseDown)
-						{
-							lastUnmirroredBottom = bottom;
-							scaleCenter = (bottom + top) * 0.5f;
-						}
-
-						if (!holdingAlt)
-							bottom = lastUnmirroredBottom;
-
 						top = Vector3.Dot (direction, newTopPosition);
 						top = Mathf.Max (top, bottom);
-
-						if (holdingAlt)
-						{
-							var difference = Mathf.Abs (top - scaleCenter);
-							bottom = scaleCenter - difference;
-						}
 
 						return true;
 					}
