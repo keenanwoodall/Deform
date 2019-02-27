@@ -33,19 +33,24 @@ namespace Beans.Unity.Editor
 			}
 
 			public bool isOpen;
+			private readonly bool wideMode;
 			private readonly string text;
 
-			public FoldoutWideScope (ref bool isOpen, string text) : this (ref isOpen, text, DefaultLabelStyle) { }
-			public FoldoutWideScope (ref bool isOpen, string text, GUIStyle labelStyle)
+			public FoldoutWideScope (ref bool isOpen, string text, bool wideMode = true) : this (ref isOpen, text, DefaultLabelStyle, wideMode) { }
+			public FoldoutWideScope (ref bool isOpen, string text, GUIStyle labelStyle, bool wideMode = true)
 			{
+				this.wideMode = wideMode;
 				this.isOpen = isOpen;
 				this.text = text;
 
-				Splitter (wideMode: true);
+				Splitter (wideMode: this.wideMode);
 
 				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
-				toggleRect.xMin = 0;
-				toggleRect.xMax = Screen.width;
+				if (this.wideMode)
+				{
+					toggleRect.xMin = 0;
+					toggleRect.xMax = Screen.width;
+				}
 				EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
 				EditorGUI.indentLevel++;
 				EditorGUI.LabelField (toggleRect, text, labelStyle);
@@ -53,13 +58,14 @@ namespace Beans.Unity.Editor
 				EditorGUI.indentLevel--;
 			}
 
-			public FoldoutWideScope (SerializedProperty isExpanded, string text) : this (isExpanded, text, DefaultLabelStyle) { }
-			public FoldoutWideScope (SerializedProperty isExpanded, string text, GUIStyle labelStyle)
+			public FoldoutWideScope (SerializedProperty isExpanded, string text, bool wideMode = true) : this (isExpanded, text, DefaultLabelStyle, wideMode) { }
+			public FoldoutWideScope (SerializedProperty isExpanded, string text, GUIStyle labelStyle, bool wideMode = true)
 			{
+				this.wideMode = wideMode;
 				this.isOpen = isExpanded.isExpanded;
 				this.text = text;
 
-				Splitter (wideMode: true);
+				Splitter (wideMode: this.wideMode);
 
 				var foldoutRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				foldoutRect.xMin = 0;
@@ -85,7 +91,7 @@ namespace Beans.Unity.Editor
 
 			public void Dispose ()
 			{
-				Splitter (wideMode: true);
+				Splitter (wideMode: this.wideMode);
 			}
 		}
 

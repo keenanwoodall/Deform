@@ -189,8 +189,6 @@ namespace DeformEditor
 						else
 							newPosition = Handles.PositionHandle (matrix.inverse.MultiplyPoint3x4 (target.position), Quaternion.identity);
 						break;
-					// rotation handle doesn't differentiate between local/global pivot mode b/c you'd have to persist the last rotation used 
-					// in global mode and reset it whenever the object was reselected or the pivot mode changed.
 					case Tool.Rotate:
 						newRotation = Handles.RotationHandle(target.rotation, matrix.inverse.MultiplyPoint3x4 (target.position));
 						break;
