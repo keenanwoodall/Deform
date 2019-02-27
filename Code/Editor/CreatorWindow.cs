@@ -78,8 +78,6 @@ namespace DeformEditor
 		private SearchField searchField;
 		[SerializeField]
 		private string searchQuery;
-		[SerializeField]
-		private int searchIndex = -1;
 
 		[MenuItem ("Window/Deform/Creator", priority = 10000)]
 		[MenuItem ("Tools/Deform/Creator", priority = 10000)]
@@ -97,7 +95,6 @@ namespace DeformEditor
 		private void OnEnable ()
 		{
 			searchField = new SearchField ();
-			searchField.downOrUpArrowKeyPressed += SearchFieldIndexChange;
 
 			UpdateDeformerAttributes ();
 
@@ -198,26 +195,6 @@ namespace DeformEditor
 			}
 		}
 
-		private void SearchFieldIndexChange ()
-		{
-			var e = Event.current;
-
-			if (e.keyCode == KeyCode.UpArrow)
-			{
-				searchIndex--;
-				e.Use ();
-			}
-			else if (e.keyCode == KeyCode.DownArrow)
-			{
-				searchIndex++;
-				e.Use ();
-			}
-			if (searchIndex < 0)
-				searchIndex = filteredDeformerAttributes.Count - 1;
-			if (searchIndex > filteredDeformerAttributes.Count - 1)
-				searchIndex = 0;
-		}
-
 		private bool AttributeIncludedInFilter (DeformerAttribute attribute, FilterCategory filter)
 		{
 			if (filter == FilterCategory.All)
@@ -305,7 +282,7 @@ namespace DeformEditor
 				var newGameObject = new GameObject (attribute.Name);
 				Undo.RegisterCreatedObjectUndo (newGameObject, "Created Deformer");
 
-				UnityEditor.EditorGUIUtility.PingObject (newGameObject);
+				EditorGUIUtility.PingObject (newGameObject);
 
 				var newDeformer = newGameObject.AddComponent (attribute.Type) as Deformer;
 
