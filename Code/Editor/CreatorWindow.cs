@@ -25,11 +25,11 @@ namespace DeformEditor
 
 			static Styles ()
 			{
-				ListButton = new GUIStyle (EditorStyles.toolbarButton);
+				ListButton = new GUIStyle (EditorStyles.miniButton);
 				ListButton.margin = new RectOffset (PAD_X, PAD_X, PAD_Y, PAD_Y);
 
 				ButtonLeftStyle = new GUIStyle (EditorStyles.miniButtonLeft);
-				ButtonMidStyle = new GUIStyle (EditorStyles.miniButtonMid);
+				ButtonMidStyle = new GUIStyle (EditorStyles.miniButton);
 				ButtonRightStyle = new GUIStyle (EditorStyles.miniButtonRight);
 
 				ButtonLeftStyle.fixedHeight = ButtonMidStyle.fixedHeight = ButtonRightStyle.fixedHeight = EditorGUIUtility.singleLineHeight;
