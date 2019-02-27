@@ -66,6 +66,8 @@ namespace Deform
 
 		public DataFlags ModifiedDataFlags => lastModifiedDataFlags;
 
+		public bool assignOriginalMeshOnDisable = true;
+
 		[SerializeField, HideInInspector] private UpdateMode updateMode = UpdateMode.Auto;
 		[SerializeField, HideInInspector] private NormalsRecalculation normalsRecalculation = NormalsRecalculation.Auto;
 		[SerializeField, HideInInspector] private BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
@@ -106,7 +108,7 @@ namespace Deform
 		private void OnDisable ()
 		{
 			Complete ();
-			data.Dispose ();
+			data.Dispose (assignOriginalMeshOnDisable);
 			Manager?.RemoveDeformable (this);
 		}
 

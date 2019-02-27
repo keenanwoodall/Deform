@@ -212,15 +212,20 @@ namespace Deform
 		/// <summary>
 		/// Disposes of all native data and sets the target's mesh back to the original one.
 		/// </summary>
-		public void Dispose ()
+		public void Dispose () => Dispose (true);
+		public void Dispose (bool assignOriginalMesh)
 		{
-			// Meshes are special and don't get garbage collected so we need to destroy it manually.
-			GameObject.DestroyImmediate (DynamicMesh);
+			if (assignOriginalMesh)
+			{
+				// Meshes are special and don't get garbage collected so we need to destroy it manually.
+				GameObject.DestroyImmediate (DynamicMesh);
+				Target.SetMesh (OriginalMesh);
+			}
+
 			if (DynamicNative != null)
 				DynamicNative.Dispose ();
 			if (OriginalNative != null)
 				OriginalNative.Dispose ();
-			Target.SetMesh (OriginalMesh);
 		}
 	}
 }
