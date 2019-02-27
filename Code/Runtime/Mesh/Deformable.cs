@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
-using Deform.Masking;
 
 namespace Deform
 {
@@ -59,6 +58,11 @@ namespace Deform
 			get => deformerElements;
 			set => deformerElements = value;
 		}
+		public Bounds CustomBounds
+		{
+			get => customBounds;
+			set => customBounds = value;
+		}
 
 		public DataFlags ModifiedDataFlags => lastModifiedDataFlags;
 
@@ -71,6 +75,8 @@ namespace Deform
 
 		[SerializeField, HideInInspector] private MeshData data;
 		[SerializeField, HideInInspector] private List<DeformerElement> deformerElements = new List<DeformerElement> ();
+
+		[SerializeField, HideInInspector] private Bounds customBounds;
 
 		private JobHandle handle;
 
@@ -183,13 +189,13 @@ namespace Deform
 				}
 			}
 
-			if (normalsRecalculation == NormalsRecalculation.Auto)
+			if (NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
 				handle = MeshUtils.RecalculateNormals (data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
-			if (boundsRecalculation != BoundsRecalculation.Never)
+			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
 				handle = MeshUtils.RecalculateBounds (data.DynamicNative, handle);
@@ -225,6 +231,9 @@ namespace Deform
 				return;
 
 			data.ApplyData (currentModifiedDataFlags | lastModifiedDataFlags);
+
+			if (BoundsRecalculation == BoundsRecalculation.Custom )
+				data.DynamicMesh.bounds = CustomBounds;
 
 			if (ColliderRecalculation == ColliderRecalculation.Auto)
 				RecalculateMeshCollider ();

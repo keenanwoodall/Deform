@@ -10,5 +10,6 @@
 		Auto,
 		Never,
 		OnceAtTheEnd,
+		Custom
 	}
 }
