@@ -9,7 +9,7 @@ namespace DeformEditor
 	{
 		private class Content
 		{
-			public static readonly GUIContent Update = new GUIContent (text: "Update");
+			public static readonly GUIContent Update = new GUIContent (text: "Update", tooltip: "Should the manager update?");
 		}
 
 		private class Properties
@@ -21,8 +21,6 @@ namespace DeformEditor
 				Update = obj.FindProperty ("update");
 			}
 		}
-
-		private static bool ShowDebug;
 
 		private Properties properties;
 
