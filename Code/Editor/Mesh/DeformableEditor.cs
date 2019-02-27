@@ -303,6 +303,7 @@ namespace DeformEditor
 					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
 				}
 			}
+
 			serializedObject.ApplyModifiedProperties ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();

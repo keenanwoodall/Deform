@@ -6,7 +6,7 @@ namespace Beans.Unity.Editor
 {
 	public static class EditorGUILayoutx
 	{
-		public static void Splitter (float padding = 0f, bool wideMode = false)
+		public static void Splitter (float padding = 3f, bool wideMode = false)
 		{
 			GUILayoutUtility.GetRect (1f, padding);
 			var rect = GUILayoutUtility.GetRect (1f, 1f);
@@ -43,7 +43,7 @@ namespace Beans.Unity.Editor
 				this.isOpen = isOpen;
 				this.text = text;
 
-				Splitter (wideMode: this.wideMode);
+				Splitter (padding: 0f, wideMode: this.wideMode);
 
 				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				if (this.wideMode)
@@ -65,7 +65,7 @@ namespace Beans.Unity.Editor
 				this.isOpen = isExpanded.isExpanded;
 				this.text = text;
 
-				Splitter (wideMode: this.wideMode);
+				Splitter (padding: 0f, wideMode: this.wideMode);
 
 				var foldoutRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
 				foldoutRect.xMin = 0;
@@ -91,7 +91,7 @@ namespace Beans.Unity.Editor
 
 			public void Dispose ()
 			{
-				Splitter (wideMode: this.wideMode);
+				Splitter (padding: 0f, wideMode: this.wideMode);
 			}
 		}
 
