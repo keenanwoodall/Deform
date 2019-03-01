@@ -85,8 +85,6 @@ namespace DeformEditor
 
 		public override void OnInspectorGUI ()
 		{
-			base.OnInspectorGUI ();
-
 			serializedObject.UpdateIfRequiredOrScript ();
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
