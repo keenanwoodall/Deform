@@ -67,11 +67,14 @@ namespace DeformEditor
 				list.DoLayoutList ();
 			}
 			// If an error is thrown, the serialized object was modified but not marked as dirty so we need to force it to sync back up with the targets.
-			catch (InvalidOperationException)
+			catch (Exception e)
 			{
-				var so = list.serializedProperty.serializedObject;
-				so.SetIsDifferentCacheDirty ();
-				so.Update ();
+				if (e is InvalidOperationException || e is NullReferenceException)
+				{
+					var so = list.serializedProperty.serializedObject;
+					so.SetIsDifferentCacheDirty ();
+					so.Update ();
+				}
 			}
 		}
 
