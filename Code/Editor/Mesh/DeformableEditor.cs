@@ -41,9 +41,6 @@ namespace DeformEditor
 			public static readonly GUIContent SaveObj = new GUIContent (text: "Save Obj", tooltip: "Save the current mesh as a .obj file in the project. (Doesn't support vertex colors)");
 			public static readonly GUIContent SaveAsset = new GUIContent (text: "Save Asset", tooltip: "Save the current mesh as a mesh asset file in the project.");
 			public static readonly GUIContent CustomBounds = new GUIContent (text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
-
-			public static readonly GUIContent Manager = new GUIContent (text: "Manager", tooltip: "The manager that will update this deformable. If none is assigned a default one will be created at Start.");
-
 		}
 
 		private class Properties
@@ -65,8 +62,6 @@ namespace DeformEditor
 				ColliderRecalculation	= obj.FindProperty ("colliderRecalculation");
 				MeshCollider			= obj.FindProperty ("meshCollider");
 				CustomBounds			= obj.FindProperty ("customBounds");
-
-				Manager					= obj.FindProperty ("manager");
 			}
 		}
 
@@ -288,22 +283,6 @@ namespace DeformEditor
 
 					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
 					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
-
-					using (var check = new EditorGUI.ChangeCheckScope ())
-					{
-						var differentManagers = properties.Manager.hasMultipleDifferentValues;
-
-						EditorGUI.showMixedValue = differentManagers;
-						var newManager = (DeformableManager)EditorGUILayout.ObjectField (Content.Manager, properties.Manager.objectReferenceValue, typeof (DeformableManager), true);
-						EditorGUI.showMixedValue = false;
-
-						if (check.changed)
-						{
-							Undo.RecordObjects (targets, "Changed Manager");
-							foreach (var t in targets)
-								((Deformable)t).Manager = newManager;
-						}
-					}
 				}
 			}
 

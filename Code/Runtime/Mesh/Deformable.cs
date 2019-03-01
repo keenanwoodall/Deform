@@ -43,16 +43,6 @@ namespace Deform
 			get => meshCollider;
 			set => meshCollider = value;
 		}
-		public DeformableManager Manager
-		{
-			get => manager;
-			set
-			{
-				manager?.RemoveDeformable (this);
-				manager = value;
-				manager?.AddDeformable (this);
-			}
-		}
 		public List<DeformerElement> DeformerElements
 		{
 			get => deformerElements;
@@ -62,6 +52,16 @@ namespace Deform
 		{
 			get => customBounds;
 			set => customBounds = value;
+		}
+		public DeformableManager Manager
+		{
+			get => manager;
+			set
+			{
+				manager?.RemoveDeformable (this);
+				manager = value;
+				manager?.AddDeformable (this);
+			}
 		}
 
 		public DataFlags ModifiedDataFlags => lastModifiedDataFlags;
@@ -73,13 +73,13 @@ namespace Deform
 		[SerializeField, HideInInspector] private BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
 		[SerializeField, HideInInspector] private ColliderRecalculation colliderRecalculation = ColliderRecalculation.None;
 		[SerializeField, HideInInspector] private MeshCollider meshCollider;
-		[SerializeField, HideInInspector] private DeformableManager manager;
 
 		[SerializeField, HideInInspector] private MeshData data;
 		[SerializeField, HideInInspector] private List<DeformerElement> deformerElements = new List<DeformerElement> ();
 
 		[SerializeField, HideInInspector] private Bounds customBounds;
 
+		private DeformableManager manager;
 		private JobHandle handle;
 
 		private DataFlags currentModifiedDataFlags = DataFlags.None;
