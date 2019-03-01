@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using Beans.Unity.Editor;
 using Deform;
@@ -37,12 +36,13 @@ namespace DeformEditor
 			public static readonly GUIContent BoundsRecalculation = new GUIContent (text: "Bounds Recalculation", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent (text: "Collider Recalculation", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent (text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
-			public static readonly GUIContent Manager = new GUIContent (text: "Manager", tooltip: "The manager that will update this deformable. If none is assigned a default one will be created at Start.");
 			public static readonly GUIContent ClearDeformers = new GUIContent (text: "Clear", tooltip: "Remove all deformers from the deformer list.");
 			public static readonly GUIContent CleanDeformers = new GUIContent (text: "Clean", tooltip: "Remove all null deformers from the deformer list.");
 			public static readonly GUIContent SaveObj = new GUIContent (text: "Save Obj", tooltip: "Save the current mesh as a .obj file in the project. (Doesn't support vertex colors)");
 			public static readonly GUIContent SaveAsset = new GUIContent (text: "Save Asset", tooltip: "Save the current mesh as a mesh asset file in the project.");
 			public static readonly GUIContent CustomBounds = new GUIContent (text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
+
+			public static readonly GUIContent Manager = new GUIContent (text: "Manager", tooltip: "The manager that will update this deformable. If none is assigned a default one will be created at Start.");
 
 		}
 
@@ -53,8 +53,9 @@ namespace DeformEditor
 			public SerializedProperty BoundsRecalculation;
 			public SerializedProperty ColliderRecalculation;
 			public SerializedProperty MeshCollider;
-			public SerializedProperty Manager;
 			public SerializedProperty CustomBounds;
+
+			public SerializedProperty Manager;
 
 			public Properties (SerializedObject obj)
 			{
@@ -63,8 +64,9 @@ namespace DeformEditor
 				BoundsRecalculation		= obj.FindProperty ("boundsRecalculation");
 				ColliderRecalculation	= obj.FindProperty ("colliderRecalculation");
 				MeshCollider			= obj.FindProperty ("meshCollider");
-				Manager					= obj.FindProperty ("manager");
 				CustomBounds			= obj.FindProperty ("customBounds");
+
+				Manager					= obj.FindProperty ("manager");
 			}
 		}
 
@@ -118,22 +120,6 @@ namespace DeformEditor
 			{
 				using (new EditorGUI.IndentLevelScope ())
 					EditorGUILayout.PropertyField (properties.MeshCollider, Content.MeshCollider);
-			}
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var differentManagers = properties.Manager.hasMultipleDifferentValues;
-
-				EditorGUI.showMixedValue = differentManagers;
-				var newManager = (DeformableManager)EditorGUILayout.ObjectField (Content.Manager, properties.Manager.objectReferenceValue, typeof (DeformableManager), true);
-				EditorGUI.showMixedValue = false;
-
-				if (check.changed)
-				{
-					Undo.RecordObjects (targets, "Changed Manager");
-					foreach (var t in targets)
-						((Deformable)t).Manager = newManager;
-				}
 			}
 
 			deformerList.DoLayoutList ();
@@ -299,8 +285,25 @@ namespace DeformEditor
 							vertexCount += deformable.GetMesh ().vertexCount;
 						modifiedData |= deformable.ModifiedDataFlags;
 					}
+
 					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
 					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
+
+					using (var check = new EditorGUI.ChangeCheckScope ())
+					{
+						var differentManagers = properties.Manager.hasMultipleDifferentValues;
+
+						EditorGUI.showMixedValue = differentManagers;
+						var newManager = (DeformableManager)EditorGUILayout.ObjectField (Content.Manager, properties.Manager.objectReferenceValue, typeof (DeformableManager), true);
+						EditorGUI.showMixedValue = false;
+
+						if (check.changed)
+						{
+							Undo.RecordObjects (targets, "Changed Manager");
+							foreach (var t in targets)
+								((Deformable)t).Manager = newManager;
+						}
+					}
 				}
 			}
 
