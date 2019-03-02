@@ -55,7 +55,7 @@ namespace Deform
 
 		[SerializeField, HideInInspector] private float angle = 0f;
 		[SerializeField, HideInInspector] private float factor = 1f;
-		[SerializeField, HideInInspector] private BoundsMode mode;
+		[SerializeField, HideInInspector] private BoundsMode mode = BoundsMode.Limited;
 		[SerializeField, HideInInspector] private float inner = 0f;
 		[SerializeField, HideInInspector] private float outer = 1f;
 		[SerializeField, HideInInspector] private bool smooth = true;
