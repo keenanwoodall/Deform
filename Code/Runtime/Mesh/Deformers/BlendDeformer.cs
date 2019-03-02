@@ -41,7 +41,7 @@ namespace Deform
 			if (Cache == null)
 				return false;
 			vertices = new NativeArray<float3> (Cache.Data.Vertices.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-			vertices.MemCpy (Cache.Data.Vertices);
+			Cache.Data.Vertices.MemCpy (vertices);
 			return true;
 		}
 
