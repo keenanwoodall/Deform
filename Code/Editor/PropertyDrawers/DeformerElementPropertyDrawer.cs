@@ -34,7 +34,7 @@ namespace DeformEditor
 				var componentProperty = property.FindPropertyRelative ("component");
 
 				var toggleRect = new Rect (indentedRect);
-				toggleRect.xMax = toggleRect.xMin + UnityEditor.EditorGUIUtility.singleLineHeight;
+				toggleRect.xMax = toggleRect.xMin + EditorGUIUtility.singleLineHeight;
 
 				using (new EditorGUI.DisabledScope (componentProperty.objectReferenceValue == null))
 				{
