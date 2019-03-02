@@ -46,7 +46,6 @@ namespace DeformEditor
 						componentProperty = elementProperty.FindPropertyRelative ("component");
 					}
 
-
 					// and the property's object reference
 					var component = componentProperty.objectReferenceValue;
 
