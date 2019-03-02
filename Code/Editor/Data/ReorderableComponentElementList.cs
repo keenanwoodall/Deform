@@ -29,27 +29,46 @@ namespace DeformEditor
 			list.drawHeaderCallback = (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
 			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
-				var elementProperty = list.serializedProperty.GetArrayElementAtIndex (index);
-
-				EditorGUI.PropertyField (rect, elementProperty);
-
-				// get the current element's component property
-				var componentProperty = elementProperty.FindPropertyRelative ("component");
-				// and the property's object reference
-				var component = componentProperty.objectReferenceValue;
-				// if the current element is selected
-				if (!componentProperty.hasMultipleDifferentValues && index == list.index && component != null)
+				try
 				{
-					// create it's editor and draw it
-					Editor.CreateCachedEditor (component, null, ref selectedComponentInspectorEditor);
-					SceneView.onSceneGUIDelegate -= SceneGUI;
-					SceneView.onSceneGUIDelegate += SceneGUI;
+					var elementProperty = list.serializedProperty.GetArrayElementAtIndex (index);
 
-					using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, $"{component.name} Properties"))
+					EditorGUI.PropertyField (rect, elementProperty);
+
+					// get the current element's component property
+					var componentProperty = elementProperty.FindPropertyRelative ("component");
+
+					if (componentProperty == null)
 					{
-						if (foldout.isOpen)
-							selectedComponentInspectorEditor.OnInspectorGUI ();
+						elementProperty.serializedObject.SetIsDifferentCacheDirty ();
+						elementProperty.serializedObject.Update ();
+
+						componentProperty = elementProperty.FindPropertyRelative ("component");
 					}
+
+
+					// and the property's object reference
+					var component = componentProperty.objectReferenceValue;
+
+					// if the current element is selected
+					if (!componentProperty.hasMultipleDifferentValues && index == list.index && component != null)
+					{
+						// create it's editor and draw it
+						Editor.CreateCachedEditor (component, null, ref selectedComponentInspectorEditor);
+						SceneView.onSceneGUIDelegate -= SceneGUI;
+						SceneView.onSceneGUIDelegate += SceneGUI;
+
+						using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, $"{component.name} Properties"))
+						{
+							if (foldout.isOpen)
+								selectedComponentInspectorEditor.OnInspectorGUI ();
+						}
+					}
+				}
+				catch (NullReferenceException)
+				{
+					list.serializedProperty.serializedObject.SetIsDifferentCacheDirty ();
+					list.serializedProperty.serializedObject.Update ();
 				}
 			};
 		}
