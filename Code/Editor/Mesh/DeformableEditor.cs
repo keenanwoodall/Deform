@@ -32,9 +32,9 @@ namespace DeformEditor
 		private class Content
 		{
 			public static readonly GUIContent UpdateMode = new GUIContent (text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
-			public static readonly GUIContent NormalsRecalculation = new GUIContent (text: "Normals Recalculation", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");
-			public static readonly GUIContent BoundsRecalculation = new GUIContent (text: "Bounds Recalculation", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
-			public static readonly GUIContent ColliderRecalculation = new GUIContent (text: "Collider Recalculation", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
+			public static readonly GUIContent NormalsRecalculation = new GUIContent (text: "Normals", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");
+			public static readonly GUIContent BoundsRecalculation = new GUIContent (text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
+			public static readonly GUIContent ColliderRecalculation = new GUIContent (text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent (text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
 			public static readonly GUIContent ClearDeformers = new GUIContent (text: "Clear", tooltip: "Remove all deformers from the deformer list.");
 			public static readonly GUIContent CleanDeformers = new GUIContent (text: "Clean", tooltip: "Remove all null deformers from the deformer list.");
@@ -51,8 +51,6 @@ namespace DeformEditor
 			public SerializedProperty ColliderRecalculation;
 			public SerializedProperty MeshCollider;
 			public SerializedProperty CustomBounds;
-
-			public SerializedProperty Manager;
 
 			public Properties (SerializedObject obj)
 			{
@@ -114,6 +112,8 @@ namespace DeformEditor
 				using (new EditorGUI.IndentLevelScope ())
 					EditorGUILayout.PropertyField (properties.MeshCollider, Content.MeshCollider);
 			}
+
+			EditorGUILayout.Space ();
 
 			deformerList.DoLayoutList ();
 
