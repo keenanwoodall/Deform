@@ -123,7 +123,7 @@ namespace Beans.Unity.Editor
 		/// <returns>Returns true if the top or bottom was changed.</returns>
 		public bool DrawHandle (float top, float bottom, Transform axis, Vector3 direction)
 		{
-			return DrawHandle (top, bottom, axis.position, axis.rotation, axis.localScale, direction);
+			return DrawHandle (top, bottom, axis.position, axis.rotation, axis.lossyScale, direction);
 		}
 	}
 }
