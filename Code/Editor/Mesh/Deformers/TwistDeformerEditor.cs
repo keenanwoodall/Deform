@@ -124,8 +124,8 @@ namespace DeformEditor
 
 			var normal = -twist.Axis.forward;
 			var direction = twist.Axis.right;
-			var bottomMatrix = Matrix4x4.TRS (twist.transform.position + (twist.Axis.forward * twist.Bottom), Quaternion.LookRotation (direction, normal), Vector3.one);
-			var topMatrix = Matrix4x4.TRS (twist.transform.position + (twist.Axis.forward * twist.Top), Quaternion.LookRotation (direction, normal), Vector3.one);
+			var bottomMatrix = Matrix4x4.TRS (twist.transform.position + (twist.Axis.forward * twist.Bottom * twist.Axis.lossyScale.z), Quaternion.LookRotation (direction, normal), Vector3.one);
+			var topMatrix = Matrix4x4.TRS (twist.transform.position + (twist.Axis.forward * twist.Top * twist.Axis.lossyScale.z), Quaternion.LookRotation (direction, normal), Vector3.one);
 
 			using (new Handles.DrawingScope (Handles.matrix))
 			{
