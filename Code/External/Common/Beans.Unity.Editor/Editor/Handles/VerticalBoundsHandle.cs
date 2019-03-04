@@ -73,7 +73,7 @@ namespace Beans.Unity.Editor
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					var bottomSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (bottomPosition)) * screenspaceHandleSize;
+					var bottomSize = HandleUtility.GetHandleSize (bottomPosition) * screenspaceHandleSize;
 					var newBottomPosition = Handles.Slider (bottomPosition, direction, bottomSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
@@ -86,7 +86,7 @@ namespace Beans.Unity.Editor
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					var topSize = HandleUtility.GetHandleSize (handleSpace.inverse.MultiplyPoint3x4 (topPosition)) * screenspaceHandleSize;
+					var topSize = HandleUtility.GetHandleSize (topPosition) * screenspaceHandleSize;
 					var newTopPosition = Handles.Slider (topPosition, direction, topSize, handleCapFunction, actualSnap);
 					if (check.changed)
 					{
