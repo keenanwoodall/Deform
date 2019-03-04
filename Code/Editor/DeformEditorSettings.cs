@@ -30,34 +30,58 @@ namespace DeformEditor
 		public static Color SolidHandleColor
 		{
 			get => SettingsAsset.solidHandleColor;
-			set => SettingsAsset.solidHandleColor = value;
+			set
+			{
+				SettingsAsset.solidHandleColor = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
 		}
 		public static Color LightHandleColor
 		{
 			get => SettingsAsset.lightHandleColor;
-			set => SettingsAsset.lightHandleColor = value;
+			set
+			{
+				SettingsAsset.lightHandleColor = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
 		}
 
 		public static float DottedLineSize
 		{
 			get => SettingsAsset.dottedLineSize;
-			set => SettingsAsset.dottedLineSize = value;
+			set
+			{
+				SettingsAsset.dottedLineSize = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
 		}
 		public static float ScreenspaceSliderHandleCapSize
 		{
 			get => SettingsAsset.screenspaceHandleCapSize;
-			set => SettingsAsset.screenspaceHandleCapSize = value;
+			set
+			{
+				SettingsAsset.screenspaceHandleCapSize = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
 		}
 		public static float ScreenspaceAngleHandleSize
 		{
 			get => SettingsAsset.screenspaceAngleHandleSize;
-			set => SettingsAsset.screenspaceAngleHandleSize = value;
+			set
+			{
+				SettingsAsset.screenspaceAngleHandleSize = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
 		}
 
 		public static DeformHandles.CapType CapType
 		{
 			get => settingsAsset.capType;
-			set => settingsAsset.capType = value;
+			set
+			{
+				settingsAsset.capType = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
 		}
 
 		public static void SelectSettingsAsset ()
