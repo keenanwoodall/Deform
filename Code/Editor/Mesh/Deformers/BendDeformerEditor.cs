@@ -100,10 +100,10 @@ namespace DeformEditor
 		private void DrawAngleHandle (BendDeformer bend)
         {
 			angleHandle.angle = bend.Angle;
-			angleHandle.radius = HandleUtility.GetHandleSize (bend.Axis.position) * DeformEditorSettings.ScreenspaceAngleHandleSize;
+			angleHandle.radius = bend.Top - bend.Bottom;//HandleUtility.GetHandleSize (bend.Axis.position) * DeformEditorSettings.ScreenspaceAngleHandleSize;
 			angleHandle.fillColor = Color.clear;
 
-			var direction = -bend.Axis.right;
+			var direction = bend.Axis.up;
 			var normal = -bend.Axis.forward;
 			var matrix = Matrix4x4.TRS (bend.Axis.position + bend.Axis.rotation * (Vector3.up * bend.Bottom), Quaternion.LookRotation (direction, normal), Vector3.one);
 
