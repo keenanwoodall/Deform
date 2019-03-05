@@ -43,8 +43,8 @@ namespace Deform
 
 		[SerializeField, HideInInspector] private float factor;
 		[SerializeField, HideInInspector] private BoundsMode mode= BoundsMode.Unlimited;
-		[SerializeField, HideInInspector] private float top = 1f;
-		[SerializeField, HideInInspector] private float bottom = -1f;
+		[SerializeField, HideInInspector] private float top = 0.5f;
+		[SerializeField, HideInInspector] private float bottom = -0.5f;
 		[SerializeField, HideInInspector] private Transform axis;
 
 		public override DataFlags DataFlags => DataFlags.Vertices;

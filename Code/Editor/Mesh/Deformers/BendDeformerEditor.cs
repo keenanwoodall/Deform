@@ -83,6 +83,8 @@ namespace DeformEditor
 
 			var bend = target as BendDeformer;
 
+			DrawAngleHandle (bend);
+
 			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
 			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			if (boundsHandle.DrawHandle (bend.Top, bend.Bottom, bend.Axis, Vector3.up))
@@ -92,15 +94,13 @@ namespace DeformEditor
 				bend.Bottom = boundsHandle.bottom;
 			}
 
-			DrawAngleHandle (bend);
-
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
 
 		private void DrawAngleHandle (BendDeformer bend)
         {
 			angleHandle.angle = bend.Angle;
-			angleHandle.radius = bend.Top - bend.Bottom;//HandleUtility.GetHandleSize (bend.Axis.position) * DeformEditorSettings.ScreenspaceAngleHandleSize;
+			angleHandle.radius = bend.Top - bend.Bottom;
 			angleHandle.fillColor = Color.clear;
 
 			var direction = bend.Axis.up;

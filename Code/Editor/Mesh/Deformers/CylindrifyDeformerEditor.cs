@@ -80,7 +80,7 @@ namespace DeformEditor
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				var newWorldPosition = DeformHandles.MiniSlider (worldPosition, direction);
+				var newWorldPosition = DeformHandles.Slider (worldPosition, direction);
 				if (check.changed)
 				{
 					Undo.RecordObject (cylindrify, "Changed Radius");

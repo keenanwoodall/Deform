@@ -66,8 +66,8 @@ namespace DeformEditor
 
 			var spherify = target as SpherifyDeformer;
 
-			DrawFactorHandle (spherify);
 			DrawRadiusHandle (spherify);
+			DrawFactorHandle (spherify);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}

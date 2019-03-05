@@ -74,16 +74,6 @@ namespace DeformEditor
 			}
 		}
 
-		public static DeformHandles.CapType CapType
-		{
-			get => settingsAsset.capType;
-			set
-			{
-				settingsAsset.capType = value;
-				EditorUtility.SetDirty (SettingsAsset);
-			}
-		}
-
 		public static void SelectSettingsAsset ()
 		{
 			Selection.activeObject = SettingsAsset;

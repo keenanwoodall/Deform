@@ -45,19 +45,7 @@ namespace DeformEditor
 
 		public static void HandleCapFunction (int controlId, Vector3 position, Quaternion rotation, float size, EventType eventType)
 		{
-			switch (DeformEditorSettings.CapType)
-			{
-				default:
-				case CapType.Circle:
-					Handles.CircleHandleCap (controlId, position, rotation, size, eventType);
-					break;
-				case CapType.Rectangle:
-					Handles.RectangleHandleCap (controlId, position, rotation, size, eventType);
-					break;
-				case CapType.Dot:
-					Handles.DotHandleCap (controlId, position, rotation, size, eventType);
-					break;
-			}
+			Handles.DotHandleCap (controlId, position, rotation, size, eventType);
 		}
 
 		public static void Line (Vector3 a, Vector3 b, LineMode mode)

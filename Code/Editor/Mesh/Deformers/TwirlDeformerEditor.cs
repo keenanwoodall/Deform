@@ -91,6 +91,8 @@ namespace DeformEditor
 
 			var twirl = target as TwirlDeformer;
 
+			DrawAngleHandle (twirl);
+
 			if (twirl.Mode == BoundsMode.Limited)
 			{
 				boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
@@ -102,7 +104,6 @@ namespace DeformEditor
 					twirl.Inner = boundsHandle.bottom;
 				}
 			}
-			DrawAngleHandle (twirl);
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
