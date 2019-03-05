@@ -16,6 +16,5 @@ MonoBehaviour:
   solidHandleColor: {r: 1, g: 0.40000004, b: 0, a: 1}
   lightHandleColor: {r: 1, g: 0.40000004, b: 0, a: 0.5}
   dottedLineSize: 5
-  screenspaceHandleCapSize: 0.25
+  screenspaceHandleCapSize: 0.05
   screenspaceAngleHandleSize: 1.25
-  capType: 0
