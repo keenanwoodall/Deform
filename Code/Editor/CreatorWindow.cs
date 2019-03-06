@@ -58,7 +58,7 @@ namespace DeformEditor
 					new GUIContent ("All", "All"),
 					new GUIContent ("N", "Noise"),
 					new GUIContent ("M", "Mask"),
-					new GUIContent ("U", "Utility")
+					new GUIContent (DeformEditorResources.GetTexture ("UtilityCategoryIcon"), "Utility")
 				};
 			}
 		}
