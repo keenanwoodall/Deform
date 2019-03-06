@@ -20,29 +20,12 @@ namespace DeformEditor
 			public const int PAD_X = 5;
 			public const int PAD_Y = 2;
 
-			public static GUIStyle ListButton;
-			public static readonly GUIStyle ButtonLeftStyle, ButtonMidStyle, ButtonRightStyle;
+			public static GUIStyle Button;
 
 			static Styles ()
 			{
-				ListButton = new GUIStyle (EditorStyles.miniButton);
-				ListButton.margin = new RectOffset (PAD_X, PAD_X, PAD_Y, PAD_Y);
-
-				ButtonLeftStyle = new GUIStyle (EditorStyles.miniButtonLeft);
-				ButtonMidStyle = new GUIStyle (EditorStyles.miniButton);
-				ButtonRightStyle = new GUIStyle (EditorStyles.miniButtonRight);
-
-				ButtonLeftStyle.fixedHeight = ButtonMidStyle.fixedHeight = ButtonRightStyle.fixedHeight = EditorGUIUtility.singleLineHeight;
-
-				var leftMargin = ButtonLeftStyle.margin;
-				var midMargin = ButtonMidStyle.margin;
-				var rightMargin = ButtonRightStyle.margin;
-
-				// decrease the margins of the inner sides by 1 because in a horizontal layout Unity likes to randomly add 1px of padding between elements
-				midMargin.left--;
-				rightMargin.left--;
-				midMargin.right--;
-				leftMargin.right--;
+				Button = new GUIStyle (EditorStyles.miniButton);
+				Button.margin = new RectOffset (PAD_X, PAD_X, PAD_Y, PAD_Y);
 			}
 		}
 
@@ -105,7 +88,7 @@ namespace DeformEditor
 		{
 			EditorGUILayout.Space ();
 
-			if (GUILayout.Button (Content.CreateDeformable, Styles.ListButton))
+			if (GUILayout.Button (Content.CreateDeformable, Styles.Button))
 				AddOrCreateDeformable ();
 
 			EditorGUILayout.Space ();
@@ -165,7 +148,7 @@ namespace DeformEditor
 								EditorGUILayout.LabelField ($"{current.Category.ToString ()} ({countInCategory})", EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
 							}
 
-							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.ListButton))
+							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.Button))
 								CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
 							drawnCount++;
 						}
