@@ -53,22 +53,17 @@ namespace DeformEditor
 
 			static Content ()
 			{
-				var noiseTexture = DeformEditorResources.LoadAssetOfType<Texture2D> ("DeformNoiseIcon");
-				var maskTexture = DeformEditorResources.LoadAssetOfType<Texture2D> ("DeformMaskIcon");
-				var utilityTexture = DeformEditorResources.LoadAssetOfType<Texture2D> ("DeformUtilityIcon");
-
 				FilterToolbar = new GUIContent[]
 				{
 					new GUIContent ("All", "All"),
-					new GUIContent ("N", "Normal"),
-					new GUIContent (noiseTexture, "Noise"),
-					new GUIContent (maskTexture, "Mask"),
-					new GUIContent (utilityTexture, "Utility")
+					new GUIContent ("N", "Noise"),
+					new GUIContent ("M", "Mask"),
+					new GUIContent ("U", "Utility")
 				};
 			}
 		}
 
-		private enum FilterCategory { All, Normal, Noise, Mask, Utility }
+		private enum FilterCategory { All, Noise, Mask, Utility }
 
 		[SerializeField]
 		private FilterCategory filter;
@@ -121,7 +116,7 @@ namespace DeformEditor
 				if (check.changed)
 				{
 					Undo.RecordObject (this, "Changed Category Filter");
-					filter = (FilterCategory)newCategoryIndex;
+					filter = ToolbarIndexToFilterCategory (newCategoryIndex);
 				}
 			}
 
@@ -195,11 +190,26 @@ namespace DeformEditor
 			}
 		}
 
+        private FilterCategory ToolbarIndexToFilterCategory (int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return FilterCategory.All;
+                case 1:
+                    return FilterCategory.Noise;
+                case 2:
+                    return FilterCategory.Mask;
+                case 3:
+                    return FilterCategory.Utility;
+                default:
+                    throw new Exception("Invalid index.");
+            }
+        }
+
 		private bool AttributeIncludedInFilter (DeformerAttribute attribute, FilterCategory filter)
 		{
 			if (filter == FilterCategory.All)
-				return true;
-			else if (filter == FilterCategory.Normal && attribute.Category == Category.Normal)
 				return true;
 			else if (filter == FilterCategory.Noise && attribute.Category == Category.Noise)
 				return true;
