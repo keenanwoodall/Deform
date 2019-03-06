@@ -18,6 +18,29 @@ namespace DeformEditor
 			Packages
 		}
 
+		private static GUISkin ProSkin, PersonalSkin;
+
+		public static GUISkin GetSkin ()
+		{
+			if (EditorGUIUtility.isProSkin)
+			{
+				if (ProSkin == null)
+					ProSkin = LoadAssetOfType<GUISkin> (contains: "DeformProfessional");
+				return ProSkin;
+			}
+			else
+			{
+				if (PersonalSkin == null)
+					PersonalSkin = LoadAssetOfType<GUISkin> (contains: "DeformPersonal");
+				return PersonalSkin;
+			}
+		}
+
+		public static GUIStyle GetStyle (string name)
+		{
+			return GetSkin ().GetStyle (name);
+		}
+
 		public static T LoadAssetOfType<T> (string contains = null, SearchFilter searchAssets = SearchFilter.All, Action error = null, Action success = null) where T : Object
 		{
 			bool allowScriptAssets = typeof (T) == typeof (MonoScript);

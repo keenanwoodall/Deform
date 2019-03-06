@@ -11,18 +11,7 @@ namespace DeformEditor
 		{
 			public const int Padding = 5;
 
-			public static readonly Texture2D ToggleOnTexture = UnityEditor.EditorGUIUtility.FindTexture ("animationvisibilitytoggleon");
-			public static readonly Texture2D ToggleOffTexture = UnityEditor.EditorGUIUtility.FindTexture ("animationvisibilitytoggleoff");
-
-			public static readonly GUIContent ToggleOn = new GUIContent (string.Empty, ToggleOnTexture);
-			public static readonly GUIContent ToggleOff = new GUIContent (string.Empty, ToggleOffTexture);
-
-			public static readonly GUIStyle Toggle = new GUIStyle ();
-
-			static Content ()
-			{
-				Toggle.contentOffset = new Vector2 (2, 3);
-			}
+			public static readonly GUIStyle Toggle = DeformEditorResources.GetStyle ("Visibility Toggle");
 		}
 
 		public override void OnGUI (Rect rect, SerializedProperty property, GUIContent label)
@@ -38,8 +27,7 @@ namespace DeformEditor
 
 				using (new EditorGUI.DisabledScope (componentProperty.objectReferenceValue == null))
 				{
-					var activeContent = activeProperty.boolValue ? Content.ToggleOn : Content.ToggleOff;
-					activeProperty.boolValue = GUI.Toggle (toggleRect, activeProperty.boolValue, activeContent, Content.Toggle);
+					activeProperty.boolValue = GUI.Toggle (toggleRect, activeProperty.boolValue, GUIContent.none, Content.Toggle);
 				}
 
 				var componentRect = new Rect (rect);
