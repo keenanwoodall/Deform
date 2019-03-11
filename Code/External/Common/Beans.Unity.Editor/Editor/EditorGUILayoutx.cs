@@ -6,93 +6,61 @@ namespace Beans.Unity.Editor
 {
 	public static class EditorGUILayoutx
 	{
-		public static void Splitter (float padding = 3f, bool wideMode = false)
+		private static class Styles
 		{
-			GUILayoutUtility.GetRect (1f, padding);
-			var rect = GUILayoutUtility.GetRect (1f, 1f);
-			GUILayoutUtility.GetRect (1f, padding);
-			if (Event.current.type != EventType.Repaint)
-				return;
-			if (wideMode)
-			{
-				rect.xMin = 0f;
-				rect.xMax = Screen.width;
-			}
-			var color = EditorGUIUtilityx.LowlightColor;
-			color.a = GUI.color.a;
-			EditorGUI.DrawRect (rect, color);
+			public static readonly Color SplitterDark = new Color (0.12f, 0.12f, 0.12f, 1.333f);
+			public static readonly Color SplitterLight = new Color (0.6f, 0.6f, 0.6f, 1.333f);
+			public static readonly Color HeaderBackgroundDark = new Color (0.1f, 0.1f, 0.1f, 0.2f);
+			public static readonly Color HeaderBackgroundLight = new Color (1f, 1f, 1f, 0.2f);
 		}
 
-		public class FoldoutWideScope : System.IDisposable
+		public static void DrawSplitter ()
 		{
-			private static GUIStyle DefaultLabelStyle;
-			static FoldoutWideScope ()
+			var rect = GUILayoutUtility.GetRect (1f, 1f);
+
+			rect.xMin = 0f;
+			rect.width += 4f;
+
+			if (Event.current.type != EventType.Repaint)
+				return;
+
+			EditorGUI.DrawRect (rect, EditorGUIUtility.isProSkin ? Styles.SplitterDark : Styles.SplitterLight);
+		}
+
+		public static bool DrawFoldoutHeader (string title, bool state)
+		{
+			var backgroundRect = GUILayoutUtility.GetRect (1f, 17f);
+
+			var labelRect = backgroundRect;
+			labelRect.xMin += 16f;
+			labelRect.xMax -= 20f;
+
+			var foldoutRect = backgroundRect;
+			foldoutRect.y += 1f;
+			foldoutRect.width = 13f;
+			foldoutRect.height = 13f;
+
+			// Background rect should be full-width
+			backgroundRect.xMin = 0f;
+			backgroundRect.width += 4f;
+
+			// Background
+			EditorGUI.DrawRect (backgroundRect, EditorGUIUtility.isProSkin ? Styles.HeaderBackgroundDark : Styles.HeaderBackgroundLight);
+
+			// Title
+			EditorGUI.LabelField (labelRect, EditorGUIUtility.TrTextContent (title), EditorStyles.boldLabel);
+
+			// Foldout
+			state = GUI.Toggle (foldoutRect, state, GUIContent.none, EditorStyles.foldout);
+
+			var e = Event.current;
+			if (e.type == EventType.MouseDown && backgroundRect.Contains (e.mousePosition) && e.button == 0)
 			{
-				DefaultLabelStyle = new GUIStyle (EditorStyles.label);
-				DefaultLabelStyle.alignment = TextAnchor.MiddleLeft;
+				state = !state;
+				e.Use ();
 			}
 
-			public bool isOpen;
-			private readonly bool wideMode;
-			private readonly string text;
-
-			public FoldoutWideScope (ref bool isOpen, string text, bool wideMode = true) : this (ref isOpen, text, DefaultLabelStyle, wideMode) { }
-			public FoldoutWideScope (ref bool isOpen, string text, GUIStyle labelStyle, bool wideMode = true)
-			{
-				this.wideMode = wideMode;
-				this.isOpen = isOpen;
-				this.text = text;
-
-				Splitter (padding: 0f, wideMode: this.wideMode);
-
-				var toggleRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
-				if (this.wideMode)
-				{
-					toggleRect.xMin = 0;
-					toggleRect.xMax = Screen.width;
-				}
-				EditorGUI.DrawRect (toggleRect, EditorGUIUtilityx.HighlightColor);
-				EditorGUI.indentLevel++;
-				EditorGUI.LabelField (toggleRect, text, labelStyle);
-				isOpen = EditorGUI.Foldout (toggleRect, isOpen, GUIContent.none, true);
-				EditorGUI.indentLevel--;
-			}
-
-			public FoldoutWideScope (SerializedProperty isExpanded, string text, bool wideMode = true) : this (isExpanded, text, DefaultLabelStyle, wideMode) { }
-			public FoldoutWideScope (SerializedProperty isExpanded, string text, GUIStyle labelStyle, bool wideMode = true)
-			{
-				this.wideMode = wideMode;
-				this.isOpen = isExpanded.isExpanded;
-				this.text = text;
-
-				Splitter (padding: 0f, wideMode: this.wideMode);
-
-				var foldoutRect = GUILayoutUtility.GetRect (1, EditorGUIUtility.singleLineHeight);
-				foldoutRect.xMin = 0;
-				foldoutRect.xMax = Screen.width;
-				EditorGUI.DrawRect (foldoutRect, EditorGUIUtilityx.HighlightColor);
-
-				foldoutRect = EditorGUI.IndentedRect (foldoutRect);
-
-				var labelRect = foldoutRect;
-				labelRect.xMin += EditorGUIUtility.singleLineHeight;
-				EditorGUI.LabelField (labelRect, text, labelStyle);
-
-				using (var check = new EditorGUI.ChangeCheckScope ())
-				{
-					isOpen = EditorGUI.Foldout (foldoutRect, isOpen, GUIContent.none, true);
-					if (check.changed)
-					{
-						isExpanded.serializedObject.ApplyModifiedPropertiesWithoutUndo ();
-						isExpanded.isExpanded = isOpen;
-					}
-				};
-			}
-
-			public void Dispose ()
-			{
-				Splitter (padding: 0f, wideMode: this.wideMode);
-			}
+			return state;
 		}
 
 		public class FoldoutContainerScope : System.IDisposable

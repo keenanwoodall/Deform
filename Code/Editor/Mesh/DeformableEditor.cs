@@ -182,25 +182,22 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			using (var foldout = new EditorGUILayoutx.FoldoutWideScope (ref ShowDebug, "Debug Info"))
+			if (ShowDebug = EditorGUILayoutx.DrawFoldoutHeader ("Debug Info", ShowDebug))
 			{
-				if (foldout.isOpen)
+				var vertexCount = 0;
+				var modifiedData = DataFlags.None;
+				foreach (var t in targets)
 				{
-					var vertexCount = 0;
-					var modifiedData = DataFlags.None;
-					foreach (var t in targets)
-					{
-						var deformable = t as Deformable;
-						var mesh = deformable.GetMesh ();
+					var deformable = t as Deformable;
+					var mesh = deformable.GetMesh ();
 
-						if (mesh != null)
-							vertexCount += deformable.GetMesh ().vertexCount;
-						modifiedData |= deformable.ModifiedDataFlags;
-					}
-
-					EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
-					EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
+					if (mesh != null)
+						vertexCount += deformable.GetMesh ().vertexCount;
+					modifiedData |= deformable.ModifiedDataFlags;
 				}
+
+				EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
+				EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
 			}
 
 			serializedObject.ApplyModifiedProperties ();
