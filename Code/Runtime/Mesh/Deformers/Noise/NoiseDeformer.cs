@@ -65,7 +65,7 @@ namespace Deform
 		[SerializeField, HideInInspector] private NoiseMode mode = NoiseMode._3D;
 		[SerializeField, HideInInspector] private float magnitudeScalar = 0f;
 		[SerializeField, HideInInspector] private Vector3 magnitudeVector = Vector3.one;
-		[SerializeField, HideInInspector] private float frequencyScalar = 3f;
+		[SerializeField, HideInInspector] private float frequencyScalar = 2f;
 		[SerializeField, HideInInspector] private Vector3 frequencyVector = Vector3.one;
 		[SerializeField, HideInInspector] private Vector4 offsetVector;
 		[SerializeField, HideInInspector] private float offsetSpeedScalar = 1f;
