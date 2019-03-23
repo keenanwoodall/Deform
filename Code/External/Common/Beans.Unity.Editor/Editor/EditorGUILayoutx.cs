@@ -14,7 +14,7 @@ namespace Beans.Unity.Editor
 			public static readonly Color HeaderBackgroundLight = new Color (1f, 1f, 1f, 0.2f);
 		}
 
-		public static void DrawSplitter ()
+		public static void Splitter ()
 		{
 			var rect = GUILayoutUtility.GetRect (1f, 1f);
 
@@ -24,10 +24,10 @@ namespace Beans.Unity.Editor
 			if (Event.current.type != EventType.Repaint)
 				return;
 
-			EditorGUI.DrawRect (rect, EditorGUIUtility.isProSkin ? Styles.SplitterDark : Styles.SplitterLight);
+			EditorGUI.DrawRect (rect, EditorGUIUtility.isProSkin ? Styles.SplitterLight : Styles.SplitterDark);
 		}
 
-		public static bool DrawFoldoutHeader (string title, bool state)
+		public static bool FoldoutHeader (string title, bool foldout)
 		{
 			var backgroundRect = GUILayoutUtility.GetRect (1f, 17f);
 
@@ -51,16 +51,16 @@ namespace Beans.Unity.Editor
 			EditorGUI.LabelField (labelRect, EditorGUIUtility.TrTextContent (title), EditorStyles.boldLabel);
 
 			// Foldout
-			state = GUI.Toggle (foldoutRect, state, GUIContent.none, EditorStyles.foldout);
+			foldout = GUI.Toggle (foldoutRect, foldout, GUIContent.none, EditorStyles.foldout);
 
 			var e = Event.current;
 			if (e.type == EventType.MouseDown && backgroundRect.Contains (e.mousePosition) && e.button == 0)
 			{
-				state = !state;
+				foldout = !foldout;
 				e.Use ();
 			}
 
-			return state;
+			return foldout;
 		}
 
 		public class FoldoutContainerScope : System.IDisposable

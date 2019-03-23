@@ -40,7 +40,7 @@ namespace DeformEditor
 		private void OnGUI ()
 		{
 			var foldoutProperty = serializedAsset.FindProperty ("sceneFoldoutOpen");
-			if (foldoutProperty.boolValue = EditorGUILayoutx.DrawFoldoutHeader ("Scene", foldoutProperty.boolValue))
+			if (foldoutProperty.boolValue = EditorGUILayoutx.FoldoutHeader ("Scene", foldoutProperty.boolValue))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{

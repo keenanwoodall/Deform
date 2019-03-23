@@ -182,7 +182,7 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			if (ShowDebug = EditorGUILayoutx.DrawFoldoutHeader ("Debug Info", ShowDebug))
+			if (ShowDebug = EditorGUILayoutx.FoldoutHeader ("Debug Info", ShowDebug))
 			{
 				var vertexCount = 0;
 				var modifiedData = DataFlags.None;
