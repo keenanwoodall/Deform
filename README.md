@@ -1,5 +1,6 @@
 ![](https://img.shields.io/badge/unity-2018.3%2B-blue.svg)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/keenanwoodall/Deform/compare)
+[![](https://img.shields.io/twitter/follow/keenanwoodall.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=keenanwoodall)
 
 # Deform
 A fully-featured deformer system for Unity. Deform is multi-threaded with the Job System, compiled with Burst and calculated using the Mathematics library.
@@ -62,3 +63,4 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 3. Now that it's open-source other people can contribute to the project! I think Deform is awesome right now, but there's always room for improvement and I'm excited to see what cool stuff people add!
 
 **If you find this tool useful and you work at an awesome studio that is looking for an intern or junior developer, please reach out!**
+[email](mailto:keenanwoodall@gmail.com) [twitter](https://twitter.com/keenanwoodall) [website](http://keenanwoodall.com)
