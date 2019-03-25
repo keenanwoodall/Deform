@@ -4,7 +4,7 @@ using Deform;
 
 namespace DeformEditor
 {
-	[CustomEditor (typeof (Deformer), true), CanEditMultipleObjects]
+	[CustomEditor (typeof (Deformer), false), CanEditMultipleObjects]
 	public class DeformerEditor : Editor
 	{
 		private class Content
