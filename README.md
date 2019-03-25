@@ -21,11 +21,10 @@ A fully-featured deformer system for Unity. Deform is multi-threaded with the Jo
 
 :zap: Custom editors and handles!
 
-## [Installation](Documentation/Installation.md)
-
-## [Getting Started](Documentation/GettingStarted.md)
-
-## [Creating a Custom Deformer](Documentation/CustomDeformer.md)
+## Documentation
+* [Installation](Documentation/Installation.md)
+* [Getting Started](Documentation/GettingStarted.md)
+* [Creating a Custom Deformer](Documentation/CustomDeformer.md)
 
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting. The amount of knowledge he has of Unity is incredible!
