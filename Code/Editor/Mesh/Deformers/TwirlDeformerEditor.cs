@@ -116,23 +116,24 @@ namespace DeformEditor
 			angleHandle.angleHandleColor = DeformEditorSettings.SolidHandleColor;
 			angleHandle.radiusHandleColor = Color.clear;
 
-			var normal = twirl.Axis.forward;
-			var direction = twirl.Axis.right;
-			var matrix = Matrix4x4.TRS (twirl.transform.position, Quaternion.LookRotation (direction, normal), Vector3.one);
+			var matrix = Matrix4x4.TRS (twirl.transform.position, twirl.transform.rotation, twirl.transform.localScale);
 
 			using (new Handles.DrawingScope (matrix))
 			{
-				DeformHandles.Circle (Vector3.zero, Vector3.up, Vector3.back, angleHandle.radius);
+				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, angleHandle.radius);
 
 				Handles.color = DeformEditorSettings.SolidHandleColor;
 
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					angleHandle.DrawHandle ();
-					if (check.changed)
+					using (new Handles.DrawingScope (matrix * Matrix4x4.Rotate (Quaternion.LookRotation (Vector3.right, Vector3.forward))))
 					{
-						Undo.RecordObject (twirl, "Changed Angle");
-						twirl.Angle = angleHandle.angle;
+						angleHandle.DrawHandle ();
+						if (check.changed)
+						{
+							Undo.RecordObject (twirl, "Changed Angle");
+							twirl.Angle = angleHandle.angle;
+						}
 					}
 				}
 			}
