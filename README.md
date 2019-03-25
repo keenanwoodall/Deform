@@ -9,17 +9,17 @@
 A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is multi-threaded with the [Job System](https://unity3d.com/learn/tutorials/topics/scripting/implementing-job-system), compiled with [Burst](https://unity3d.com/learn/tutorials/topics/scripting/using-burst-compiler) and calculations are done using the [Mathematics library](https://github.com/Unity-Technologies/Unity.Mathematics/blob/master/readme.md).
 
 ## Features
-:zap: Lightning fast!
+✔️ Lightning fast!
 
-:zap: Fully multi-threaded!
+✔️ Fully multi-threaded!
 
-:zap: 40+ modular deformers!
+✔️ 40+ modular deformers!
 
-:zap: Easily extendable!
+✔️ Easily extendable!
 
-:zap: Works in worldspace!
+✔️ Works in worldspace!
 
-:zap: Custom editors and handles!
+✔️ Custom editors and handles!
 
 
 ## Documentation
