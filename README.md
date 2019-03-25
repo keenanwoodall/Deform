@@ -25,14 +25,13 @@ Deform has been built to be used with UPM (aka Package Manager.) You *can* clone
 6. The project should be now installed.
 
 #### From Repo
-:warning: *Warning:* At the time of typing this, to update your version of Deform you'll have to remove and then re-add the dependency to the GitHub repository.
+:warning: *At the time of typing this, to update your version of Deform you'll have to remove and then re-add the dependency to the GitHub repository.*
 1. Open your project's manifest file in a text editor (Located at `<ProjectName>/Packages/manifest.json`)
 2. Add `"com.beans.deform": "https://github.com/keenanwoodall/deform.git"` to the dependencies.
 3. The project should be now installed.
 
 ### Install Manually
-:warning: *Warning:* It's very important you follow these steps in the correct order. If you install Deform before installing it's dependencies, you'll have to assign all of it's assembly definition references manually.
-
+:warning: *It's very important you follow these steps in the correct order. If you install Deform before installing it's dependencies, you'll have to assign all of it's assembly definition references manually.*
 1. Open Package Manager.
 2. Install `Burst` and `Mathematics`.
 3. Clone/download the repository directly into a project's `Assets` folder.
