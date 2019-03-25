@@ -165,7 +165,7 @@ Now it should work. If you add an Offset Deformer to a deformable and change the
 ![Example Deformer](https://i.imgur.com/ShOeUPI.gif)
 
 **Step 10**
-For a finishing touch, make sure to add `[BurstCompile]` to the `OffsetJob`. This will make you code be compiled by Burst (run waaay faster).
+For a finishing touch, make sure to add `[BurstCompile]` to the `OffsetJob`. This will make your code be compiled by Burst (it'll run waaay faster).
 
 Here's the final script:
 ```cs
