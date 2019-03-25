@@ -19,8 +19,6 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 :zap: Works in worldspace!
 
-:zap: Supports masking!
-
 :zap: Custom editors and handles!
 
 
