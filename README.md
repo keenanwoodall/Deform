@@ -23,7 +23,7 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 
 ## Documentation
-* [Installation](Documentation/Installation.md)
+* [Installation](Documentation/Installation.md) (Important)
 * [Getting Started](Documentation/GettingStarted.md)
 * [Creating a Custom Deformer](Documentation/CustomDeformer.md)
 
