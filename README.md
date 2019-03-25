@@ -1,3 +1,4 @@
+[![GitHub All Releases](https://img.shields.io/github/downloads/keenanwoodall/Deform/total.svg)](https://github.com/keenanwoodall/Deform/archive/master.zip)
 [![Unity Version](https://img.shields.io/badge/unity-2018.3%2B-blue.svg)](https://unity3d.com/get-unity/download)
 [![GitHub](https://img.shields.io/github/license/keenanwoodall/Deform.svg)](https://github.com/keenanwoodall/Deform/blob/master/LICENSE.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/keenanwoodall/Deform/compare)
