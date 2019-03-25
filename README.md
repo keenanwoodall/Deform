@@ -19,6 +19,8 @@ A fully-featured deformer system for Unity. Deform is multi-threaded with the Jo
 
 :zap: Works in worldspace!
 
+:zap: Supports masking!
+
 :zap: Custom editors and handles!
 
 
