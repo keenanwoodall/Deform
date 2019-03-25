@@ -49,7 +49,8 @@ Deform has been built to be used with UPM (aka Package Manager.) You *can* clone
 
 ## Getting Started
 
-### [Video](https://youtu.be/8HnPkK_cZG8)
+### Video
+[![](https://i.imgur.com/W6nZmkK.png)](https://youtu.be/8HnPkK_cZG8)
 ### Text
 After installing, the first thing you'll probably want to do is deform a mesh. Every mesh that you want to deform must have a `Deformable` component added to it. This component is like a little manager for the mesh. Once your mesh has a `Deformable` component you can add `Deformer` components to the `Deformable`'s list of deformers to modify the mesh.
 
