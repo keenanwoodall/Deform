@@ -169,7 +169,9 @@ Now it should work. If you add an Offset Deformer to a deformable and change the
 ![Example Deformer](https://i.imgur.com/ShOeUPI.gif)
 
 **Step 10**
-For a finishing touch, make sure to add `[BurstCompile]` to the `OffsetJob`. This will make your code be compiled by Burst (it'll run waaay faster).
+For a finishing touch, make sure to add the `[BurstCompile]` attribute to the `OffsetJob`. This will make your code be compiled by Burst (it'll run waaay faster).
+
+If you want your deformer to be added to the Creator window, add a `[Deformer]` attribute to the class.
 
 Here's the final script:
 ```cs
@@ -211,8 +213,6 @@ namespace Deform
 	}
 }
 ```
-
-If you want your deformer to be added to the Creator window, add a `[Deformer(...)]` attribute to the class.
 
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting. The amount of knowledge he has of Unity is incredible!
