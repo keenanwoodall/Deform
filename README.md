@@ -46,6 +46,16 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 
 
 ## Example GIFs
-Bend | Magnet | Twirl
-:-------------------------:|:-------------------------:|:-------------------------:
-![](https://i.imgur.com/oveeDgm.gif)  |  ![](https://i.imgur.com/OU3MXeP.gif)  |  ![](https://i.imgur.com/7haw7ww.gif)
+
+<table>
+  <tr>
+    <td><img src="https://i.imgur.com/oveeDgm.gif"></td>
+    <td><img src="https://i.imgur.com/OU3MXeP.gif"></td>
+    <td><img src="https://i.imgur.com/7haw7ww.gif"></td>
+  </tr>
+  <tr>
+    <td><img src="https://i.imgur.com/KSIOW7V.gif"></td>
+    <td><img src="https://i.imgur.com/ABM6n1u.gif"></td>
+    <td><img src="https://i.imgur.com/u3IAhXN.gif"></td>
+  </tr>
+</table>
