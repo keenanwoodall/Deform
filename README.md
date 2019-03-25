@@ -21,6 +21,7 @@ A fully-featured deformer system for Unity. Deform is multi-threaded with the Jo
 
 :zap: Custom editors and handles!
 
+
 ## Documentation
 * [Installation](Documentation/Installation.md)
 * [Getting Started](Documentation/GettingStarted.md)
@@ -42,3 +43,9 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 **If you find this tool useful and you work at, or know an awesome studio that is looking for an intern or junior developer, please reach out!**
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
+
+---
+![Twirl Bunny](https://i.imgur.com/7haw7ww.gif)
+![Magnet Cubes](https://i.imgur.com/OU3MXeP.gif)
+![Bend Towner](https://i.imgur.com/oveeDgm.gif)
+---
