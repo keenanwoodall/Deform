@@ -44,8 +44,8 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
 
----
-![Twirl Bunny](https://i.imgur.com/7haw7ww.gif)
-![Magnet Cubes](https://i.imgur.com/OU3MXeP.gif)
-![Bend Towner](https://i.imgur.com/oveeDgm.gif)
----
+
+## Example GIFs
+Bend | Magnet | Twirl
+:-------------------------:|:-------------------------:|:-------------------------:
+![](https://i.imgur.com/oveeDgm.gif)  |  ![](https://i.imgur.com/OU3MXeP.gif)  |  ![](https://i.imgur.com/7haw7ww.gif)
