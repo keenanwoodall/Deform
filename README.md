@@ -33,7 +33,7 @@ Deform has been built to be used with UPM (aka Package Manager.) You *can* clone
 
 #### From Repo
 *At the time of typing this, to update your version of Deform you'll have to remove and then re-add the dependency to the GitHub repository.*
-1. Open your project's manifest file in a text editor (Located at `<ProjectName>/Packages/manifest.json`)
+1. Open your project's manifest file in a text editor (Located at `<ProjectPath>/Packages/manifest.json`)
 2. Add `"com.beans.deform": "https://github.com/keenanwoodall/deform.git"` to the dependencies.
 3. The project should be now installed.
 
