@@ -4,7 +4,7 @@
 [![](https://img.shields.io/twitter/follow/keenanwoodall.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=keenanwoodall)
 
 # Deform
-A fully-featured deformer system for Unity. Deform is multi-threaded with the Job System, compiled with Burst and calculated using the Mathematics library.
+A fully-featured deformer system for Unity. Deform is multi-threaded with the Job System, compiled with Burst and calculations are done using the Mathematics library.
 
 ## Features
 - :zap: Lightning fast!
