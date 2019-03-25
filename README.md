@@ -36,7 +36,7 @@ Deform has been built to be used with UPM (aka Package Manager.) You *can* clone
 2. Install `Burst` and `Mathematics`.
 3. Clone/download the repository directly into a project's `Assets` folder.
 
-**If you have any errors unclearable errors, try restarting Unity. If the errors persist, open a new issue and I'll do my best to help.**
+**If you have any errors unclearable errors try restarting Unity. If the errors persist open a new issue and I'll do my best to help.**
 
 ## Getting Started
 After installing, the first thing you'll probably want to do is deform a mesh. Every mesh that you want to deform must have a `Deformable` component added to it. This component is like a little manager for the mesh. Once your mesh has a `Deformable` component you can add `Deformer` components to the `Deformable`'s list of deformers to modify the mesh.
