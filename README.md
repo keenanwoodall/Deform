@@ -7,12 +7,17 @@
 A fully-featured deformer system for Unity. Deform is multi-threaded with the Job System, compiled with Burst and calculations are done using the Mathematics library.
 
 ## Features
-- :zap: Lightning fast!
-- :zap: Fully multi-threaded!
-- :zap: 40+ modular deformers!
-- :zap: Easily extendable!
-- :zap: Works in worldspace!
-- :zap: Custom editors and handles!
+:zap: Lightning fast!
+
+:zap: Fully multi-threaded!
+
+:zap: 40+ modular deformers!
+
+:zap: Easily extendable!
+
+:zap: Works in worldspace!
+
+:zap: Custom editors and handles!
 
 ## Installing
 Deform has been built to be used with UPM (aka Package Manager.) You *can* clone it directly into your project, but it will take a bit of work to set it up.
