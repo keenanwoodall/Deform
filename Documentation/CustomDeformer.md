@@ -104,3 +104,50 @@ public void Execute (int index)
 Now it should work. If you add an Offset Deformer to a deformable and change the `offset` field it should offset the mesh.
 
 ![Example Deformer](https://i.imgur.com/ShOeUPI.gif)
+
+
+**Step 10**
+For a finishing touch, make sure to add the `[BurstCompile]` attribute to the `OffsetJob`. This will make your code be compiled by Burst (it'll run waaay faster).
+
+If you want your deformer to be added to the Creator window, add a `[Deformer]` attribute to the class.
+
+Here's the final script:
+```cs
+using UnityEngine;
+using Unity.Jobs;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Mathematics;
+
+namespace Deform
+{
+	[Deformer (Name = "Offset", Type = typeof (OffsetDeformer))]
+	public class OffsetDeformer : Deformer
+	{
+		public Vector3 offset;
+
+		public override DataFlags DataFlags => DataFlags.Vertices;
+
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
+		{
+			return new OffsetJob
+			{
+				offset = offset,
+				vertices = data.DynamicNative.VertexBuffer
+			}.Schedule (data.Length, BatchCount, dependency);
+		}
+
+		[BurstCompile]
+		private struct OffsetJob : IJobParallelFor
+		{
+			public float3 offset;
+			public NativeArray<float3> vertices;
+
+			public void Execute (int index)
+			{
+				vertices[index] += offset;
+			}
+		}
+	}
+}
+```
