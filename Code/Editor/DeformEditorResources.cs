@@ -56,14 +56,13 @@ namespace DeformEditor
 		{
 			if (!AssetDatabase.IsValidFolder ($"Assets/{relativePath}"))
 			{
-				string[] paths = relativePath.Split ('/');
-				string workingPath = "Assets";
-				for (int i = 0; i < paths.Length; i++)
+				var paths = relativePath.Split ('/');
+				var workingPath = "Assets";
+				for (int i = 0; i < paths.Length - 1; i++)
 				{
 					if (!AssetDatabase.IsValidFolder ($"{workingPath}/{paths[i]}"))
-					{
 						AssetDatabase.CreateFolder (workingPath, paths[i]);
-					}
+
 					workingPath += $"/{paths[i]}";
 				}
 				AssetDatabase.Refresh (ImportAssetOptions.Default);
