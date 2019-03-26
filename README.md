@@ -57,7 +57,7 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
     <td><img src="https://imgur.com/tnkBOD6.gif"></td>
   </tr>
   <tr>
-    <td><img src="https://imgur.com/tnkBOD6.gif"></td>
+    <td><img src="https://i.imgur.com/ei9639H.gif"></td>
     <td><img src="https://imgur.com/KK3aIRY.gif"></td>
     <td><img src="https://imgur.com/WF592sB.gif"></td>
   </tr>
