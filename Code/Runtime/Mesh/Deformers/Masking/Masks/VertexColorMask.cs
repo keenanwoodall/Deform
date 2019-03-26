@@ -49,7 +49,7 @@ namespace Deform.Masking
 					currentVertices = data.DynamicNative.VertexBuffer,
 					maskVertices = data.DynamicNative.MaskVertexBuffer,
 					colors = data.DynamicNative.ColorBuffer,
-				}.Schedule (data.Length, BatchCount, dependency);
+				}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 			else
 				return new InvertedVertexColorJob
 				{
@@ -59,7 +59,7 @@ namespace Deform.Masking
 					currentVertices = data.DynamicNative.VertexBuffer,
 					maskVertices = data.DynamicNative.MaskVertexBuffer,
 					colors = data.DynamicNative.ColorBuffer,
-				}.Schedule (data.Length, BatchCount, dependency);
+				}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

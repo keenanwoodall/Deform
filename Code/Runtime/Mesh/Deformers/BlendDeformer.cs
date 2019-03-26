@@ -66,7 +66,7 @@ namespace Deform
 				factor = Factor,
 				currentVertices = data.DynamicNative.VertexBuffer,
 				cachedVertices = vertices
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 		}
 
 		private void OnDisable ()

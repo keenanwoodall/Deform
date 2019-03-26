@@ -82,7 +82,7 @@ namespace Deform
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

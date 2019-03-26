@@ -74,7 +74,6 @@ namespace Deform
 
 		protected Vector4 speedOffset;
 
-		public override int BatchCount => 64;
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
 		public Vector3 GetActualMagnitude () => MagnitudeVector * MagnitudeScalar;

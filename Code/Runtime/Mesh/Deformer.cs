@@ -9,15 +9,12 @@ namespace Deform
 	public abstract class Deformer : MonoBehaviour, IDeformer<MeshData>
 	{
 		public const bool COMPILE_SYNCHRONOUSLY = true;
+		public const int DEF_BATCH_COUNT = 64;
 
 		/// <summary>
 		/// If false, this deformer will be ignored by Deformables.
 		/// </summary>
 		public bool update = true;
-		/// <summary>
-		/// How many vertexes should be processed per batch. (There's normally one batch per thread.)
-		/// </summary>
-		public virtual int BatchCount { get; } = 64;
 		/// <summary>
 		/// If true, bounds will be recalculated before this deformer is sent data to process.
 		/// </summary>

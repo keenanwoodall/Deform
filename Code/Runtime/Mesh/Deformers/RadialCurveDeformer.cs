@@ -53,7 +53,6 @@ namespace Deform
 		private JobHandle combinedHandle;
 		private NativeCurve nativeCurve;
 
-		public override int BatchCount => 128;
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
 		private void OnDisable ()
@@ -85,7 +84,7 @@ namespace Deform
 				axisToMesh = meshToAxis.inverse,
 				curve = nativeCurve,
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, 128, dependency);
 
 			combinedHandle = JobHandle.CombineDependencies (combinedHandle, newHandle);
 

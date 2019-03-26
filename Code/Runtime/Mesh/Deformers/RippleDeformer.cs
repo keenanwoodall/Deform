@@ -105,7 +105,7 @@ namespace Deform
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
+					}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 				case BoundsMode.Limited:
 					return new LimitedRippleJob
 					{
@@ -118,7 +118,7 @@ namespace Deform
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, BatchCount, dependency);
+					}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 			}
 		}
 

@@ -115,7 +115,7 @@ namespace Deform
 				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

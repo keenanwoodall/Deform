@@ -88,7 +88,6 @@ namespace Deform
 		private NativeTexture2D nativeTexture;
 		private bool textureDirty = false;
 
-		public override int BatchCount => 32;
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
 		private void OnEnable ()
@@ -150,7 +149,7 @@ namespace Deform
 							texture = nativeTexture,
 							vertices = data.DynamicNative.VertexBuffer,
 							normals = data.DynamicNative.NormalBuffer
-						}.Schedule (data.Length, BatchCount, dependency);
+						}.Schedule (data.Length, 32, dependency);
 					else
 						newHandle = new WorldTextureDisplaceBilinearJob
 						{
@@ -164,7 +163,7 @@ namespace Deform
 							texture = nativeTexture,
 							vertices = data.DynamicNative.VertexBuffer,
 							normals = data.DynamicNative.NormalBuffer
-						}.Schedule (data.Length, BatchCount, dependency);
+						}.Schedule (data.Length, 32, dependency);
 					break;
 				case TextureSampleSpace.UV:
 					if (!Bilinear)
@@ -179,7 +178,7 @@ namespace Deform
 							uvs = data.DynamicNative.UVBuffer,
 							vertices = data.DynamicNative.VertexBuffer,
 							normals = data.DynamicNative.NormalBuffer
-						}.Schedule (data.Length, BatchCount, dependency);
+						}.Schedule (data.Length, 32, dependency);
 					else
 						newHandle = new UVTextureDisplaceBilinearJob
 						{
@@ -192,7 +191,7 @@ namespace Deform
 							uvs = data.DynamicNative.UVBuffer,
 							vertices = data.DynamicNative.VertexBuffer,
 							normals = data.DynamicNative.NormalBuffer
-						}.Schedule (data.Length, BatchCount, dependency);
+						}.Schedule (data.Length, 32, dependency);
 					break;
 			}
 

@@ -108,7 +108,7 @@ namespace Deform
 				splineRotation = Path.transform.rotation,
 				spline = pathData,
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
 
 			handle = JobHandle.CombineDependencies (handle, newHandle);
 

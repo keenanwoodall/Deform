@@ -8,7 +8,6 @@ namespace Deform.Masking
 	[Deformer (Name = "Mask State", Description = "Stores the current state of the mesh for masks to interpolate towards.", Type = typeof (MaskState), Category = Category.Mask)]
 	public class MaskState : Deformer
 	{
-		public override int BatchCount => 256;
 		public override DataFlags DataFlags => DataFlags.Vertices | DataFlags.MaskVertices;
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
@@ -17,7 +16,7 @@ namespace Deform.Masking
 			{
 				currentVertices = data.DynamicNative.VertexBuffer,
 				maskVertices = data.DynamicNative.MaskVertexBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, 256, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

@@ -24,7 +24,6 @@ namespace Deform
 		[SerializeField, HideInInspector]
 		private Transform target;
 
-		public override int BatchCount => 256;
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
@@ -35,7 +34,7 @@ namespace Deform
 			{
 				matrix = matrix,
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, BatchCount, dependency);
+			}.Schedule (data.Length, 256, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
