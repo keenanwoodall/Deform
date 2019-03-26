@@ -45,6 +45,7 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 **If you use Deform, please consider donating!**
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/KeenanWoodall)
+[![Itch](https://img.shields.io/badge/Buy-Itch.io-green.svg)](https://keenanwoodall.itch.io/deform)
 
 ---
 
