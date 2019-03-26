@@ -40,9 +40,9 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 
 **If you you work at, or know an awesome studio that is looking for an intern or junior developer, please reach out!**
 
----
-
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
+
+---
 
 **If you use Deform, please consider donating!**
 
