@@ -42,11 +42,11 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
 
----
-
 **If you use Deform, please consider donating!**
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/KeenanWoodall)
+
+---
 
 ## Example GIFs
 
