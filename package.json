@@ -2,7 +2,7 @@
     "name": "com.beans.deform",
     "author": "Keenan Woodall",
     "displayName": "Deform",
-    "version": "0.0.1-preview.1",
+    "version": "1.0.0",
     "unity": "2018.3",
     "description": "A framework for deforming meshes in the editor and at runtime.",
     "category": "Unity",
