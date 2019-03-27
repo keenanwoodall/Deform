@@ -52,13 +52,18 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 ## Example GIFs
 <table>
   <tr>
-    <td><img src="https://imgur.com/2FZ9o32.gif"></td>
-    <td><img src="https://imgur.com/CkyGuK6.gif"></td>
-    <td><img src="https://imgur.com/tnkBOD6.gif"></td>
+    <td><img src="https://i.imgur.com/h3ZcNEC.gif"></td>
+    <td><img src="https://i.imgur.com/LAzo6kT.gif"></td>
+    <td><img src="https://i.imgur.com/CgxWUod.gif"></td>
   </tr>
   <tr>
-    <td><img src="https://i.imgur.com/ei9639H.gif"></td>
-    <td><img src="https://imgur.com/KK3aIRY.gif"></td>
-    <td><img src="https://imgur.com/WF592sB.gif"></td>
+    <td><img src="https://i.imgur.com/7BSjdJF.gif"></td>
+    <td><img src="https://i.imgur.com/uFzvAlF.gif"></td>
+    <td><img src="https://i.imgur.com/UoDy1ZC.gif"></td>
+  </tr>
+  <tr>
+    <td><img src="https://i.imgur.com/h2D0KDV.gif"></td>
+    <td><img src="https://i.imgur.com/Il2oGLH.gif"></td>
+    <td><img src="https://i.imgur.com/PQrbXrY.gif"></td>
   </tr>
 </table>
