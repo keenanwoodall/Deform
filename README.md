@@ -28,8 +28,8 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 * [Creating a Custom Deformer](Documentation/CustomDeformer.md)
 
 ## Acknowledgments
-* Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting. The amount of knowledge he has of Unity is incredible!
-* Thanks to [David Carney](https://twitter.com/thedavidcarney), [William Besnard](https://twitter.com/BillSansky) and Raphael for beta testing Deform. Their feedback was invaluable and I'm very grateful to them.
+* Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
+* Thanks to [David Carney](https://twitter.com/thedavidcarney), [William Besnard](https://twitter.com/BillSansky) and Raphael for beta testing Deform and giving helpful feedback.
 
 ## Author's Note
 Thanks so much for checking out Deform! It's been my passion project since 2016 and has undergone **4 rewrites**! For a long time I planned to charge money for this tool, but I've decided to release it for free for a few reasons:
@@ -62,3 +62,50 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
     <td><img src="https://imgur.com/WF592sB.gif"></td>
   </tr>
 </table>
+
+## Complete List Of Deformers
+### Normal
+* Bend
+* Blend
+* Bulge
+* Cubify
+* Curve Displace
+* Curve Scale
+* Cylindrify
+* Inflate
+* Lathe Displace
+* Magnet
+* Melt
+* Path
+* Radial Curve
+* Radial Skew
+* Ripple
+* Scale
+* Sine
+* Skew
+* Spherify
+* Squash and Stretch
+* Star
+* Taper
+* Texture Displace
+* Transform
+* Transform Offset
+* Twirl
+* Twist
+* UV Offset
+* UV Scale
+* Wave
+### Noise
+* Cellular Noise
+* Perlin Noise
+* Simplex Noise
+### Mask
+* Box Mask
+* Sphere Mask
+* Vertex Color Mask
+* Vertical Gradient Mask
+* Mask State
+### Utility
+* Auto Group
+* Group
+* Repeater
