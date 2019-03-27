@@ -65,7 +65,7 @@ namespace Deform
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
@@ -109,8 +109,8 @@ namespace Deform
 					stretchAmount = -1f / (factor - 1f);
 				}
 
-				var a = 4f * (1f - squashAmount);
-				squashAmount = (((a * nDist) - a) * nDist) + 1f;
+				var f = 4f * (1f - squashAmount);
+				squashAmount = (((f * nDist) - f) * nDist) + 1f;
 
 				point.xy *= squashAmount;
 

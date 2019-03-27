@@ -31,7 +31,7 @@ namespace Deform
 			{
 				scale = Scale * Factor,
 				uvs = data.DynamicNative.UVBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]

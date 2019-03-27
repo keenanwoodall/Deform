@@ -9,7 +9,7 @@ namespace Deform
 	public abstract class Deformer : MonoBehaviour, IDeformer<MeshData>
 	{
 		public const bool COMPILE_SYNCHRONOUSLY = true;
-		public const int DEF_BATCH_COUNT = 64;
+		public const int DEFAULT_BATCH_COUNT = 64;
 
 		/// <summary>
 		/// If false, this deformer will be ignored by Deformables.

@@ -79,7 +79,7 @@ namespace Deform
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+					}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 				case BoundsMode.Limited:
 					if (Mathf.Abs (Inner - Outer) < MIN_RANGE)
 						return dependency;
@@ -93,7 +93,7 @@ namespace Deform
 							meshToAxis = meshToAxis,
 							axisToMesh = meshToAxis.inverse,
 							vertices = data.DynamicNative.VertexBuffer
-						}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+						}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 			}
 		}
 

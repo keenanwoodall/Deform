@@ -19,7 +19,7 @@ namespace Deform
 				offset = GetActualOffset (),
 				meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
 				vertices = data.DynamicNative.VertexBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		protected override JobHandle CreateDirectionalNoiseJob (MeshData data, JobHandle dependency = default)
@@ -34,7 +34,7 @@ namespace Deform
 				inverseAxisSpace = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		protected override JobHandle CreateNormalNoiseJob (MeshData data, JobHandle dependency = default)
@@ -47,7 +47,7 @@ namespace Deform
 				axisSpace = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		protected override JobHandle CreateSphericalNoiseJob (MeshData data, JobHandle dependency = default)
@@ -62,7 +62,7 @@ namespace Deform
 				inverseAxisSpace = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		protected override JobHandle CreateColorNoiseJob (MeshData data, JobHandle dependency = default)
@@ -77,7 +77,7 @@ namespace Deform
 				inverseAxisSpace = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				colors = data.DynamicNative.ColorBuffer
-			}.Schedule (data.Length, DEF_BATCH_COUNT, dependency);
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
