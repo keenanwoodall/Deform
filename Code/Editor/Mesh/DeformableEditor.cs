@@ -8,6 +8,17 @@ namespace DeformEditor
 	[CustomEditor (typeof (Deformable)), CanEditMultipleObjects]
 	public class DeformableEditor : Editor
 	{
+		private class Styles
+		{
+			public static readonly GUIStyle WrappedLabel;
+
+			static Styles ()
+			{
+				WrappedLabel = new GUIStyle (EditorStyles.miniLabel);
+				WrappedLabel.wordWrap = true;
+			}
+		}
+
 		private class Content
 		{
 			public static readonly GUIContent UpdateMode = new GUIContent (text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
@@ -186,6 +197,7 @@ namespace DeformEditor
 			{
 				var vertexCount = 0;
 				var modifiedData = DataFlags.None;
+				var bounds = (target as Deformable).GetMesh ().bounds;
 				foreach (var t in targets)
 				{
 					var deformable = t as Deformable;
@@ -196,8 +208,9 @@ namespace DeformEditor
 					modifiedData |= deformable.ModifiedDataFlags;
 				}
 
-				EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}");
-				EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}");
+				EditorGUILayout.LabelField ($"Vertex Count: {vertexCount}", Styles.WrappedLabel);
+				EditorGUILayout.LabelField ($"Modified Data: {modifiedData.ToString ()}", Styles.WrappedLabel);
+				EditorGUILayout.LabelField ($"Bounds: {bounds.ToString ()}", Styles.WrappedLabel);
 			}
 
 			serializedObject.ApplyModifiedProperties ();
