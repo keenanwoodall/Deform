@@ -10,4 +10,4 @@ You can open the *Creator* window from either the `Tools/Deform/Creator` or `Win
 Remember, almost every deformer operates in worldspace. Most deformers have a Transform property called `Axis`. If left blank, the deformer will use it's transform as the axis. This axis is used as the position, rotation and scale of the deformer i.e. all deformation will be relative to it. For example, the *Magnet* deformer will push/pull vertices from it's axis' position.
 
 ### Video
-[![](https://i.imgur.com/W6nZmkK.png)](https://youtu.be/8HnPkK_cZG8)
+[![](https://i.imgur.com/BJzhvG5.png)](https://youtu.be/8HnPkK_cZG8)
