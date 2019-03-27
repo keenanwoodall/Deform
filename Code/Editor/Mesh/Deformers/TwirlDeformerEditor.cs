@@ -110,13 +110,14 @@ namespace DeformEditor
 
 		void DrawAngleHandle (TwirlDeformer twirl)
 		{
+			var radiusDistanceOffset = HandleUtility.GetHandleSize (twirl.Axis.position + twirl.Axis.right * twirl.Outer) * DeformEditorSettings.ScreenspaceSliderHandleCapSize * 2f;
 			angleHandle.angle = twirl.Angle;
-			angleHandle.radius = twirl.Outer;
+			angleHandle.radius = twirl.Outer + radiusDistanceOffset;
 			angleHandle.fillColor = Color.clear;
 			angleHandle.angleHandleColor = DeformEditorSettings.SolidHandleColor;
 			angleHandle.radiusHandleColor = Color.clear;
 
-			var matrix = Matrix4x4.TRS (twirl.transform.position, twirl.transform.rotation, twirl.transform.localScale);
+			var matrix = Matrix4x4.TRS (twirl.transform.position, twirl.transform.rotation, twirl.transform.lossyScale);
 
 			using (new Handles.DrawingScope (matrix))
 			{
