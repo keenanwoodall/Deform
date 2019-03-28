@@ -33,24 +33,8 @@ namespace DeformEditor
 		private static class Content
 		{
 			public static GUIContent CreateDeformable = new GUIContent (text: "Create Deformable", tooltip: "Create a deformable");
-			public static GUIContent[] FilterToolbar;
-
-			static Content ()
-			{
-				FilterToolbar = new GUIContent[]
-				{
-					new GUIContent ("All", "All"),
-					new GUIContent ("N", "Noise"),
-					new GUIContent ("M", "Mask"),
-					new GUIContent (DeformEditorResources.GetTexture ("UtilityCategoryIcon"), "Utility")
-				};
-			}
 		}
 
-		private enum FilterCategory { All, Noise, Mask, Utility }
-
-		[SerializeField]
-		private FilterCategory filter;
 		[SerializeField]
 		private Vector2 scrollPosition;
 		[SerializeField]
@@ -100,30 +84,6 @@ namespace DeformEditor
 			if (GUILayout.Button (Content.CreateDeformable, Styles.Button))
 				AddOrCreateDeformable ();
 
-			EditorGUILayout.Space ();
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newCategoryIndex = GUILayout.Toolbar ((int)filter, Content.FilterToolbar, EditorStyles.miniButton, GUILayout.Height (EditorGUIUtility.singleLineHeight));
-				if (check.changed)
-				{
-					Undo.RecordObject (this, "Changed Category Filter");
-					filter = ToolbarIndexToFilterCategory (newCategoryIndex);
-					switch (filter)
-					{
-						case FilterCategory.Noise:
-							categoryFoldouts[Category.Noise] = true;
-							break;
-						case FilterCategory.Mask:
-							categoryFoldouts[Category.Mask] = true;
-							break;
-						case FilterCategory.Utility:
-							categoryFoldouts[Category.Utility] = true;
-							break;
-					}
-				}
-			}
-
 			using (new EditorGUILayout.HorizontalScope ())
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
@@ -153,7 +113,6 @@ namespace DeformEditor
 					filteredDeformerAttributes =
 					(
 						from d in deformerAttributes
-						where AttributeIncludedInFilter (d, filter)
 						where string.IsNullOrEmpty (searchQuery) || d.Name.ToLower ().Contains (searchQuery.ToLower ())
 						select d
 					).ToList ();
@@ -163,30 +122,25 @@ namespace DeformEditor
 					{
 						var current = filteredDeformerAttributes[i];
 
-						if (AttributeIncludedInFilter (current, filter))
+						if (drawnCount == 0)
 						{
-							if (drawnCount == 0)
-							{
-								var countInCategory = filteredDeformerAttributes.Count (t => t.Category == current.Category);
-								categoryFoldouts[current.Category] = EditorGUILayoutx.FoldoutHeader ($"{current.Category.ToString ()} ({countInCategory})", categoryFoldouts[current.Category], EditorStyles.label);
-							}
-
-							if (categoryFoldouts[current.Category])
-								if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.Button))
-									CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
-							drawnCount++;
+							var countInCategory = filteredDeformerAttributes.Count (t => t.Category == current.Category);
+							categoryFoldouts[current.Category] = EditorGUILayoutx.FoldoutHeader ($"{current.Category.ToString ()} ({countInCategory})", categoryFoldouts[current.Category], EditorStyles.label);
 						}
 
-						if (filter == FilterCategory.All)
+						if (categoryFoldouts[current.Category])
+							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.Button))
+								CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
+
+						drawnCount++;
+
+						if (i + 1 < filteredDeformerAttributes.Count)
 						{
-							if (i + 1 < filteredDeformerAttributes.Count)
+							var next = filteredDeformerAttributes[i + 1];
+							if (next.Category != current.Category)
 							{
-								var next = filteredDeformerAttributes[i + 1];
-								if (next.Category != current.Category)
-								{
-									var countInCategory = filteredDeformerAttributes.Count (t => t.Category == next.Category);
-									categoryFoldouts[next.Category] = EditorGUILayoutx.FoldoutHeader ($"{next.Category.ToString ()} ({countInCategory})", categoryFoldouts[next.Category], EditorStyles.label);
-								}
+								var countInCategory = filteredDeformerAttributes.Count (t => t.Category == next.Category);
+								categoryFoldouts[next.Category] = EditorGUILayoutx.FoldoutHeader ($"{next.Category.ToString ()} ({countInCategory})", categoryFoldouts[next.Category], EditorStyles.label);
 							}
 						}
 					}
@@ -195,36 +149,6 @@ namespace DeformEditor
 				}
 				scrollPosition = scroll.scrollPosition;
 			}
-		}
-
-        private FilterCategory ToolbarIndexToFilterCategory (int index)
-        {
-            switch (index)
-            {
-                case 0:
-                    return FilterCategory.All;
-                case 1:
-                    return FilterCategory.Noise;
-                case 2:
-                    return FilterCategory.Mask;
-                case 3:
-                    return FilterCategory.Utility;
-                default:
-                    throw new Exception("Invalid index.");
-            }
-        }
-
-		private bool AttributeIncludedInFilter (DeformerAttribute attribute, FilterCategory filter)
-		{
-			if (filter == FilterCategory.All)
-				return true;
-			else if (filter == FilterCategory.Noise && attribute.Category == Category.Noise)
-				return true;
-			else if (filter == FilterCategory.Mask && attribute.Category == Category.Mask)
-				return true;
-			else if (filter == FilterCategory.Utility && attribute.Category == Category.Utility)
-				return true;
-			return false;
 		}
 
 		public void AddOrCreateDeformable ()
