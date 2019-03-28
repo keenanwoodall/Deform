@@ -265,6 +265,8 @@ namespace DeformEditor
 			var deformable = newObject.AddComponent<Deformable> ();
 			deformable.ChangeMesh (DeformEditorResources.LoadAssetOfType<Mesh> ("DeformDefaultMesh"));
 
+			newObject.GetComponent<Renderer> ().material = DeformEditorResources.LoadAssetOfType<Material> ("DeformDefaultMaterial");
+
 			DestroyImmediate (newObject.GetComponent<Collider> ());
 
 			Selection.activeGameObject = newObject;
