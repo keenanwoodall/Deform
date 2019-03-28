@@ -128,7 +128,7 @@ namespace DeformEditor
 						elements.Add (new DeformerElement (newDeformer));
 				}
 
-				// I'd like to give a massive thanks and credit to @vertx aka Thomas Ingram for taking time out of his day to
+				// I'd like to give a massive thanks and credit to Thomas Ingram for taking time out of his day to
 				// solve an abomination of a bug and find this fix. He truly is an editor scripting legend.
 				// Changing fields directly with multiple objects selected doesn't dirty the serialized object for some reason.
 				// To force it to be dirty you have to call this method.

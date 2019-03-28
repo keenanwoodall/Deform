@@ -71,7 +71,7 @@ namespace Beans.Unity.Editor
 
 			static FoldoutContainerScope ()
 			{
-				DefaultContainerStyle = new GUIStyle (EditorStyles.helpBox);
+				DefaultContainerStyle = GUI.skin.FindStyle ("Box");
 				DefaultLabelStyle = new GUIStyle (EditorStyles.foldout);
 			}
 
