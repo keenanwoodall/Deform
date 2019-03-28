@@ -99,8 +99,10 @@ namespace DeformEditor
 
 		private void DrawAngleHandle (BendDeformer bend)
         {
+			var radiusDistanceOffset = HandleUtility.GetHandleSize (bend.Axis.position + bend.Axis.up* bend.Top) * DeformEditorSettings.ScreenspaceSliderHandleCapSize * 2f;
+
 			angleHandle.angle = bend.Angle;
-			angleHandle.radius = bend.Top - bend.Bottom;
+			angleHandle.radius = bend.Top - bend.Bottom + radiusDistanceOffset;
 			angleHandle.fillColor = Color.clear;
 
 			var direction = bend.Axis.up;
