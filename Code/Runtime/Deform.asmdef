@@ -1,7 +1,6 @@
 {
     "name": "Deform",
     "references": [
-        "PathCreator",
         "Unity.Burst",
         "Unity.Mathematics",
         "Beans.Unity.Mathematics",

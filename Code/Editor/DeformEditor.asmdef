@@ -2,8 +2,7 @@
     "name": "DeformEditor",
     "references": [
         "Beans.Unity.Editor",
-        "Deform",
-        "PathCreator"
+        "Deform"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
