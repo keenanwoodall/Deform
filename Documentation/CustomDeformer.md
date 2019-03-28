@@ -1,5 +1,7 @@
 ## Creating a Custom Deformer
-
+### Video
+[![](https://i.imgur.com/w0tRfDF.png)](https://www.youtube.com/watch?v=Xo4fN84fIbQ)
+### Text
 To show how to make your own deformer I'm going to walk you through how to create a simple "Offset" deformer, which will simply add an offset to a Deformable's vertices. Before creating your own deformers your should be slightly familiar with the Job System and Mathematics library.
 
 **Step 1**
