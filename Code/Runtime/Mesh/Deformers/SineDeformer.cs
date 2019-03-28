@@ -12,8 +12,8 @@ namespace Deform
 	{
 		public float Factor
 		{
-			get => Magnitude;
-			set => Magnitude = value;
+			get => Amplitude;
+			set => Amplitude = value;
 		}
 
 		public float Frequency
@@ -21,10 +21,10 @@ namespace Deform
 			get => frequency;
 			set => frequency = value;
 		}
-		public float Magnitude
+		public float Amplitude
 		{
-			get => magnitude;
-			set => magnitude = value;
+			get => amplitude;
+			set => amplitude = value;
 		}
 		public float Falloff
 		{
@@ -53,7 +53,7 @@ namespace Deform
 		}
 
 		[SerializeField, HideInInspector] private float frequency = 1f;
-		[SerializeField, HideInInspector] private float magnitude = 0f;
+		[SerializeField, HideInInspector] private float amplitude = 0f;
 		[SerializeField, HideInInspector] private float falloff = 0f;
 		[SerializeField, HideInInspector] private float offset;
 		[SerializeField, HideInInspector] private float speed;
@@ -75,7 +75,7 @@ namespace Deform
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
-			if (Magnitude == 0f)
+			if (Amplitude == 0f)
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
@@ -83,7 +83,7 @@ namespace Deform
 			return new SineJob
 			{
 				frequency = Frequency,
-				magnitude = Magnitude,
+				magnitude = Amplitude,
 				falloff = Falloff,
 				offset = GetTotalOffset (),
 				meshToAxis = meshToAxis,
