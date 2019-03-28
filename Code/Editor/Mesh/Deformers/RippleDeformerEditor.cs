@@ -11,7 +11,7 @@ namespace DeformEditor
 		private class Content
 		{
 			public static readonly GUIContent Frequency = new GUIContent (text: "Frequency", tooltip: "Higher values mean more ripples.");
-			public static readonly GUIContent Magnitude = new GUIContent (text: "Magnitude", tooltip: "The strength of the ripples,");
+			public static readonly GUIContent Amplitude = new GUIContent (text: "Amplitude", tooltip: "The strength of the ripples,");
 			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: Entire mesh is rippled.\nLimited: Mesh only ripples between bounds.");
 			public static readonly GUIContent Falloff = new GUIContent (text: "Falloff", tooltip: "When at 0, vertices outside the bounds will match the height of the bounds edge.\nWhen at 1, vertices outside the bounds will be unchanged.");
 			public static readonly GUIContent InnerRadius = new GUIContent (text: "Inner Radius", tooltip: "Vertices within this radius don't ripple.");
@@ -24,7 +24,7 @@ namespace DeformEditor
 		private class Properties
 		{
 			public SerializedProperty Frequency;
-			public SerializedProperty Magnitude;
+			public SerializedProperty Amplitude;
 			public SerializedProperty Mode;
 			public SerializedProperty Falloff;
 			public SerializedProperty InnerRadius;
@@ -36,7 +36,7 @@ namespace DeformEditor
 			public Properties (SerializedObject obj)
 			{
 				Frequency	= obj.FindProperty ("frequency");
-				Magnitude	= obj.FindProperty ("magnitude");
+				Amplitude	= obj.FindProperty ("amplitude");
 				Mode		= obj.FindProperty ("mode");
 				Falloff		= obj.FindProperty ("falloff");
 				InnerRadius = obj.FindProperty ("innerRadius");
@@ -67,7 +67,7 @@ namespace DeformEditor
 			serializedObject.UpdateIfRequiredOrScript ();
 
 			EditorGUILayout.PropertyField (properties.Frequency, Content.Frequency);
-			EditorGUILayout.PropertyField (properties.Magnitude, Content.Magnitude);
+			EditorGUILayout.PropertyField (properties.Amplitude, Content.Amplitude);
 			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
 			using (new EditorGUI.DisabledScope ((BoundsMode)properties.Mode.enumValueIndex == BoundsMode.Unlimited && !properties.Mode.hasMultipleDifferentValues))
@@ -118,7 +118,7 @@ namespace DeformEditor
 		private void DrawMagnitudeHandle (RippleDeformer ripple)
 		{
 			var direction = ripple.Axis.forward;
-			var worldPosition = ripple.Axis.position + direction * ripple.Magnitude;
+			var worldPosition = ripple.Axis.position + direction * ripple.Amplitude;
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
@@ -127,7 +127,7 @@ namespace DeformEditor
 				{
 					Undo.RecordObject (ripple, "Changed Magnitude");
 					var newMagnitude = DeformHandlesUtility.DistanceAlongAxis (ripple.Axis, ripple.Axis.position, newWorldPosition, Axis.Z);
-					ripple.Magnitude = newMagnitude;
+					ripple.Amplitude = newMagnitude;
 				}
 				var offset = newWorldPosition - ripple.Axis.position;
 				DeformHandles.Line (ripple.Axis.position - offset, newWorldPosition, DeformHandles.LineMode.LightDotted);
