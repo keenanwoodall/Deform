@@ -26,6 +26,17 @@ namespace DeformEditor
 			list = new ReorderableList (serializedObject, elements);
 			list.elementHeight = EditorGUIUtility.singleLineHeight;
 
+			list.onAddCallback = (list) =>
+			{
+				var property = list.serializedProperty;
+
+				property.arraySize++;
+
+				// Even though in the DeformerElement class, active defaults to true, serialized bools default to false.
+				var lastElement = property.GetArrayElementAtIndex (property.arraySize - 1);
+				lastElement.FindPropertyRelative ("active").boolValue = true;
+			};
+
 			list.drawHeaderCallback = (r) => GUI.Label (r, new GUIContent ($"{typeof (T).Name}s"));
 			list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
 			{
