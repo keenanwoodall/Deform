@@ -168,7 +168,6 @@ namespace DeformEditor
 							if (drawnCount == 0)
 							{
 								var countInCategory = filteredDeformerAttributes.Count (t => t.Category == current.Category);
-
 								categoryFoldouts[current.Category] = EditorGUILayoutx.FoldoutHeader ($"{current.Category.ToString ()} ({countInCategory})", categoryFoldouts[current.Category], EditorStyles.label);
 							}
 
