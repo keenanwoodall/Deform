@@ -130,7 +130,7 @@ namespace DeformEditor
 
 						if (categoryFoldouts[current.Category])
 							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.Button))
-								CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
+								CreateDeformerFromAttribute (current, Event.current.modifiers != EventModifiers.Alt);
 
 						drawnCount++;
 
