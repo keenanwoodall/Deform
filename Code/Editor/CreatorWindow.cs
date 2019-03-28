@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using Deform;
+using Beans.Unity.Editor;
 
 namespace DeformEditor
 {
@@ -56,6 +57,14 @@ namespace DeformEditor
 		private SearchField searchField;
 		[SerializeField]
 		private string searchQuery;
+		[SerializeField]
+		private Dictionary<Category, bool> categoryFoldouts = new Dictionary<Category, bool>
+		{
+			{ Category.Normal, true },
+			{ Category.Noise, true },
+			{ Category.Mask, true },
+			{ Category.Utility, true },
+		};
 
 		[MenuItem ("Window/Deform/Creator", priority = 10000)]
 		[MenuItem ("Tools/Deform/Creator", priority = 10000)]
@@ -100,6 +109,18 @@ namespace DeformEditor
 				{
 					Undo.RecordObject (this, "Changed Category Filter");
 					filter = ToolbarIndexToFilterCategory (newCategoryIndex);
+					switch (filter)
+					{
+						case FilterCategory.Noise:
+							categoryFoldouts[Category.Noise] = true;
+							break;
+						case FilterCategory.Mask:
+							categoryFoldouts[Category.Mask] = true;
+							break;
+						case FilterCategory.Utility:
+							categoryFoldouts[Category.Utility] = true;
+							break;
+					}
 				}
 			}
 
@@ -120,6 +141,8 @@ namespace DeformEditor
 					}
 				}
 			}
+
+			EditorGUILayout.Space ();
 
 			using (var scroll = new EditorGUILayout.ScrollViewScope (scrollPosition))
 			{
@@ -145,11 +168,13 @@ namespace DeformEditor
 							if (drawnCount == 0)
 							{
 								var countInCategory = filteredDeformerAttributes.Count (t => t.Category == current.Category);
-								EditorGUILayout.LabelField ($"{current.Category.ToString ()} ({countInCategory})", EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
+
+								categoryFoldouts[current.Category] = EditorGUILayoutx.FoldoutHeader ($"{current.Category.ToString ()} ({countInCategory})", categoryFoldouts[current.Category], EditorStyles.label);
 							}
 
-							if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.Button))
-								CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
+							if (categoryFoldouts[current.Category])
+								if (GUILayout.Button (new GUIContent (current.Name, current.Description), Styles.Button))
+									CreateDeformerFromAttribute (current, Event.current.modifiers == EventModifiers.Alt);
 							drawnCount++;
 						}
 
@@ -161,7 +186,7 @@ namespace DeformEditor
 								if (next.Category != current.Category)
 								{
 									var countInCategory = filteredDeformerAttributes.Count (t => t.Category == next.Category);
-									EditorGUILayout.LabelField ($"{next.Category.ToString ()} ({countInCategory})", EditorStyles.centeredGreyMiniLabel, GUILayout.MinWidth (0));
+									categoryFoldouts[next.Category] = EditorGUILayoutx.FoldoutHeader ($"{next.Category.ToString ()} ({countInCategory})", categoryFoldouts[next.Category], EditorStyles.label);
 								}
 							}
 						}

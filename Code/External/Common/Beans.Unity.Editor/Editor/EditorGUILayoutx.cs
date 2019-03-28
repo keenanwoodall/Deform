@@ -27,7 +27,8 @@ namespace Beans.Unity.Editor
 			EditorGUI.DrawRect (rect, EditorGUIUtility.isProSkin ? Styles.SplitterLight : Styles.SplitterDark);
 		}
 
-		public static bool FoldoutHeader (string title, bool foldout)
+		public static bool FoldoutHeader (string title, bool foldout) => FoldoutHeader (title, foldout, EditorStyles.boldLabel);
+		public static bool FoldoutHeader (string title, bool foldout, GUIStyle headerStyle)
 		{
 			var backgroundRect = GUILayoutUtility.GetRect (1f, 17f);
 
@@ -48,7 +49,7 @@ namespace Beans.Unity.Editor
 			EditorGUI.DrawRect (backgroundRect, EditorGUIUtility.isProSkin ? Styles.HeaderBackgroundDark : Styles.HeaderBackgroundLight);
 
 			// Title
-			EditorGUI.LabelField (labelRect, EditorGUIUtility.TrTextContent (title), EditorStyles.boldLabel);
+			EditorGUI.LabelField (labelRect, EditorGUIUtility.TrTextContent (title), headerStyle);
 
 			// Foldout
 			foldout = GUI.Toggle (foldoutRect, foldout, GUIContent.none, EditorStyles.foldout);
