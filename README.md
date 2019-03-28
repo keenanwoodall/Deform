@@ -29,7 +29,7 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
-* Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky) and [David Carney](https://twitter.com/thedavidcarney) for beta testing Deform and giving helpful feedback.
+* Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for beta testing Deform and giving helpful feedback.
 
 ## Author's Note
 Thanks so much for checking out Deform! It's been my passion project since 2016 and has undergone **4 rewrites**! For a long time I planned to charge money for this tool, but I've decided to release it for free for a few reasons:
