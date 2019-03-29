@@ -71,46 +71,48 @@ namespace DeformEditor
 			if (cylindrify.Radius == 0f)
 				return;
 
-			var direction = cylindrify.Axis.up;
+			var position = Vector3.up * cylindrify.Factor * cylindrify.Radius;
 
-			var worldPosition = cylindrify.Axis.position + direction * cylindrify.Factor * cylindrify.Radius;
-
-			DeformHandles.Line (worldPosition, cylindrify.Axis.position, DeformHandles.LineMode.Light);
-			DeformHandles.Line (worldPosition, cylindrify.Axis.position + direction * cylindrify.Radius, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			var axis = cylindrify.Axis;
+			using (new Handles.DrawingScope (Matrix4x4.TRS (axis.position, axis.rotation, axis.lossyScale)))
 			{
-				var newWorldPosition = DeformHandles.Slider (worldPosition, direction);
-				if (check.changed)
+				DeformHandles.Line (position, Vector3.zero, DeformHandles.LineMode.Light);
+				DeformHandles.Line (position, Vector3.up * cylindrify.Radius, DeformHandles.LineMode.LightDotted);
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (cylindrify, "Changed Radius");
-					var newFactor = DeformHandlesUtility.DistanceAlongAxis (cylindrify.Axis, cylindrify.Axis.position, newWorldPosition, Axis.Y) / cylindrify.Radius;
-					cylindrify.Factor = newFactor;
+					var newWorldPosition = DeformHandles.Slider (position, Vector3.up);
+					if (check.changed)
+					{
+						Undo.RecordObject (cylindrify, "Changed Radius");
+						cylindrify.Factor = newWorldPosition.y;
+					}
 				}
 			}
 		}
 
 		private void DrawRadiusHandle (CylindrifyDeformer cylindrify)
 		{
-			var direction = cylindrify.Axis.up;
+			var position = Vector3.up * cylindrify.Radius;
 
-			var worldPosition = cylindrify.Axis.position + direction * cylindrify.Radius;
-
-			var size = HandleUtility.GetHandleSize (worldPosition) * DeformEditorSettings.ScreenspaceSliderHandleCapSize;
-
-			DeformHandles.Circle (cylindrify.Axis.position, cylindrify.Axis.forward, cylindrify.Axis.up, cylindrify.Radius);
-
-			DeformHandles.Line (worldPosition + cylindrify.Axis.forward * size, worldPosition + cylindrify.Axis.forward * size * 5f, DeformHandles.LineMode.Light);
-			DeformHandles.Line (worldPosition - cylindrify.Axis.forward * size, worldPosition - cylindrify.Axis.forward * size * 5f, DeformHandles.LineMode.Light);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			var axis = cylindrify.Axis;
+			using (new Handles.DrawingScope (Matrix4x4.TRS (axis.position, axis.rotation, axis.lossyScale)))
 			{
-				var newWorldPosition = DeformHandles.Slider (worldPosition, direction);
-				if (check.changed)
+				var size = HandleUtility.GetHandleSize (position) * DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+
+				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.up, cylindrify.Radius);
+
+				DeformHandles.Line (position + Vector3.forward * size, position + Vector3.forward * size * 5f, DeformHandles.LineMode.Light);
+				DeformHandles.Line (position - Vector3.forward * size, position - Vector3.forward * size * 5f, DeformHandles.LineMode.Light);
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					var newRadius = DeformHandlesUtility.DistanceAlongAxis (cylindrify.Axis, cylindrify.Axis.position, newWorldPosition, Axis.Y);
-					Undo.RecordObject (cylindrify, "Changed Radius");
-					cylindrify.Radius = newRadius;
+					var newWorldPosition = DeformHandles.Slider (position, Vector3.up);
+					if (check.changed)
+					{
+						Undo.RecordObject (cylindrify, "Changed Radius");
+						cylindrify.Radius = cylindrify.Axis.position.y;
+					}
 				}
 			}
 		}

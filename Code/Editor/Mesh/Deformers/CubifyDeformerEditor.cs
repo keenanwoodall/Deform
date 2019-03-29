@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using Deform;
+using Beans.Unity.Editor;
 
 namespace DeformEditor
 {
@@ -58,6 +59,8 @@ namespace DeformEditor
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 
 			serializedObject.ApplyModifiedProperties ();
+
+			EditorGUILayoutx.WIPAlert ();
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
