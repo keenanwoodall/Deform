@@ -74,7 +74,7 @@ namespace DeformEditor.Masking
 
 		private void DrawInnerRadiusHandle (SphereMask sphereMask)
 		{
-			using (new Handles.DrawingScope (Matrix4x4.TRS (sphereMask.Axis.position, sphereMask.Axis.rotation, sphereMask.Axis.localScale)))
+			using (new Handles.DrawingScope (Matrix4x4.TRS (sphereMask.Axis.position, sphereMask.Axis.rotation, sphereMask.Axis.lossyScale)))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
@@ -90,7 +90,7 @@ namespace DeformEditor.Masking
 
 		private void DrawOuterRadiusHandle (SphereMask sphereMask)
 		{
-			using (new Handles.DrawingScope (Matrix4x4.TRS (sphereMask.Axis.position, sphereMask.Axis.rotation, sphereMask.Axis.localScale)))
+			using (new Handles.DrawingScope (Matrix4x4.TRS (sphereMask.Axis.position, sphereMask.Axis.rotation, sphereMask.Axis.lossyScale)))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{

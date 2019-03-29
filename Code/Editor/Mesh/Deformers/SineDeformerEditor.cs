@@ -81,7 +81,7 @@ namespace DeformEditor
 		private void DrawFrequencyHandle (SineDeformer sine)
 		{
 			var direction = sine.Axis.forward;
-			var frequencyHandleWorldPosition = sine.Axis.position + direction * (1f / sine.Frequency * sine.Axis.localScale.z);
+			var frequencyHandleWorldPosition = sine.Axis.position + direction * (1f / sine.Frequency * sine.Axis.lossyScale.z);
 			
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
@@ -89,7 +89,7 @@ namespace DeformEditor
 				if (check.changed)
 				{
 					Undo.RecordObject (sine, "Changed Frequency");
-					var newFrequency = sine.Axis.localScale.z / DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newFrequencyWorldPosition, Axis.Z);
+					var newFrequency = sine.Axis.lossyScale.z / DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newFrequencyWorldPosition, Axis.Z);
 					sine.Frequency = newFrequency;
 				}
 			}
@@ -98,7 +98,7 @@ namespace DeformEditor
 		private void DrawMagnitudeHandle (SineDeformer sine)
 		{
 			var direction = sine.Axis.up;
-			var magnitudeHandleWorldPosition = sine.Axis.position + direction * sine.Amplitude * sine.Axis.localScale.y;
+			var magnitudeHandleWorldPosition = sine.Axis.position + direction * sine.Amplitude * sine.Axis.lossyScale.y;
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
@@ -106,7 +106,7 @@ namespace DeformEditor
 				if (check.changed)
 				{
 					Undo.RecordObject (sine, "Changed Magnitude");
-					var newMagnitude = DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newMagnitudeWorldPosition, Axis.Y) / sine.Axis.localScale.y;
+					var newMagnitude = DeformHandlesUtility.DistanceAlongAxis (sine.Axis, sine.Axis.position, newMagnitudeWorldPosition, Axis.Y) / sine.Axis.lossyScale.y;
 					sine.Amplitude = newMagnitude;
 				}
 			}

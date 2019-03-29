@@ -83,7 +83,7 @@ namespace DeformEditor
 			boundsHandle.center = Vector3.zero;
 			boundsHandle.size = new Vector3 (cubify.Width, cubify.Height, cubify.Length);
 
-			using (new Handles.DrawingScope (Matrix4x4.TRS (cubify.Axis.position, cubify.Axis.rotation, cubify.Axis.localScale)))
+			using (new Handles.DrawingScope (Matrix4x4.TRS (cubify.Axis.position, cubify.Axis.rotation, cubify.Axis.lossyScale)))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
