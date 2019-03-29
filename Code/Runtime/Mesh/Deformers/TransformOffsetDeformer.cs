@@ -26,7 +26,7 @@ namespace Deform
 
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
 			var dataTargetTransform = data.Target.GetTransform ();
 			var matrix = Matrix4x4.TRS (Target.position, Target.rotation, Target.lossyScale);

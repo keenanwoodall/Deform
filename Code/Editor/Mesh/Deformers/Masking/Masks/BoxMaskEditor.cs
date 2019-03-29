@@ -81,7 +81,7 @@ namespace DeformEditor.Masking
 			boxHandle.center = boxMask.InnerBounds.center;
 			boxHandle.size = boxMask.InnerBounds.size;
 
-			using (new Handles.DrawingScope (Matrix4x4.TRS (boxMask.Axis.position, boxMask.Axis.rotation, boxMask.Axis.localScale)))
+			using (new Handles.DrawingScope (Matrix4x4.TRS (boxMask.Axis.position, boxMask.Axis.rotation, boxMask.Axis.lossyScale)))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
@@ -102,7 +102,7 @@ namespace DeformEditor.Masking
 			boxHandle.center = boxMask.OuterBounds.center;
 			boxHandle.size = boxMask.OuterBounds.size;
 
-			using (new Handles.DrawingScope (Matrix4x4.TRS (boxMask.Axis.position, boxMask.Axis.rotation, boxMask.Axis.localScale)))
+			using (new Handles.DrawingScope (Matrix4x4.TRS (boxMask.Axis.position, boxMask.Axis.rotation, boxMask.Axis.lossyScale)))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
