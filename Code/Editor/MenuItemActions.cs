@@ -11,9 +11,11 @@ namespace DeformEditor
 		{
 			var deformables = GameObject.FindObjectsOfType<Deformable> ();
 
-			Undo.RecordObjects (deformables, "Cleaned All Deformables In Scene");
+			Undo.RecordObjects (deformables, "Cleaned All Deformables");
 			foreach (var deformable in deformables)
 				deformable.DeformerElements.RemoveAll (t => t.Component == null);
+
+			EditorUtility.DisplayDialog ("Cleaned All Deformables", $"{deformables.Length} found and cleaned.", "OK");
 		}
 
 		[MenuItem ("Tools/Deform/Actions/Strip All Deformables", priority = 10101)]
@@ -27,6 +29,8 @@ namespace DeformEditor
 				deformable.assignOriginalMeshOnDisable = false;
 				Undo.DestroyObjectImmediate (deformable);
 			}
+
+			EditorUtility.DisplayDialog ("Stripped All Deformables", $"{deformables.Length} found and stripped.", "OK");
 		}
 
 		[MenuItem ("Tools/Deform/Actions/Strip Selected Deformables", priority = 10102)]
