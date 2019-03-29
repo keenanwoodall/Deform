@@ -99,21 +99,22 @@ namespace DeformEditor
 
 		private void DrawAngleHandle (BendDeformer bend)
         {
-			var radiusDistanceOffset = HandleUtility.GetHandleSize (bend.Axis.position + bend.Axis.up* bend.Top) * DeformEditorSettings.ScreenspaceSliderHandleCapSize * 2f;
+			var radiusDistanceOffset = HandleUtility.GetHandleSize (bend.Axis.position + bend.Axis.up * bend.Top) * DeformEditorSettings.ScreenspaceSliderHandleCapSize * 2f;
 
+			// Arc handles aren't scaled vertically by Handles.matrix for some reason sooo...
+			// this whole thing is a mess of scaling different parts of the handle via the matrix and others via manually changing properties :(
 			angleHandle.angle = bend.Angle;
-			angleHandle.radius = bend.Top - bend.Bottom + radiusDistanceOffset;
+			angleHandle.radius = (bend.Top - bend.Bottom) * bend.Axis.lossyScale.y + radiusDistanceOffset; // scale the handle radius by the vertical lossy scale
 			angleHandle.fillColor = Color.clear;
 
 			var direction = bend.Axis.up;
 			var normal = -bend.Axis.forward;
-			var matrix = Matrix4x4.TRS (bend.Axis.position + bend.Axis.rotation * (Vector3.up * bend.Bottom), Quaternion.LookRotation (direction, normal), Vector3.one);
+			// offset the handle position upwards to the bottom handle position
+			// the handle will warp horizontally correctly via the matrix, but the best we can do for vertical scaling is to increase the radius above^^
+			var matrix = Matrix4x4.TRS (bend.Axis.position + (bend.Axis.up * (bend.Bottom * bend.Axis.lossyScale.y)), Quaternion.LookRotation (direction, normal), Vector3.Scale (bend.Axis.lossyScale, new Vector3 (1f / bend.Axis.lossyScale.y, bend.Axis.lossyScale.y, 1f)));
 
-			using (new Handles.DrawingScope (Handles.matrix))
+			using (new Handles.DrawingScope (DeformEditorSettings.SolidHandleColor, matrix))
 			{
-            	Handles.color = DeformEditorSettings.SolidHandleColor;
-				Handles.matrix = matrix;
-
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					angleHandle.DrawHandle ();
