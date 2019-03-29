@@ -74,13 +74,16 @@ namespace DeformEditor
 
 		private void DrawRadiusHandle (SpherifyDeformer spherify)
 		{
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (new Handles.DrawingScope (Matrix4x4.TRS (spherify.Axis.position, spherify.Axis.rotation, spherify.Axis.lossyScale)))
 			{
-				var newRadius = DeformHandles.Radius (spherify.Axis.rotation, spherify.Axis.position, spherify.Radius);
-				if (check.changed)
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (spherify, "Changed Radius");
-					spherify.Radius = newRadius;
+					var newRadius = DeformHandles.Radius (Quaternion.identity, Vector3.zero, spherify.Radius);
+					if (check.changed)
+					{
+						Undo.RecordObject (spherify, "Changed Radius");
+						spherify.Radius = newRadius;
+					}
 				}
 			}
 		}
@@ -90,20 +93,23 @@ namespace DeformEditor
 			if (spherify.Radius == 0f)
 				return;
 
-			var direction = spherify.Axis.forward;
-			var worldPosition = spherify.Axis.position + direction * (spherify.Factor * spherify.Radius);
+			var direction = Vector3.forward;
+			var position = direction * (spherify.Factor * spherify.Radius);
 
-			DeformHandles.Line (spherify.Axis.position, worldPosition, DeformHandles.LineMode.Light);
-			DeformHandles.Line (worldPosition, spherify.Axis.position + direction * spherify.Radius, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (new Handles.DrawingScope (Matrix4x4.TRS (spherify.Axis.position, spherify.Axis.rotation, spherify.Axis.lossyScale)))
 			{
-				var newWorldPosition = DeformHandles.Slider (worldPosition, direction);
-				if (check.changed)
+				DeformHandles.Line (Vector3.zero, position, DeformHandles.LineMode.Light);
+				DeformHandles.Line (position, direction * spherify.Radius, DeformHandles.LineMode.LightDotted);
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (spherify, "Changed Factor");
-					var newFactor = DeformHandlesUtility.DistanceAlongAxis (spherify.Axis, spherify.Axis.position, newWorldPosition, Axis.Z) / spherify.Radius;
-					spherify.Factor = newFactor;
+					var newWorldPosition = DeformHandles.Slider (position, direction);
+					if (check.changed)
+					{
+						Undo.RecordObject (spherify, "Changed Factor");
+						var newFactor = newWorldPosition.z / spherify.Radius;
+						spherify.Factor = newFactor;
+					}
 				}
 			}
 		}
