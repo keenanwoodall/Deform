@@ -75,8 +75,8 @@ namespace Deform
 			{
 				top = Top,
 				bottom = Bottom,
-				topFactor = TopFactor,
-				bottomFactor = BottomFactor,
+				topFactor = TopFactor * new Vector2 (Axis.lossyScale.x, Axis.lossyScale.y),
+				bottomFactor = BottomFactor * new Vector2 (Axis.lossyScale.x, Axis.lossyScale.y),
 				curvature = Curvature,
 				smooth = Smooth,
 				meshToAxis = meshToAxis,

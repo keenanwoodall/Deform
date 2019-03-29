@@ -96,74 +96,68 @@ namespace DeformEditor
 
 		private void DrawTopFactorHandles (TaperDeformer taper)
 		{
-			var directionX = taper.Axis.right;
-			var directionY = taper.Axis.up;
-			var directionZ = taper.Axis.forward;
+			var topPosition = Vector3.forward * taper.Top;
 
-			var topWorldPosition = taper.Axis.position + directionZ * taper.Top;
+			var topFactorXPosition = topPosition + Vector3.right * taper.TopFactor.x * 0.5f;
+			var topFactorYPosition = topPosition + Vector3.up * taper.TopFactor.y * 0.5f;
 
-			var topFactorXWorldPosition = topWorldPosition + directionX * taper.TopFactor.x;
-			var topFactorYWorldPosition = topWorldPosition + directionY * taper.TopFactor.y;
-
-			DeformHandles.Line (topWorldPosition, topFactorXWorldPosition, DeformHandles.LineMode.LightDotted);
-			DeformHandles.Line (topWorldPosition, topFactorYWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (new Handles.DrawingScope (Matrix4x4.TRS (taper.Axis.position, taper.Axis.rotation, taper.Axis.lossyScale)))
 			{
-				var newTopFactorXWorldPosition = DeformHandles.Slider (topFactorXWorldPosition, directionX);
-				if (check.changed)
+				DeformHandles.Line (topPosition, topFactorXPosition, DeformHandles.LineMode.LightDotted);
+				DeformHandles.Line (topPosition, topFactorYPosition, DeformHandles.LineMode.LightDotted);
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (taper, "Changed Top Factor");
-					var newTopFactorX = DeformHandlesUtility.DistanceAlongAxis (taper.Axis, taper.Axis.position, newTopFactorXWorldPosition, Axis.X);
-					taper.TopFactor = new Vector2 (newTopFactorX, taper.TopFactor.y);
+					var newTopFactorXWorldPosition = DeformHandles.Slider (topFactorXPosition, Vector3.right);
+					if (check.changed)
+					{
+						Undo.RecordObject (taper, "Changed Top Factor");
+						taper.TopFactor = new Vector2 (newTopFactorXWorldPosition.x * 2f, taper.TopFactor.y);
+					}
 				}
-			}
 
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newTopFactorYWorldPosition = DeformHandles.Slider (topFactorYWorldPosition, directionY);
-				if (check.changed)
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (taper, "Changed Top Factor");
-					var newTopFactorY = DeformHandlesUtility.DistanceAlongAxis (taper.Axis, taper.Axis.position, newTopFactorYWorldPosition, Axis.Y);
-					taper.TopFactor = new Vector2 (taper.TopFactor.x, newTopFactorY);
+					var newTopFactorYWorldPosition = DeformHandles.Slider (topFactorYPosition, Vector3.up);
+					if (check.changed)
+					{
+						Undo.RecordObject (taper, "Changed Top Factor");
+						taper.TopFactor = new Vector2 (taper.TopFactor.x, newTopFactorYWorldPosition.y * 2f);
+					}
 				}
 			}
 		}
 
 		private void DrawBottomFactorHandles (TaperDeformer taper)
 		{
-			var directionX = taper.Axis.right;
-			var directionY = taper.Axis.up;
-			var directionZ = taper.Axis.forward;
+			var bottomPosition = Vector3.forward * taper.Bottom;
 
-			var bottomWorldPosition = taper.Axis.position + directionZ * taper.Bottom;
+			var bottomFactorXPosition = bottomPosition + Vector3.right * taper.BottomFactor.x * 0.5f;
+			var bottomFactorYPosition = bottomPosition + Vector3.up * taper.BottomFactor.y * 0.5f;
 
-			var bottomFactorXWorldPosition = bottomWorldPosition + directionX * taper.BottomFactor.x;
-			var bottomFactorYWorldPosition = bottomWorldPosition + directionY * taper.BottomFactor.y;
-
-			DeformHandles.Line (bottomWorldPosition, bottomFactorXWorldPosition, DeformHandles.LineMode.LightDotted);
-			DeformHandles.Line (bottomWorldPosition, bottomFactorYWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (new Handles.DrawingScope (Matrix4x4.TRS (taper.Axis.position, taper.Axis.rotation, taper.Axis.lossyScale)))
 			{
-				var newBottomFactorXWorldPosition = DeformHandles.Slider (bottomFactorXWorldPosition, directionX);
-				if (check.changed)
+				DeformHandles.Line (bottomPosition, bottomFactorXPosition, DeformHandles.LineMode.LightDotted);
+				DeformHandles.Line (bottomPosition, bottomFactorYPosition, DeformHandles.LineMode.LightDotted);
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (taper, "Changed Bottom Factor");
-					var newBottomFactorX = DeformHandlesUtility.DistanceAlongAxis (taper.Axis, taper.Axis.position, newBottomFactorXWorldPosition, Axis.X);
-					taper.BottomFactor = new Vector2 (newBottomFactorX, taper.BottomFactor.y);
+					var newBottomFactorXWorldPosition = DeformHandles.Slider (bottomFactorXPosition, Vector3.right);
+					if (check.changed)
+					{
+						Undo.RecordObject (taper, "Changed Bottom Factor");
+						taper.BottomFactor = new Vector2 (newBottomFactorXWorldPosition.x * 2f, taper.BottomFactor.y);
+					}
 				}
-			}
 
-			using (var check = new EditorGUI.ChangeCheckScope ())
-			{
-				var newBottomFactorYWorldPosition = DeformHandles.Slider (bottomFactorYWorldPosition, directionY);
-				if (check.changed)
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (taper, "Changed Bottom Factor");
-					var newBottomFactorY = DeformHandlesUtility.DistanceAlongAxis (taper.Axis, taper.Axis.position, newBottomFactorYWorldPosition, Axis.Y);
-					taper.BottomFactor = new Vector2 (taper.BottomFactor.x, newBottomFactorY);
+					var newBottomFactorYWorldPosition = DeformHandles.Slider (bottomFactorYPosition, Vector3.up);
+					if (check.changed)
+					{
+						Undo.RecordObject (taper, "Changed Bottom Factor");
+						taper.BottomFactor = new Vector2 (taper.BottomFactor.x, newBottomFactorYWorldPosition.y * 2f);
+					}
 				}
 			}
 		}
