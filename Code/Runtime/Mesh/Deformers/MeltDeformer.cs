@@ -79,7 +79,7 @@ namespace Deform
 		[SerializeField, HideInInspector] private float factor = 0f;
 		[SerializeField, HideInInspector] private float falloff = 2f;
 		[SerializeField, HideInInspector] private float radius = 1f;
-		[SerializeField, HideInInspector] private bool useNormals = true;
+		[SerializeField, HideInInspector] private bool useNormals = false;
 		[SerializeField, HideInInspector] private bool clampAtBottom = true;
 		[SerializeField, HideInInspector] private float top = 1f;
 		[SerializeField, HideInInspector] private float bottom = 0f;

@@ -136,24 +136,25 @@ namespace DeformEditor
 		}
 
 		private void DrawRadiusHandle (MeltDeformer melt)
-		{
-			var bottomWorldPosition = melt.Axis.position + melt.Axis.forward * melt.Bottom;
+		{ 
+			var scaledRadius = melt.Radius;
 
-			var scaledRadius = (melt.Radius + 1f) * 0.5f;
+			var bottomPosition = Vector3.forward * melt.Bottom;
 
-			DeformHandles.Circle (bottomWorldPosition, melt.Axis.forward, melt.Axis.right, scaledRadius);
-
-			var direction = melt.Axis.up;
-			var radiusWorldPosition = melt.Axis.position + (melt.Axis.forward * melt.Bottom) +direction * scaledRadius;
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (new Handles.DrawingScope (Matrix4x4.TRS (melt.Axis.position, melt.Axis.rotation, melt.Axis.lossyScale)))
 			{
-				var newRadiusWorldPosition = DeformHandles.Slider (radiusWorldPosition, direction);
-				if (check.changed)
+				DeformHandles.Circle (bottomPosition, Vector3.forward, Vector3.right, scaledRadius);
+
+				var radiusWorldPosition = (Vector3.forward * melt.Bottom) + Vector3.up * scaledRadius;
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (melt, "Changed Radius");
-					var newRadius = DeformHandlesUtility.DistanceAlongAxis (melt.Axis, melt.Axis.position, newRadiusWorldPosition, Axis.Y);
-					melt.Radius = (newRadius * 2f) - 1f;
+					var newRadiusWorldPosition = DeformHandles.Slider (radiusWorldPosition, Vector3.up);
+					if (check.changed)
+					{
+						Undo.RecordObject (melt, "Changed Radius");
+						melt.Radius = newRadiusWorldPosition.y;
+					}
 				}
 			}
 		}
