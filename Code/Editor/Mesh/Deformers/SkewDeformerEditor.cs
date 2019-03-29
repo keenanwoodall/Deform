@@ -96,20 +96,21 @@ namespace DeformEditor
 
 		private void DrawFactorHandle (SkewDeformer skew)
 		{
-			var direction = skew.Axis.forward;
-			var center = skew.Axis.position + (skew.Axis.up * ((skew.Top + skew.Bottom) * 0.5f));
-			var handleWorldPosition = center + direction * skew.Factor;
+			var center = Vector3.up * ((skew.Top + skew.Bottom) * 0.5f);
+			var handlePosition = center + Vector3.forward * skew.Factor;
 
-			DeformHandles.Line (center, handleWorldPosition, DeformHandles.LineMode.LightDotted);
-
-			using (var check = new EditorGUI.ChangeCheckScope ())
+			using (new Handles.DrawingScope (Matrix4x4.TRS (skew.Axis.position, skew.Axis.rotation, skew.Axis.lossyScale)))
 			{
-				var newWorldPosition = DeformHandles.Slider (handleWorldPosition, direction);
-				if (check.changed)
+				DeformHandles.Line (center, handlePosition, DeformHandles.LineMode.LightDotted);
+
+				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
-					Undo.RecordObject (skew, "Changed Factor");
-					var newFactor = DeformHandlesUtility.DistanceAlongAxis (skew.Axis, skew.Axis.position, newWorldPosition, Axis.Z);
-					skew.Factor = newFactor;
+					var newWorldPosition = DeformHandles.Slider (handlePosition, Vector3.forward);
+					if (check.changed)
+					{
+						Undo.RecordObject (skew, "Changed Factor");
+						skew.Factor = newWorldPosition.z;
+					}
 				}
 			}
 		}
