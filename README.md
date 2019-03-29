@@ -13,7 +13,7 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 ✔️ Fully multi-threaded!
 
-✔️ 40+ modular deformers!
+✔️ 40+ deformers!
 
 ✔️ Easily extendable!
 
