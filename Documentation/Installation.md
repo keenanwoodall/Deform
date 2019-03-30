@@ -1,7 +1,4 @@
 ## Installation
-
-Deform has been built to be used with UPM (aka Package Manager.) You *can* clone it directly into your project, but it will take a bit of work to set it up.
-
 ### Install via UPM
 1. Navigate to your project's Packages folder using a console or terminal.
 ```
