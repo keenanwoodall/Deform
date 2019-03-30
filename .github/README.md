@@ -27,9 +27,6 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 * [Getting Started](../Documentation/GettingStarted.md)
 * [Creating a Custom Deformer](../Documentation/CustomDeformer.md)
 
-## Contributing
-Pull requests are more than welcome! Feel free to add a feature or solve an [issue](https://github.com/keenanwoodall/Deform/issues). 
-
 The ["help wanted"](https://github.com/keenanwoodall/Deform/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) label is used on issues I'm struggling with - it doesn't mean I'll only accept help on issues with the ["help wanted"](https://github.com/keenanwoodall/Deform/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) label.
 
 ## Acknowledgments
