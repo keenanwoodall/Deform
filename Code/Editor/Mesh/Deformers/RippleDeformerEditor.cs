@@ -109,8 +109,11 @@ namespace DeformEditor
 				}
 			}
 
-			DeformHandles.Circle (ripple.Axis.position, ripple.Axis.forward, ripple.Axis.right, ripple.InnerRadius);
-			DeformHandles.Circle (ripple.Axis.position, ripple.Axis.forward, ripple.Axis.right, ripple.OuterRadius);
+			using (new Handles.DrawingScope (Matrix4x4.TRS (ripple.Axis.position, ripple.Axis.rotation, ripple.Axis.lossyScale)))
+			{
+				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.InnerRadius);
+				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.OuterRadius);
+			}
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
