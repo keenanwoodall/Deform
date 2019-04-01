@@ -8,6 +8,15 @@ cd <ProjectPath>/Packages
 ```
 git clone https://github.com/keenanwoodall/Deform com.beans.deform
 ```
+---
+For those of you not using git; you can also just download and unzip the tool into the Packages folder. Just make sure they are put into a container folder
+```
+- <ProjectPath>
+  - Assets
+  - Packages
+    - Deform
+      - <repository contents>
+```
 
 ### Install Manually
 *It's very important you follow these steps in the correct order. If you install Deform before installing it's dependencies, you'll have to assign all of it's assembly definition references manually.*
