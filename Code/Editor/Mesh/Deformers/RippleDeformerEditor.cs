@@ -122,8 +122,24 @@ namespace DeformEditor
 					DeformHandles.LineMode.LightDotted
 				);
 
-				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.InnerRadius);
-				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.OuterRadius);
+				var limited = ripple.Mode == BoundsMode.Limited;
+
+				var innerCirlePosition = new Vector3
+				{
+					x = 0f,
+					y = 0f,
+					z = RipplePoint (ripple, Vector3.up * ripple.InnerRadius, limited).z
+				};
+
+				var outerCirlePosition = new Vector3
+				{
+					x = 0f,
+					y = 0f,
+					z = RipplePoint (ripple, Vector3.up * ripple.OuterRadius, limited).z
+				};
+
+				DeformHandles.Circle (innerCirlePosition, Vector3.forward, Vector3.right, ripple.InnerRadius);
+				DeformHandles.Circle (outerCirlePosition, Vector3.forward, Vector3.right, ripple.OuterRadius);
 			}
 
 			EditorApplication.QueuePlayerLoopUpdate ();
@@ -154,19 +170,26 @@ namespace DeformEditor
 		{
 			using (new Handles.DrawingScope (Matrix4x4.TRS (ripple.Axis.position, ripple.Axis.rotation, ripple.Axis.lossyScale)))
 			{
-				var lastPoint = Vector3.zero;
-				for (int i = 0; i < CURVE_RES; i++)
+				var lineStart = Vector3.up * -ripple.OuterRadius;
+				var lineEnd = Vector3.up * ripple.OuterRadius;
+				var previousPoint = RipplePoint (ripple, lineStart, ripple.Mode == BoundsMode.Limited);
+				DeformHandles.Line (Vector3.up * -ripple.OuterRadius, previousPoint, DeformHandles.LineMode.LightDotted);
+
+				for (int i = 0; i <= CURVE_RES; i++)
 				{
-					var point = Vector3.Lerp (Vector3.zero, Vector3.up * ripple.OuterRadius, (float)i / CURVE_RES);
+					var point = Vector3.Lerp (lineStart, lineEnd, (float)i / CURVE_RES);
 
 					point = RipplePoint (ripple, point, ripple.Mode == BoundsMode.Limited);
 
-					DeformHandles.Line (lastPoint, point, DeformHandles.LineMode.Light);
+					DeformHandles.Line (previousPoint, point, DeformHandles.LineMode.Light);
 
-					lastPoint = point;
+					previousPoint = point;
 				}
 
-				DeformHandles.Line (lastPoint, Vector3.up * ripple.OuterRadius, DeformHandles.LineMode.Light);
+				var outerPoint = RipplePoint (ripple, Vector3.up * ripple.OuterRadius, ripple.Mode == BoundsMode.Limited);
+//				DeformHandles.Line (previousPoint, outerPoint, DeformHandles.LineMode.Light);
+				DeformHandles.Line (lineEnd, outerPoint, DeformHandles.LineMode.LightDotted);
+				DeformHandles.Line (lineStart, lineEnd, DeformHandles.LineMode.LightDotted);
 			}
 		}
 
