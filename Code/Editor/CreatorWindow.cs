@@ -185,6 +185,8 @@ namespace DeformEditor
 			var newObject = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			newObject.name = "Deformable Object";
 
+			newObject.transform.position = SceneView.lastActiveSceneView.pivot;
+
 			var deformable = newObject.AddComponent<Deformable> ();
 			deformable.ChangeMesh (DeformEditorResources.LoadAssetOfType<Mesh> ("DeformDefaultMesh"));
 
