@@ -6,10 +6,10 @@ cd <ProjectPath>/Packages
 ```
 2. Clone the repository
 ```
-git clone https://github.com/keenanwoodall/Deform com.beans.deform
+git clone https://github.com/keenanwoodall/Deform
 ```
 ---
-Those of you not using git can just download and unzip the tool into a folder called `com.beans.deform` under the Packages folder.
+Those of you not using git can just download and unzip the tool into a folder called `Deform` under the Packages folder.
 ```
 - <ProjectPath>
   - Assets
