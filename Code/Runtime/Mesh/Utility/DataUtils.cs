@@ -14,11 +14,21 @@ namespace Deform
 		/// <param name="onlyEssentials">If true, only vertices, normals, bounds, and mask vertices will be copied.</param>
 		public static void CopyManagedToNativeMeshData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
 		{
-			if (!managed.HasValidData () || !native.HasValidData ())
+			var dataIsValid = true;
+
+			if (!managed.HasValidData ())
 			{
-				Debug.LogError ("Cannot copy data as some of it is invalid");
-				return;
+				dataIsValid = false;
+				Debug.LogError ("Cannot copy data as the managed data is invalid");
 			}
+			if (!native.HasValidData ())
+			{
+				Debug.LogError ("Cannot copy data as the native data is invalid");
+				dataIsValid = false;
+			}
+
+			if (!dataIsValid)
+				return;
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
 				managed.Vertices.MemCpy (native.VertexBuffer);
@@ -44,11 +54,21 @@ namespace Deform
 		/// <param name="onlyEssentials">If true, only vertices, normals and bounds are copied. The mask data isn't copied because is only exists in native data.</param>
 		public static void CopyNativeDataToManagedData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
 		{
-			if (!managed.HasValidData () || !native.HasValidData ())
+			var dataIsValid = true;
+
+			if (!managed.HasValidData ())
 			{
-				Debug.LogError ("Cannot copy data as some of it is invalid");
-				return;
+				dataIsValid = false;
+				Debug.LogError ("Cannot copy data as the managed data is invalid");
 			}
+			if (!native.HasValidData ())
+			{
+				Debug.LogError ("Cannot copy data as the native data is invalid");
+				dataIsValid = false;
+			}
+
+			if (!dataIsValid)
+				return;
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
 				native.VertexBuffer.MemCpy (managed.Vertices);
