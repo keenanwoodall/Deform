@@ -9,13 +9,12 @@ cd <ProjectPath>/Packages
 git clone https://github.com/keenanwoodall/Deform
 ```
 ---
-Those of you not using git can just download and unzip the tool into a folder called `Deform` under the Packages folder.
+Those of you not using git can just download and unzip the repository into the Packages folder.
 ```
 - <ProjectPath>
   - Assets
   - Packages
-    - Deform
-      - <repository contents>
+    - <extract files here>
 ```
 
 ### Install Manually
