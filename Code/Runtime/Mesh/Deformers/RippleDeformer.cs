@@ -100,7 +100,7 @@ namespace Deform
 					return new UnlimitedRippleJob
 					{
 						frequency = Frequency,
-						magnitude = Amplitude,
+						amplitude = Amplitude,
 						offset = GetTotalOffset (),
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
@@ -110,7 +110,7 @@ namespace Deform
 					return new LimitedRippleJob
 					{
 						frequency = Frequency,
-						magnitude = Amplitude,
+						amplitude = Amplitude,
 						falloff = Falloff,
 						innerRadius = InnerRadius,
 						outerRadius = OuterRadius,
@@ -131,7 +131,7 @@ namespace Deform
 		private struct UnlimitedRippleJob : IJobParallelFor
 		{
 			public float frequency;
-			public float magnitude;
+			public float amplitude;
 			public float offset;
 			public float4x4 meshToAxis;
 			public float4x4 axisToMesh;
@@ -146,7 +146,7 @@ namespace Deform
 
 				var d = length (point.xy);
 
-				point.z += sin ((offset + d * frequency) * (float)PI * 2f) * magnitude;
+				point.z += sin ((offset + d * frequency) * (float)PI * 2f) * amplitude;
 
 				vertices[index] = mul (axisToMesh, point).xyz;
 			}
@@ -156,7 +156,7 @@ namespace Deform
 		private struct LimitedRippleJob : IJobParallelFor
 		{
 			public float frequency;
-			public float magnitude;
+			public float amplitude;
 			public float falloff;
 			public float innerRadius;
 			public float outerRadius;
@@ -177,7 +177,7 @@ namespace Deform
 				var d = length (point.xy);
 				var clampedD = clamp (d, innerRadius, outerRadius);
 
-				var positionOffset = sin ((-offset + clampedD * frequency) * (float)PI * 2f) * magnitude;
+				var positionOffset = sin ((-offset + clampedD * frequency) * (float)PI * 2f) * amplitude;
 				if (range != 0f)
 				{
 					var pointBetweenBounds = clamp ((clampedD - innerRadius) / range, 0f, 1f);

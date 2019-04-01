@@ -47,6 +47,8 @@ namespace DeformEditor
 			}
 		}
 
+		private const int CURVE_RES = 100;
+
 		private Properties properties;
 		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
@@ -109,6 +111,8 @@ namespace DeformEditor
 				}
 			}
 
+			DrawCurve (ripple);
+
 			using (new Handles.DrawingScope (Matrix4x4.TRS (ripple.Axis.position, ripple.Axis.rotation, ripple.Axis.lossyScale)))
 			{
 				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.InnerRadius);
@@ -135,7 +139,59 @@ namespace DeformEditor
 				var offset = newWorldPosition - ripple.Axis.position;
 				DeformHandles.Line (ripple.Axis.position - offset, newWorldPosition, DeformHandles.LineMode.LightDotted);
 			}
+		}
 
+		private void DrawCurve (RippleDeformer ripple)
+		{
+			using (new Handles.DrawingScope (Matrix4x4.TRS (ripple.Axis.position, ripple.Axis.rotation, ripple.Axis.lossyScale)))
+			{
+				var lastPoint = Vector3.zero;
+				for (int i = 0; i < CURVE_RES; i++)
+				{
+					var point = Vector3.Lerp (Vector3.zero, Vector3.up * ripple.OuterRadius, (float)i / CURVE_RES);
+
+					point = RipplePoint (ripple, point, ripple.Mode == BoundsMode.Limited);
+
+					DeformHandles.Line (lastPoint, point, DeformHandles.LineMode.Light);
+
+					lastPoint = point;
+				}
+
+				DeformHandles.Line (lastPoint, Vector3.up * ripple.OuterRadius, DeformHandles.LineMode.Light);
+			}
+		}
+
+		private Vector3 RipplePoint (RippleDeformer ripple, Vector3 point, bool limited)
+		{
+			if (ripple.Frequency == 0f)
+				return point;
+
+			var d = new Vector2 (point.x, point.y).magnitude;
+
+			if (limited)
+			{
+				var range = ripple.OuterRadius - ripple.InnerRadius;
+
+				var clampedD = Mathf.Clamp (d, ripple.InnerRadius, ripple.OuterRadius);
+
+				var positionOffset = Mathf.Sin ((-ripple.Offset + clampedD * ripple.Frequency) * (float)Mathf.PI * 2f) * ripple.Amplitude;
+				if (range != 0f)
+				{
+					var pointBetweenBounds = Mathf.Clamp ((clampedD - ripple.InnerRadius) / range, 0f, 1f);
+					point.z += Mathf.Lerp (positionOffset, 0f, pointBetweenBounds * ripple.Falloff);
+				}
+				else
+				{
+					if (d > ripple.OuterRadius)
+						point.z += Mathf.Lerp (positionOffset, 0f, ripple.Falloff);
+					else if (d < ripple.InnerRadius)
+						point.z += positionOffset;
+				}
+			}
+			else
+				point.z += Mathf.Sin ((ripple.Offset + d * ripple.Frequency) * (float)Mathf.PI * 2f) * ripple.Amplitude;
+
+			return point;
 		}
 	}
 }
