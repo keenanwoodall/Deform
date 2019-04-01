@@ -115,6 +115,13 @@ namespace DeformEditor
 
 			using (new Handles.DrawingScope (Matrix4x4.TRS (ripple.Axis.position, ripple.Axis.rotation, ripple.Axis.lossyScale)))
 			{
+				DeformHandles.Line 
+				(
+					Vector3.up * ripple.InnerRadius, 
+					RipplePoint (ripple, Vector3.up * ripple.InnerRadius, ripple.Mode == BoundsMode.Limited), 
+					DeformHandles.LineMode.LightDotted
+				);
+
 				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.InnerRadius);
 				DeformHandles.Circle (Vector3.zero, Vector3.forward, Vector3.right, ripple.OuterRadius);
 			}
@@ -124,20 +131,22 @@ namespace DeformEditor
 
 		private void DrawMagnitudeHandle (RippleDeformer ripple)
 		{
-			var direction = ripple.Axis.forward;
-			var worldPosition = ripple.Axis.position + direction * ripple.Amplitude;
+			var direction = Vector3.forward;
+			var position = direction * ripple.Amplitude;
 
 			using (var check = new EditorGUI.ChangeCheckScope ())
 			{
-				var newWorldPosition = DeformHandles.Slider (worldPosition, direction);
-				if (check.changed)
+				using (new Handles.DrawingScope (Matrix4x4.TRS (ripple.Axis.position, ripple.Axis.rotation, ripple.Axis.lossyScale)))
 				{
-					Undo.RecordObject (ripple, "Changed Magnitude");
-					var newMagnitude = DeformHandlesUtility.DistanceAlongAxis (ripple.Axis, ripple.Axis.position, newWorldPosition, Axis.Z);
-					ripple.Amplitude = newMagnitude;
+					var newPosition = DeformHandles.Slider (position, direction);
+					if (check.changed)
+					{
+						Undo.RecordObject (ripple, "Changed Magnitude");
+						ripple.Amplitude = newPosition.z;
+					}
+					var offset = newPosition - ripple.Axis.position;
+					DeformHandles.Line (Vector3.zero, newPosition, DeformHandles.LineMode.LightDotted);
 				}
-				var offset = newWorldPosition - ripple.Axis.position;
-				DeformHandles.Line (ripple.Axis.position - offset, newWorldPosition, DeformHandles.LineMode.LightDotted);
 			}
 		}
 
@@ -174,7 +183,7 @@ namespace DeformEditor
 
 				var clampedD = Mathf.Clamp (d, ripple.InnerRadius, ripple.OuterRadius);
 
-				var positionOffset = Mathf.Sin ((-ripple.Offset + clampedD * ripple.Frequency) * (float)Mathf.PI * 2f) * ripple.Amplitude;
+				var positionOffset = Mathf.Sin ((-ripple.GetTotalOffset () + clampedD * ripple.Frequency) * (float)Mathf.PI * 2f) * ripple.Amplitude;
 				if (range != 0f)
 				{
 					var pointBetweenBounds = Mathf.Clamp ((clampedD - ripple.InnerRadius) / range, 0f, 1f);
@@ -189,7 +198,7 @@ namespace DeformEditor
 				}
 			}
 			else
-				point.z += Mathf.Sin ((ripple.Offset + d * ripple.Frequency) * (float)Mathf.PI * 2f) * ripple.Amplitude;
+				point.z += Mathf.Sin ((ripple.GetTotalOffset () + d * ripple.Frequency) * (float)Mathf.PI * 2f) * ripple.Amplitude;
 
 			return point;
 		}
