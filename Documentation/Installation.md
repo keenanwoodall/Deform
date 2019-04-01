@@ -9,7 +9,7 @@ cd <ProjectPath>/Packages
 git clone https://github.com/keenanwoodall/Deform com.beans.deform
 ```
 ---
-For those of you not using git; you can also just download and unzip the tool into the Packages folder. Just make sure they are put into a container folder
+For those of you not using git; you can also just download and unzip the tool into the Packages folder.
 ```
 - <ProjectPath>
   - Assets
