@@ -14,12 +14,15 @@ namespace Beans.Unity.Editor
 			public static readonly Color HeaderBackgroundLight = new Color (1f, 1f, 1f, 0.2f);
 		}
 
-		public static void Splitter ()
+		public static void Splitter (bool wide = true)
 		{
 			var rect = GUILayoutUtility.GetRect (1f, 1f);
 
-			rect.xMin = 0f;
-			rect.width += 4f;
+			if (wide)
+			{
+				rect.xMin = 0f;
+				rect.width += 4f;
+			}
 
 			if (Event.current.type != EventType.Repaint)
 				return;

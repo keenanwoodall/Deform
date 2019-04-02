@@ -58,7 +58,7 @@ namespace DeformEditor
 					}
 
 					// and the property's object reference
-					var component = componentProperty.objectReferenceValue;
+					var component = (Component)componentProperty.objectReferenceValue;
 
 					// if the current element is selected
 					if (!componentProperty.hasMultipleDifferentValues && index == list.index && component != null)
