@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Deform;
+using System.Collections.Generic;
 
 namespace DeformEditor
 {
@@ -57,6 +58,27 @@ namespace DeformEditor
 				if (selection.GetComponent<Deformable> () != null)
 					return true;
 			return false;
+		}
+
+		[MenuItem ("Tools/Deform/Actions/Make Children Deformable", priority = 10103)]
+		public static void MakeChildrenDeformables ()
+		{
+			var newSelection = new List<GameObject> ();
+
+			var selections = Selection.gameObjects;
+			Undo.SetCurrentGroupName ("Made Children Deformable");
+			foreach (var selection in selections)
+			{
+				foreach (Transform child in selection.transform)
+				{
+					if (child.GetComponent<Deformable> ())
+						continue;
+					if (MeshTarget.IsValid (child.gameObject))
+						newSelection.Add (Undo.AddComponent<Deformable> (child.gameObject).gameObject);
+				}
+			}
+
+			Selection.objects = newSelection.ToArray ();
 		}
 	}
 }
