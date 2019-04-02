@@ -4,10 +4,9 @@
     "displayName": "Beans Editor Extensions",
     "version": "0.0.1-preview.1",
     "unity": "2018.3",
-    "description": "Additional Unity.Editor functionality",
+    "description": "Additional Unity Editor functionality",
     "category": "Unity",
-    "keywords": 
-    [
+    "keywords": [
         "GUI",
         "editor"
     ],

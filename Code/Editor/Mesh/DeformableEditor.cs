@@ -61,11 +61,11 @@ namespace DeformEditor
 			}
 		}
 
-		private bool ShowDebug;
 
 		private Properties properties;
-
 		private ReorderableComponentElementList<Deformer> deformerList;
+
+		private bool foldoutDebug;
 
 		private void OnEnable ()
 		{
@@ -197,7 +197,7 @@ namespace DeformEditor
 
 			EditorGUILayout.Space ();
 
-			if (ShowDebug = EditorGUILayoutx.FoldoutHeader ("Debug Info", ShowDebug))
+			if (foldoutDebug = EditorGUILayoutx.FoldoutHeader ("Debug Info", foldoutDebug))
 			{
 				var vertexCount = 0;
 				var modifiedData = DataFlags.None;
@@ -224,7 +224,7 @@ namespace DeformEditor
 
 		private void OnSceneGUI ()
 		{
-			if (ShowDebug)
+			if (foldoutDebug)
 			{
 				var deformable = target as Deformable;
 

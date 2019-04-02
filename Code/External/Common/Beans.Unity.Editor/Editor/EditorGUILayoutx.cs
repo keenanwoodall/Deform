@@ -30,7 +30,7 @@ namespace Beans.Unity.Editor
 		public static bool FoldoutHeader (string title, bool foldout) => FoldoutHeader (title, foldout, EditorStyles.boldLabel);
 		public static bool FoldoutHeader (string title, bool foldout, GUIStyle headerStyle)
 		{
-			var backgroundRect = GUILayoutUtility.GetRect (1f, 17f);
+			var backgroundRect = GUILayoutUtility.GetRect (1, 17);
 
 			var labelRect = backgroundRect;
 			labelRect.xMin += 16f;
@@ -75,8 +75,10 @@ namespace Beans.Unity.Editor
 				DefaultLabelStyle = new GUIStyle (EditorStyles.foldout);
 			}
 
-			public bool isOpen;
 			private readonly string text;
+
+			public bool isOpen;
+			private int lastIndentLevel = 0;
 
 			public FoldoutContainerScope (ref bool isOpen, string text) : this (ref isOpen, text, DefaultContainerStyle, DefaultLabelStyle) { }
 			public FoldoutContainerScope (ref bool isOpen, string text, GUIStyle containerStyle, GUIStyle labelStyle)
@@ -94,7 +96,8 @@ namespace Beans.Unity.Editor
 			{
 				this.isOpen = isExpanded.isExpanded;
 				this.text = text;
-				EditorGUI.indentLevel++;
+				lastIndentLevel = EditorGUI.indentLevel;
+				EditorGUI.indentLevel = 1;
 				EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
 				using (var check = new EditorGUI.ChangeCheckScope ())
@@ -112,7 +115,7 @@ namespace Beans.Unity.Editor
 			{
 				GUILayout.Space (3);
 				EditorGUILayout.EndVertical ();
-				EditorGUI.indentLevel--;
+				EditorGUI.indentLevel = lastIndentLevel;
 			}
 		}
 
@@ -193,6 +196,7 @@ namespace Beans.Unity.Editor
 			var e = Event.current;
 
 			var dropRect = GUILayoutUtility.GetRect (0f, 25f, options);
+
 			GUI.Box (dropRect, string.Empty);
 			GUI.Label (dropRect, $"+ Drag {typeof (T).Name}s Here", EditorStyles.centeredGreyMiniLabel);
 
