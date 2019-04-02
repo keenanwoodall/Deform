@@ -94,7 +94,10 @@ namespace DeformEditor
 		{
 			try
 			{
-				list.DoLayoutList ();
+				// list.DoLayoutList doesn't support indenting so list.DoList will be used with a manually indented rect.
+				var rect = GUILayoutUtility.GetRect (1, list.GetHeight ());
+				rect = EditorGUI.IndentedRect (rect);
+				list.DoList (rect);
 			}
 			// If an error is thrown, the serialized object was modified but not marked as dirty so we need to force it to sync back up with the targets.
 			catch (InvalidOperationException)
