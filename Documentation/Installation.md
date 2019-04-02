@@ -8,7 +8,6 @@ cd <ProjectPath>/Packages
 ```
 git clone https://github.com/keenanwoodall/Deform
 ```
----
 Don't want to use git? Just download and unzip the repository into the Packages folder.
 
 ### Install Manually
