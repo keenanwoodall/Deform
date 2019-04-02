@@ -85,7 +85,8 @@ namespace Beans.Unity.Editor
 			{
 				this.isOpen = isOpen;
 				this.text = text;
-				EditorGUI.indentLevel++;
+				lastIndentLevel = EditorGUI.indentLevel;
+				EditorGUI.indentLevel = 1;
 				EditorGUILayout.BeginVertical (containerStyle);
 				GUILayout.Space (3);
 				isOpen = EditorGUI.Foldout (EditorGUILayout.GetControlRect (), isOpen, text, true, labelStyle);

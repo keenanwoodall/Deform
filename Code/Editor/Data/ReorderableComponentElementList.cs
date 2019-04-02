@@ -72,7 +72,9 @@ namespace DeformEditor
 						using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, foldoutName))
 						{
 							if (foldout.isOpen)
+							{
 								selectedComponentInspectorEditor.OnInspectorGUI ();
+							}
 						}
 					}
 				}
