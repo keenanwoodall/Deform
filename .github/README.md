@@ -1,3 +1,5 @@
+![Header](https://imgur.com/NpPsjQj.png)
+
 [![Unity Version](https://img.shields.io/badge/unity-2018.3%2B-blue.svg)](https://unity3d.com/get-unity/download)
 [![GitHub](https://img.shields.io/github/license/keenanwoodall/Deform.svg)](https://github.com/keenanwoodall/Deform/blob/master/LICENSE.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/keenanwoodall/Deform/compare)
@@ -5,7 +7,6 @@
 [![Twitter](https://img.shields.io/twitter/follow/keenanwoodall.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=keenanwoodall)
 [![Discord](https://img.shields.io/discord/503808487520993280.svg?logo=Discord&style=social)](https://discord.gg/NnX5cpr)
 
-![Header](https://imgur.com/NpPsjQj.png)
 A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is multi-threaded with the [Job System](https://unity3d.com/learn/tutorials/topics/scripting/implementing-job-system), compiled with [Burst](https://unity3d.com/learn/tutorials/topics/scripting/using-burst-compiler) and calculations are done using the [Mathematics library](https://github.com/Unity-Technologies/Unity.Mathematics/blob/master/readme.md).
 
 ## Features
