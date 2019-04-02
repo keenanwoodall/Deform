@@ -196,6 +196,7 @@ namespace Beans.Unity.Editor
 			var e = Event.current;
 
 			var dropRect = GUILayoutUtility.GetRect (0f, 25f, options);
+			dropRect = EditorGUI.IndentedRect (dropRect);
 
 			GUI.Box (dropRect, string.Empty);
 			GUI.Label (dropRect, $"+ Drag {typeof (T).Name}s Here", EditorStyles.centeredGreyMiniLabel);
