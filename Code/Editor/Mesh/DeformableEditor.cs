@@ -115,8 +115,6 @@ namespace DeformEditor
 
 			deformerList.DoLayoutList ();
 
-			EditorGUILayout.Space ();
-
 			var newDeformers = EditorGUILayoutx.DragAndDropArea<Deformer> ();
 			if (newDeformers != null && newDeformers.Count > 0)
 			{
