@@ -9,13 +9,7 @@ cd <ProjectPath>/Packages
 git clone https://github.com/keenanwoodall/Deform
 ```
 ---
-Those of you not using git can just download and unzip the repository into the Packages folder.
-```
-- <ProjectPath>
-  - Assets
-  - Packages
-    - <extract files here>
-```
+Don't want to use git? Just download and unzip the repository into the Packages folder.
 
 ### Install Manually
 *It's very important you follow these steps in the correct order. If you install Deform before installing it's dependencies, you'll have to assign all of it's assembly definition references manually.*
