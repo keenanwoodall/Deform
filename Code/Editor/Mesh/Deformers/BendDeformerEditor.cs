@@ -101,17 +101,20 @@ namespace DeformEditor
         {
 			var radiusDistanceOffset = HandleUtility.GetHandleSize (bend.Axis.position + bend.Axis.up * bend.Top) * DeformEditorSettings.ScreenspaceSliderHandleCapSize * 2f;
 
-			// Arc handles aren't scaled vertically by Handles.matrix for some reason sooo...
-			// this whole thing is a mess of scaling different parts of the handle via the matrix and others via manually changing properties :(
 			angleHandle.angle = bend.Angle;
-			angleHandle.radius = (bend.Top - bend.Bottom) * bend.Axis.lossyScale.y + radiusDistanceOffset; // scale the handle radius by the vertical lossy scale
+			angleHandle.radius = (bend.Top - bend.Bottom) + radiusDistanceOffset;
 			angleHandle.fillColor = Color.clear;
 
-			var direction = bend.Axis.up;
-			var normal = -bend.Axis.forward;
-			// offset the handle position upwards to the bottom handle position
-			// the handle will warp horizontally correctly via the matrix, but the best we can do for vertical scaling is to increase the radius above^^
-			var matrix = Matrix4x4.TRS (bend.Axis.position + (bend.Axis.up * (bend.Bottom * bend.Axis.lossyScale.y)), Quaternion.LookRotation (direction, normal), Vector3.Scale (bend.Axis.lossyScale, new Vector3 (1f / bend.Axis.lossyScale.y, bend.Axis.lossyScale.y, 1f)));
+			var handleRotation = bend.Axis.rotation * Quaternion.Euler (-90, 0f, 0f);
+			// There's some weird issue where if you pass the normal lossyScale, the handle's scale on the y axis is changed when the transform's z axis is changed.
+			// My simple solution is to swap the y and z.
+			var handleScale = new Vector3
+			(
+				x: bend.Axis.lossyScale.x,
+				y: bend.Axis.lossyScale.z,
+				z: bend.Axis.lossyScale.y
+			);
+			var matrix = Matrix4x4.TRS (bend.Axis.position, handleRotation, handleScale);
 
 			using (new Handles.DrawingScope (DeformEditorSettings.SolidHandleColor, matrix))
 			{
