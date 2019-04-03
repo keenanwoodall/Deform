@@ -28,6 +28,8 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 * [Getting Started](Documentation/GettingStarted.md)
 * [Creating a Custom Deformer](Documentation/CustomDeformer.md)
 
+You can find all the deformers [here,](../Code/Runtime/Mesh/Deformers) and all their editors [here.](../Code/Editor/Mesh/Deformers)
+
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
 * Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for testing Deform and giving helpful feedback.
