@@ -30,7 +30,7 @@ namespace DeformEditor
 			}
 		}
 
-		private Vector3 scrollPosition;
+		private Vector2 scrollPosition = Vector2.zero;
 
 		[MenuItem ("Window/Deform/Credits", priority = 10200)]
 		[MenuItem ("Tools/Deform/Credits", priority = 10200)]
