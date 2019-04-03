@@ -8,10 +8,39 @@ namespace Beans.Unity.Editor
 	{
 		private static class Styles
 		{
-			public static readonly Color SplitterDark = new Color (0.12f, 0.12f, 0.12f, 1.333f);
-			public static readonly Color SplitterLight = new Color (0.6f, 0.6f, 0.6f, 1.333f);
-			public static readonly Color HeaderBackgroundDark = new Color (0.1f, 0.1f, 0.1f, 0.2f);
-			public static readonly Color HeaderBackgroundLight = new Color (1f, 1f, 1f, 0.2f);
+			public static readonly Color SplitterDarkColor = new Color (0.12f, 0.12f, 0.12f, 1.333f);
+			public static readonly Color SplitterLightColor = new Color (0.6f, 0.6f, 0.6f, 1.333f);
+
+			public static readonly Color HeaderBackgroundDarkColor = new Color (0.1f, 0.1f, 0.1f, 0.2f);
+			public static readonly Color HeaderBackgroundLightColor = new Color (1f, 1f, 1f, 0.2f);
+
+			public static readonly Color LinkColor = new Color (0x00 / 255f, 0x78 / 255f, 0xDA / 255f, 1f);
+
+			public static readonly GUIStyle Link;
+
+			static Styles ()
+			{
+				Link = new GUIStyle (EditorStyles.label);
+				Link.wordWrap = false;
+				Link.normal.textColor = LinkColor;
+				Link.stretchWidth = false;
+			}
+		}
+
+		public static bool LinkLabel (GUIContent label, params GUILayoutOption[] options) => LinkLabel (label, Styles.Link, options);
+		public static bool LinkLabel (GUIContent label, GUIStyle style, params GUILayoutOption[] options)
+		{
+			var rect = GUILayoutUtility.GetRect (label, style, options);
+
+			Handles.BeginGUI ();
+			Handles.color = style.normal.textColor;
+			Handles.DrawLine (new Vector3 (rect.xMin, rect.yMax), new Vector3 (rect.xMax, rect.yMax));
+			Handles.color = Color.white;
+			Handles.EndGUI ();
+
+			EditorGUIUtility.AddCursorRect (rect, MouseCursor.Link);
+
+			return GUI.Button (rect, label, style);
 		}
 
 		public static void Splitter (bool wide = true)
@@ -27,7 +56,7 @@ namespace Beans.Unity.Editor
 			if (Event.current.type != EventType.Repaint)
 				return;
 
-			EditorGUI.DrawRect (rect, EditorGUIUtility.isProSkin ? Styles.SplitterLight : Styles.SplitterDark);
+			EditorGUI.DrawRect (rect, EditorGUIUtility.isProSkin ? Styles.SplitterLightColor : Styles.SplitterDarkColor);
 		}
 
 		public static bool FoldoutHeader (string title, bool foldout) => FoldoutHeader (title, foldout, EditorStyles.boldLabel);
@@ -49,7 +78,7 @@ namespace Beans.Unity.Editor
 			backgroundRect.width += 4f;
 
 			// Background
-			EditorGUI.DrawRect (backgroundRect, EditorGUIUtility.isProSkin ? Styles.HeaderBackgroundDark : Styles.HeaderBackgroundLight);
+			EditorGUI.DrawRect (backgroundRect, EditorGUIUtility.isProSkin ? Styles.HeaderBackgroundDarkColor : Styles.HeaderBackgroundLightColor);
 
 			// Title
 			EditorGUI.LabelField (labelRect, EditorGUIUtility.TrTextContent (title), headerStyle);

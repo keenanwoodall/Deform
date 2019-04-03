@@ -18,7 +18,6 @@ namespace DeformEditor
 		{
 			public static readonly GUIStyle Title;
 			public static readonly GUIStyle CreditsText;
-			public static readonly GUIStyle Link;
 
 			static Styles ()
 			{
@@ -28,12 +27,10 @@ namespace DeformEditor
 
 				CreditsText = new GUIStyle (EditorStyles.label);
 				CreditsText.wordWrap = true;
-
-				Link = new GUIStyle (EditorStyles.label);
-				Link.normal.textColor = new Color (0.2f, 0.2f, 1f);
-				Link.hover.textColor = new Color (0.5f, 0.5f, 1f);
 			}
 		}
+
+		private Vector3 scrollPosition;
 
 		[MenuItem ("Window/Deform/Credits", priority = 10200)]
 		[MenuItem ("Tools/Deform/Credits", priority = 10200)]
@@ -48,41 +45,41 @@ namespace DeformEditor
 
 			EditorGUILayoutx.Splitter ();
 
-			EditorGUILayout.LabelField
-			(
-				"Thanks to Thomas Ingram for helping with development.",
-				Styles.CreditsText
-			);
+			using (new EditorGUILayout.ScrollViewScope (scrollPosition))
+			{
+				EditorGUILayout.LabelField
+				(
+					"Thanks to Thomas Ingram for helping with development.",
+					Styles.CreditsText
+				);
 
-			EditorGUILayout.Space ();
+				EditorGUILayout.Space ();
 
-			EditorGUILayout.LabelField
-			(
-				"Thanks to Alexander Ameye, David Carney and William Besnard for testing and providing feedback.",
-				Styles.CreditsText
-			);
+				EditorGUILayout.LabelField
+				(
+					"Thanks to Alexander Ameye, William Besnard, Raphael Herdlicka and David Carney for testing and providing feedback.",
+					Styles.CreditsText
+				);
 
-			EditorGUILayout.Space ();
+				EditorGUILayout.Space ();
 
-			EditorGUILayout.LabelField
-			(
-				"Developed by Keenan Woodall.",
-				Styles.CreditsText
-			);
+				EditorGUILayout.LabelField
+				(
+					"Developed by Keenan Woodall.",
+					Styles.CreditsText
+				);
 
-			EditorGUILayout.Space ();
+				EditorGUILayout.Space ();
 
-			var twitterRect = GUILayoutUtility.GetRect (Content.Twitter, Styles.Link, GUILayout.ExpandWidth (false));
-			if (GUI.Button (twitterRect, Content.Twitter, Styles.Link))
-				Application.OpenURL ("https://twitter.com/keenanwoodall");
+				if (EditorGUILayoutx.LinkLabel (Content.Twitter))
+					Application.OpenURL ("https://twitter.com/keenanwoodall");
 
-			var githubRect = GUILayoutUtility.GetRect (Content.GitHub, Styles.Link, GUILayout.ExpandWidth (false));
-			if (GUI.Button (githubRect, Content.GitHub, Styles.Link))
-				Application.OpenURL ("https://github.com/keenanwoodall");
+				if (EditorGUILayoutx.LinkLabel (Content.GitHub))
+					Application.OpenURL ("https://github.com/keenanwoodall");
 
-			var websiteRect = GUILayoutUtility.GetRect (Content.Website, Styles.Link, GUILayout.ExpandWidth (false));
-			if (GUI.Button (websiteRect, Content.Website, Styles.Link))
-				Application.OpenURL ("http://keenanwoodall.com");
+				if (EditorGUILayoutx.LinkLabel (Content.Website))
+					Application.OpenURL ("http://keenanwoodall.com");
+			}
 		}
 	}
 }
