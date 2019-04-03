@@ -39,6 +39,7 @@ namespace Deform
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
+		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
 		private struct ScaleJob : IJobParallelFor
 		{
 			public float3 scale;
