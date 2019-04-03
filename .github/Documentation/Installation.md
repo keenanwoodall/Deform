@@ -15,5 +15,3 @@ Don't want to use git? Just download and unzip the repository into the Packages 
 1. Open Package Manager.
 2. Install `Burst` and `Mathematics`. The correct versions can be seen in [package.json](../../package.json)'s dependency list. You can probably use different versions, but I can't guarantee they'll work.
 3. Clone/download the repository directly into a project's `Assets` folder.
-
-**If you have any errors unclearable errors try restarting Unity. If the errors persist create a new issue and I'll do my best to help.**
