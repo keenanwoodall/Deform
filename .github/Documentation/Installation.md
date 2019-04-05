@@ -1,13 +1,12 @@
 ## Installation
 ### Install via UPM
-1. Navigate to your project's Packages folder using a console or terminal.
+1. Navigate to your project's Packages folder and open the manifest.json file.
+2. Add this line below the `"dependencies": {` line
 ```
-cd <ProjectPath>/Packages
+"com.beans.deform": "https://github.com/keenanwoodall/Deform.git"
 ```
-2. Clone the repository
-```
-git clone https://github.com/keenanwoodall/Deform
-```
+3. UPM should now install Deform and it's dependencies.
+
 Don't want to use git? Just download and unzip the repository into the Packages folder.
 
 ### Install Manually
