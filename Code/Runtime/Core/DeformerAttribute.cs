@@ -2,7 +2,7 @@
 
 namespace Deform
 {
-	public enum Category : byte
+	public enum Category
 	{
 		Normal,
 		Noise,

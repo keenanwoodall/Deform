@@ -30,6 +30,23 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 You can find all the deformers [here,](../Code/Runtime/Mesh/Deformers) and all their editors [here.](../Code/Editor/Mesh/Deformers)
 
+## FAQ
+> Does Deform work with the new prefab system?
+
+Yes. Deform work seamlessly with nested prefabs and prefab variants.
+
+> Do deformers have to be on the object they are deforming?
+
+No. Because deformables require deformers be added manually, they can be anywhere in the scene and on any game object.
+
+> Can multiple deformables use the same deformer?
+
+Yes. You can create a single deformer and add it to multiple deformables.
+
+> How do deformables handle instancing?
+
+Each deformable has it's own unique mesh. Duplicating and instantiating deformables shouldn't cause any issues.
+
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
 * Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for testing Deform and giving helpful feedback.
@@ -41,7 +58,7 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 2. I wouldn't have been able to make this tool if the game-dev community wasn't so supportive. I want to give back to the community in some way.
 3. Now that it's open-source other people can contribute to the project! I think Deform is awesome right now, but there's always room for improvement and I'm excited to see what cool stuff people want to add!
 
-**If you work at, or know an awesome studio that is looking for an intern or junior developer, please reach out!**
+**If you work at, or know an awesome studio that is looking for a tools developer, please reach out!**
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
 
