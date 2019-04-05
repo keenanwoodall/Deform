@@ -30,6 +30,23 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 You can find all the deformers [here,](../Code/Runtime/Mesh/Deformers) and all their editors [here.](../Code/Editor/Mesh/Deformers)
 
+## FAQ
+> Does Deform work with the new prefab system?
+
+Yes. Deform work seamlessly with nested prefabs and prefab variants.
+
+> Do deformers have to be on the object they are deforming?
+
+No. Because deformables require deformers be added manually, they can be anywhere in the scene and on any game object.
+
+> Can multiple deformables use the same deformer?
+
+Yes. You can create a single deformer and add it to multiple deformables.
+
+> How do deformables handle instancing?
+
+Each deformable has it's own unique mesh. Duplicating and instantiating deformables shouldn't cause any issues.
+
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
 * Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for testing Deform and giving helpful feedback.
