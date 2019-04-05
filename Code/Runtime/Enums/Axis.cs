@@ -1,6 +1,6 @@
 ﻿namespace Deform
 {
-	public enum Axis : byte
+	public enum Axis
 	{
 		X,
 		Y,
