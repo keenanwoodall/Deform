@@ -33,13 +33,13 @@ You can find all the deformers [here,](../Code/Runtime/Mesh/Deformers) and all t
 ## FAQ
 > Does Deform work with the new prefab system?
 
-Yes. Deform work seamlessly with nested prefabs and prefab variants.
+Yes. Deform works seamlessly with nested prefabs and prefab variants.
 
 > Do deformers have to be on the object they are deforming?
 
 No. Because deformables require deformers be added manually, they can be anywhere in the scene and on any game object.
 
-> Can multiple deformables use the same deformer?
+> Can deformables share deformers?
 
 Yes. You can create a single deformer and add it to multiple deformables.
 
