@@ -274,10 +274,17 @@ namespace Deform
 		/// <summary>
 		/// Returns the dynamic mesh.
 		/// </summary>
-		/// <returns></returns>
 		public Mesh GetMesh ()
 		{
 			return data.DynamicMesh;
+		}
+
+		/// <summary>
+		/// Returns the original mesh.
+		/// </summary>
+		public Mesh GetOriginalMesh ()
+		{
+			return data.OriginalMesh;
 		}
 
 		/// <summary>

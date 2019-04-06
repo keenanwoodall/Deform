@@ -58,13 +58,21 @@ namespace Deform
 			if (!Target.Initialize (targetObject))
 				return false;
 
-			// Store the original mesh and make a copy (stored in dynamicMesh).
+			// Store the original mesh and make a copy (stored in DynamicMesh).
 			// Assign the copy back to the filter so that this object has a unique mesh.
 			if (!initialized)
 			{
 				OriginalMesh = Target.GetMesh ();
+
 				if (OriginalMesh == null)
 					return false;
+
+				if (!OriginalMesh.isReadable)
+				{
+					Debug.LogError ($"The mesh, '{OriginalMesh.name}' must have read/write permissions enabled.");
+					return false;
+				}
+
 				DynamicMesh = GameObject.Instantiate (Target.GetMesh ());
 			}
 			// Since this has already been initialized, make a new mesh for the dynamic mesh to reference
@@ -192,7 +200,6 @@ namespace Deform
 				// but it isn't the same one we're deforming.
 				if (!TargetUsesDynamicMesh ())
 				{
-					Debug.Log ("Target's mesh is different from deformed one. Reinitializing data to use rendered mesh.");
 					// So update the data to reflect the rendered mesh.
 					ChangeMesh (Target.GetMesh ());
 				}
