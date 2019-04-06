@@ -8,10 +8,11 @@ namespace Deform
 	/// easy to get and set the mesh of whichever one exists without constantly having to check
 	/// which one is null.
 	/// </summary>
+	[System.Serializable]
 	public class MeshTarget
 	{
-		private MeshFilter meshFilter;
-		private SkinnedMeshRenderer skinnedMeshRenderer;
+		[SerializeField, HideInInspector] private MeshFilter meshFilter;
+		[SerializeField, HideInInspector] private SkinnedMeshRenderer skinnedMeshRenderer;
 
 		public static bool IsValid (GameObject target)
 		{

@@ -6,7 +6,7 @@ namespace Deform
 	/// <summary>
 	/// Manages native and managed mesh data as well as the meshes they represent.
 	/// </summary>
-	[System.Serializable]
+	[Serializable]
 	public class MeshData : IData, IDisposable
 	{
 		// Stores the original shared mesh that other objects may be using.
@@ -40,6 +40,7 @@ namespace Deform
 		private bool initialized;
 
 		/// Stores the original state of the mesh before any changes were made.
+		[SerializeField, HideInInspector]
 		private ManagedMeshData originalManaged;
 
 		/// We can't directly transfer from a NativeArray to a mesh, so this is used as a middle-ground. 
@@ -69,7 +70,7 @@ namespace Deform
 
 				if (!OriginalMesh.isReadable)
 				{
-					Debug.LogError ($"The mesh, '{OriginalMesh.name}' must have read/write permissions enabled.");
+					Debug.LogError ($"The mesh '{OriginalMesh.name}' must have read/write permissions enabled.", OriginalMesh);
 					return false;
 				}
 
@@ -79,6 +80,28 @@ namespace Deform
 			// so that two Deformables aren't displaying and modifying the same mesh.
 			else if (OriginalMesh != null)
 				DynamicMesh = GameObject.Instantiate (OriginalMesh);
+			else if (DynamicMesh != null)
+			{
+				Debug.Log ($"Original mesh is missing. Attempting to create one from dynamic mesh ({DynamicMesh.name}) and original managed mesh data.", targetObject);
+				OriginalMesh = GameObject.Instantiate (DynamicMesh);
+				try
+				{
+					OriginalMesh.vertices = originalManaged.Vertices;
+					OriginalMesh.normals = originalManaged.Normals;
+					OriginalMesh.tangents = originalManaged.Tangents;
+					OriginalMesh.uv = originalManaged.UVs;
+					OriginalMesh.colors = originalManaged.Colors;
+					OriginalMesh.triangles = originalManaged.Triangles;
+					OriginalMesh.bounds = originalManaged.Bounds;
+				}
+				catch (NullReferenceException)
+				{
+					Debug.LogError ($"Attempted to recreate original mesh (from {DynamicMesh.name}), but the data was not valid. Please assign a new mesh.", targetObject);
+					return false;
+				}
+
+				Debug.Log ($"Original mesh was recreated from {DynamicMesh.name}. This is not ideal, but prevents stuff from breaking when an original mesh is deleted. The best solution is to find and reassign the original mesh.", targetObject);
+			}
 			else
 				return false;
 			
