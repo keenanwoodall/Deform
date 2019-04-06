@@ -158,7 +158,7 @@ namespace DeformEditor
 						{
 							var deformable = t as Deformable;
 
-							// C:/...Deform/Assets/
+							// C:/...<ProjectName>/Assets/
 							var projectPath = Application.dataPath + "/";
 							// We have to generate the full asset path starting from the Assets folder for GeneratorUniqueAssetPath to work,
 							var assetPath = EditorUtility.SaveFilePanelInProject ("Save Obj", $"{deformable.name}.obj", "obj", "");
@@ -182,11 +182,6 @@ namespace DeformEditor
 							var assetPath = EditorUtility.SaveFilePanelInProject ("Save Mesh Asset", $"{deformable.name}.asset", "asset", "");
 							if (string.IsNullOrEmpty (assetPath))
 								break;
-							// Now that we have a unique asset path we can remove the "Assets/" and ".obj" to get the unique name.
-							var fileName = assetPath;
-							// It's pretty gross, but it works and this code doesn't need to be performant.
-							fileName = fileName.Remove (0, 7);
-							fileName = fileName.Remove (fileName.Length - 4, 4);
 
 							AssetDatabase.CreateAsset (Instantiate (deformable.GetMesh ()), assetPath);
 							AssetDatabase.SaveAssets ();
