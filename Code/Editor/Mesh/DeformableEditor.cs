@@ -223,7 +223,8 @@ namespace DeformEditor
 			{
 				var deformable = t as Deformable;
 
-				if (!deformable.GetOriginalMesh ().isReadable)
+				var originalMesh = deformable.GetOriginalMesh ();
+				if (originalMesh != null && !originalMesh.isReadable)
 					EditorGUILayout.HelpBox (Content.ReadWriteNotEnableAlert, MessageType.Error);
 			}
 
