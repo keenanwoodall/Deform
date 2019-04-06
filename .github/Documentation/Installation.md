@@ -1,4 +1,5 @@
 ## Installation
+*Requires Unity 2018.3+*
 ### Install via UPM
 1. Navigate to your project's Packages folder and open the manifest.json file.
 2. Add this line below the `"dependencies": {` line
