@@ -62,8 +62,8 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
-			boundsHandle.handleCapFunction = DeformHandles.HandleCapFunction;
-			boundsHandle.drawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
+			boundsHandle.HandleCapFunction = DeformHandles.HandleCapFunction;
+			boundsHandle.DrawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -99,13 +99,13 @@ namespace DeformEditor
 
 			var twist = target as TwistDeformer;
 
-			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
-			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.HandleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.ScreenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			if (boundsHandle.DrawHandle (twist.Top, twist.Bottom, twist.Axis, Vector3.forward))
 			{
 				Undo.RecordObject (twist, "Changed Bounds");
-				twist.Top = boundsHandle.top;
-				twist.Bottom = boundsHandle.bottom;
+				twist.Top = boundsHandle.Top;
+				twist.Bottom = boundsHandle.Bottom;
 			}
 
 			DrawAngleHandles (twist);

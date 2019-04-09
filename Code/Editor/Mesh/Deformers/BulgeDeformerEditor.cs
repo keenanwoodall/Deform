@@ -44,8 +44,8 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
-			boundsHandle.handleCapFunction = DeformHandles.HandleCapFunction;
-			boundsHandle.drawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
+			boundsHandle.HandleCapFunction = DeformHandles.HandleCapFunction;
+			boundsHandle.DrawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -73,13 +73,13 @@ namespace DeformEditor
 
 			DrawFactorHandle (bulge);
 
-			boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
-			boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+			boundsHandle.HandleColor = DeformEditorSettings.SolidHandleColor;
+			boundsHandle.ScreenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 			if (boundsHandle.DrawHandle (bulge.Top, bulge.Bottom, bulge.Axis, Vector3.forward))
 			{
 				Undo.RecordObject (bulge, "Changed Bounds");
-				bulge.Top = boundsHandle.top;
-				bulge.Bottom = boundsHandle.bottom;
+				bulge.Top = boundsHandle.Top;
+				bulge.Bottom = boundsHandle.Bottom;
 			}
 
 			EditorApplication.QueuePlayerLoopUpdate ();

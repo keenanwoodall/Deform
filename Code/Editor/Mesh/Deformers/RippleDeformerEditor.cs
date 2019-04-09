@@ -58,8 +58,8 @@ namespace DeformEditor
 
 			properties = new Properties (serializedObject);
 
-			boundsHandle.handleCapFunction = DeformHandles.HandleCapFunction;
-			boundsHandle.drawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
+			boundsHandle.HandleCapFunction = DeformHandles.HandleCapFunction;
+			boundsHandle.DrawGuidelineCallback = (a, b) => DeformHandles.Line (a, b, DeformHandles.LineMode.LightDotted);
 		}
 
 		public override void OnInspectorGUI ()
@@ -101,13 +101,13 @@ namespace DeformEditor
 
 			if (ripple.Mode == BoundsMode.Limited)
 			{
-				boundsHandle.handleColor = DeformEditorSettings.SolidHandleColor;
-				boundsHandle.screenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
+				boundsHandle.HandleColor = DeformEditorSettings.SolidHandleColor;
+				boundsHandle.ScreenspaceHandleSize = DeformEditorSettings.ScreenspaceSliderHandleCapSize;
 				if (boundsHandle.DrawHandle (ripple.OuterRadius, ripple.InnerRadius, ripple.Axis, Vector3.up))
 				{
 					Undo.RecordObject (ripple, "Changed Bounds");
-					ripple.OuterRadius = boundsHandle.top;
-					ripple.InnerRadius = boundsHandle.bottom;
+					ripple.OuterRadius = boundsHandle.Top;
+					ripple.InnerRadius = boundsHandle.Bottom;
 				}
 			}
 
