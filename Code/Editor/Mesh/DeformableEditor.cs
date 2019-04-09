@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (Deformable)), CanEditMultipleObjects]
 	public class DeformableEditor : Editor
 	{
-		private class Styles
+		private static class Styles
 		{
 			public static readonly GUIStyle WrappedLabel;
 

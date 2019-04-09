@@ -14,7 +14,7 @@ namespace DeformEditor
 			public static readonly GUIContent Website = new GUIContent (text: "Website");
 		}
 
-		private class Styles
+		private static class Styles
 		{
 			public static readonly GUIStyle Title;
 			public static readonly GUIStyle CreditsText;

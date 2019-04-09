@@ -15,7 +15,7 @@ namespace DeformEditor
 		private static List<DeformerAttribute> DeformerAttributes;
 		private List<DeformerAttribute> filteredDeformerAttributes;
 
-		private class Styles
+		private static class Styles
 		{
 			public const int MAX_LIST_BUTTON_WIDTH = 150;
 			public const int PAD_X = 5;
