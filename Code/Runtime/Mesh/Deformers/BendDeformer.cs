@@ -58,7 +58,7 @@ namespace Deform
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
 			var totalAngle = Angle * Factor;
-			if (totalAngle == 0f || Top == Bottom)
+			if (Mathf.Approximately (totalAngle, 0f) || Mathf.Approximately (Top, Bottom))
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
@@ -66,6 +66,7 @@ namespace Deform
 			switch (mode)
 			{
 				default:
+				case BoundsMode.Unlimited:
 					return new UnlimitedBendJob
 					{
 						angle = totalAngle,
