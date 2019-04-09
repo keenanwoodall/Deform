@@ -98,8 +98,8 @@ namespace Beans.Unity.Editor
 
 		public class FoldoutContainerScope : System.IDisposable
 		{
-			public static GUIStyle DefaultContainerStyle;
-			public static GUIStyle DefaultLabelStyle;
+			private static readonly GUIStyle DefaultContainerStyle;
+			private static readonly GUIStyle DefaultLabelStyle;
 
 			static FoldoutContainerScope ()
 			{
