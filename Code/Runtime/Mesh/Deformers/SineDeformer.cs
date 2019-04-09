@@ -65,7 +65,7 @@ namespace Deform
 
 		private void Update ()
 		{
-			speedOffset += speed * Time.deltaTime;
+			speedOffset += Speed * Time.deltaTime;
 		}
 
 		public float GetTotalOffset ()
