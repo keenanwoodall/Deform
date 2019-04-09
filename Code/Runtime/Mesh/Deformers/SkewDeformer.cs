@@ -42,7 +42,7 @@ namespace Deform
 		}
 
 		[SerializeField, HideInInspector] private float factor;
-		[SerializeField, HideInInspector] private BoundsMode mode= BoundsMode.Unlimited;
+		[SerializeField, HideInInspector] private BoundsMode mode = BoundsMode.Unlimited;
 		[SerializeField, HideInInspector] private float top = 0.5f;
 		[SerializeField, HideInInspector] private float bottom = -0.5f;
 		[SerializeField, HideInInspector] private Transform axis;
@@ -70,8 +70,8 @@ namespace Deform
 					return new LimitedSkewJob
 					{
 						factor = Factor,
-						top = top,
-						bottom = bottom,
+						top = Top,
+						bottom = Bottom,
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
 						vertices = data.DynamicNative.VertexBuffer
