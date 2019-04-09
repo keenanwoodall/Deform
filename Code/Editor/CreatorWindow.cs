@@ -17,7 +17,6 @@ namespace DeformEditor
 
 		private static class Styles
 		{
-			public const int MAX_LIST_BUTTON_WIDTH = 150;
 			public const int PAD_X = 5;
 			public const int PAD_Y = 2;
 
