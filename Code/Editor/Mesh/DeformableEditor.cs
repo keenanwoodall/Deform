@@ -26,8 +26,6 @@ namespace DeformEditor
 			public static readonly GUIContent BoundsRecalculation = new GUIContent (text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent (text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent (text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
-			public static readonly GUIContent ClearDeformers = new GUIContent (text: "Clear", tooltip: "Remove all deformers from the deformer list.");
-			public static readonly GUIContent CleanDeformers = new GUIContent (text: "Clean", tooltip: "Remove all null deformers from the deformer list.");
 			public static readonly GUIContent CustomBounds = new GUIContent (text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
 
 			public static readonly string ReadWriteNotEnableAlert = "Read/Write permissions must be enabled on the target mesh.";
