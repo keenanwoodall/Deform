@@ -87,9 +87,9 @@ namespace Deform
 			speedOffset += Speed * Time.deltaTime;
 		}
 
-		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
+		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			if (Mathf.Approximately (Amplitude, 0f))
+			if (Mathf.Approximately (Amplitude, 0f) || Mathf.Approximately (Frequency, 0f))
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
@@ -139,9 +139,6 @@ namespace Deform
 
 			public void Execute (int index)
 			{
-				if (frequency == 0f)
-					return;
-
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 
 				var d = length (point.xy);
@@ -168,9 +165,6 @@ namespace Deform
 			public void Execute (int index)
 			{
 				var range = outerRadius - innerRadius;
-
-				if (frequency == 0f)
-					return;
 
 				var point = mul (meshToAxis, float4 (vertices[index], 1f));
 
