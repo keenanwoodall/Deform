@@ -49,8 +49,7 @@ namespace Beans.Unity.Mathematics
 
 		public void expand (float amount)
 		{
-			amount *= 0.5f;
-			extents += float3 (amount);
+			extents += float3 (amount * 0.5f);
 		}
 		public void expand (float3 amount)
 		{
