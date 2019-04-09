@@ -12,8 +12,8 @@ namespace DeformEditor
 {
 	public class CreatorWindow : EditorWindow
 	{
-		private static List<DeformerAttribute> deformerAttributes;
-		private static List<DeformerAttribute> filteredDeformerAttributes;
+		private static List<DeformerAttribute> DeformerAttributes;
+		private List<DeformerAttribute> filteredDeformerAttributes;
 
 		private class Styles
 		{
@@ -60,7 +60,7 @@ namespace DeformEditor
 		[UnityEditor.Callbacks.DidReloadScripts]
 		private static void UpdateDeformerAttributes ()
 		{
-			deformerAttributes = GetAllDeformerAttributes ().OrderBy (x => (int)x.Category).ToList ();
+			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => (int)x.Category).ToList ();
 		}
 
 		private void OnEnable ()
@@ -106,13 +106,13 @@ namespace DeformEditor
 
 			using (var scroll = new EditorGUILayout.ScrollViewScope (scrollPosition))
 			{
-				if (deformerAttributes == null || deformerAttributes.Count == 0)
+				if (DeformerAttributes == null || DeformerAttributes.Count == 0)
 					EditorGUILayout.LabelField ("No deformers found.", GUILayout.MinWidth (0));
 				else
 				{
 					filteredDeformerAttributes =
 					(
-						from d in deformerAttributes
+						from d in DeformerAttributes
 						where string.IsNullOrEmpty (searchQuery) || d.Name.ToLower ().Contains (searchQuery.ToLower ())
 						select d
 					).ToList ();
