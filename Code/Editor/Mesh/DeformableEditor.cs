@@ -28,8 +28,6 @@ namespace DeformEditor
 			public static readonly GUIContent MeshCollider = new GUIContent (text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
 			public static readonly GUIContent ClearDeformers = new GUIContent (text: "Clear", tooltip: "Remove all deformers from the deformer list.");
 			public static readonly GUIContent CleanDeformers = new GUIContent (text: "Clean", tooltip: "Remove all null deformers from the deformer list.");
-			public static readonly GUIContent SaveObj = new GUIContent (text: "Save Obj", tooltip: "Save the current mesh as a .obj file in the project. (Doesn't support vertex colors)");
-			public static readonly GUIContent SaveAsset = new GUIContent (text: "Save Asset", tooltip: "Save the current mesh as a mesh asset file in the project.");
 			public static readonly GUIContent CustomBounds = new GUIContent (text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
 
 			public static readonly string ReadWriteNotEnableAlert = "Read/Write permissions must be enabled on the target mesh.";
