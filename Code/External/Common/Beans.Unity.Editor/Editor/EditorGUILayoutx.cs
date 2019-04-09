@@ -109,7 +109,7 @@ namespace Beans.Unity.Editor
 
 			private readonly string text;
 
-			public bool isOpen;
+			public bool isOpen { get; private set; }
 			private int lastIndentLevel = 0;
 
 			public FoldoutContainerScope (ref bool isOpen, string text) : this (ref isOpen, text, DefaultContainerStyle, DefaultLabelStyle) { }
