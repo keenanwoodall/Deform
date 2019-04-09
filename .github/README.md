@@ -3,7 +3,6 @@
 [![Unity Version](https://img.shields.io/badge/unity-2018.3%2B-blue.svg)](https://unity3d.com/get-unity/download)
 [![GitHub](https://img.shields.io/github/license/keenanwoodall/Deform.svg)](https://github.com/keenanwoodall/Deform/blob/master/LICENSE.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/keenanwoodall/Deform/compare)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6059f14b808a4c20a3f6b30c13416083)](https://app.codacy.com/app/keenanwoodall/Deform?utm_source=github.com&utm_medium=referral&utm_content=keenanwoodall/Deform&utm_campaign=Badge_Grade_Dashboard)
 
 [![Twitter](https://img.shields.io/twitter/follow/keenanwoodall.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=keenanwoodall)
 [![Discord](https://img.shields.io/discord/503808487520993280.svg?logo=Discord&style=social)](https://discord.gg/NnX5cpr)
