@@ -59,7 +59,7 @@ namespace DeformEditor
 		[UnityEditor.Callbacks.DidReloadScripts]
 		private static void UpdateDeformerAttributes ()
 		{
-			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => (int)x.Category).ToList ();
+			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).OrderBy (x => (int)x.Category).ToList ();
 		}
 
 		private void OnEnable ()
