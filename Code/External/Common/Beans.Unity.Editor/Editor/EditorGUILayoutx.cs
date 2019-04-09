@@ -107,8 +107,6 @@ namespace Beans.Unity.Editor
 				DefaultLabelStyle = new GUIStyle (EditorStyles.foldout);
 			}
 
-			private readonly string text;
-
 			public bool isOpen { get; private set; }
 			private int lastIndentLevel = 0;
 
@@ -116,7 +114,6 @@ namespace Beans.Unity.Editor
 			public FoldoutContainerScope (ref bool isOpen, string text, GUIStyle containerStyle, GUIStyle labelStyle)
 			{
 				this.isOpen = isOpen;
-				this.text = text;
 				lastIndentLevel = EditorGUI.indentLevel;
 				EditorGUI.indentLevel = 1;
 				EditorGUILayout.BeginVertical (containerStyle);
@@ -128,7 +125,6 @@ namespace Beans.Unity.Editor
 			public FoldoutContainerScope (SerializedProperty isExpanded, string text, GUIStyle containerStyle, GUIStyle labelStyle)
 			{
 				this.isOpen = isExpanded.isExpanded;
-				this.text = text;
 				lastIndentLevel = EditorGUI.indentLevel;
 				EditorGUI.indentLevel = 1;
 				EditorGUILayout.BeginVertical (containerStyle);
