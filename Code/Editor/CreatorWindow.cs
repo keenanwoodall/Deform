@@ -151,7 +151,7 @@ namespace DeformEditor
 			}
 		}
 
-		public void AddOrCreateDeformable ()
+		public static void AddOrCreateDeformable ()
 		{
 			var targets = Selection.gameObjects;
 
@@ -180,7 +180,7 @@ namespace DeformEditor
 			}
 		}
 
-		private Deformable CreateDeformable ()
+		private static Deformable CreateDeformable ()
 		{
 			var newObject = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			newObject.name = "Deformable Object";
@@ -205,7 +205,7 @@ namespace DeformEditor
 			return deformable;
 		}
 
-		public void CreateDeformerFromAttribute (DeformerAttribute attribute, bool autoAdd)
+		public static void CreateDeformerFromAttribute (DeformerAttribute attribute, bool autoAdd)
 		{
 			var selectedGameObjects = Selection.gameObjects;
 			if (selectedGameObjects == null || selectedGameObjects.Length == 0)
@@ -289,7 +289,7 @@ namespace DeformEditor
 			}
 		}
 
-		private IEnumerable<T> GetComponents<T> (GameObject[] objects) where T : Component
+		private static IEnumerable<T> GetComponents<T> (GameObject[] objects) where T : Component
 		{
 			for (int i = 0; i < objects.Length; i++)
 			{
@@ -299,7 +299,7 @@ namespace DeformEditor
 			}
 		}
 
-		private Vector3 GetAverageGameObjectPosition (GameObject[] gameObjects)
+		private static Vector3 GetAverageGameObjectPosition (GameObject[] gameObjects)
 		{
 			if (gameObjects == null || gameObjects.Length == 0)
 				return Vector3.zero;
