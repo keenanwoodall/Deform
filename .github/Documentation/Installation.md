@@ -3,7 +3,7 @@
 ### Install via UPM
 1. Navigate to your project's Packages folder and open the manifest.json file.
 2. Add this line below the `"dependencies": {` line
-```
+```json
 "com.beans.deform": "https://github.com/keenanwoodall/Deform.git",
 ```
 3. UPM should now install Deform and it's dependencies.

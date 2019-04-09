@@ -58,11 +58,11 @@ Thanks so much for checking out Deform! It's been my passion project since 2016 
 2. I wouldn't have been able to make this tool if the game-dev community wasn't so supportive. I want to give back to the community in some way.
 3. Now that it's open-source other people can contribute to the project! I think Deform is awesome right now, but there's always room for improvement and I'm excited to see what cool stuff people want to add!
 
-**If you work at, or know an awesome studio that is looking for a tools developer, please reach out!**
+#### *If you work at, or know an awesome studio that is looking for a tools developer, please reach out!*
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
 
-**If you like Deform, please consider donating!**
+#### If you like Deform, please consider donating!
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/KeenanWoodall)
 [![Donate](https://img.shields.io/badge/Donate-Kofi-green.svg)](https://ko-fi.com/keenanwoodall)
