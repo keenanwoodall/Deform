@@ -347,7 +347,6 @@ namespace Deform
 			public void Execute (int index)
 			{
 				var uv = uvs[index];
-				var textureSize = int2 (texture.width, texture.height);
 				var samplePosition = ((uv + offset) * tiling);
 
 				if (!repeat && OutsideTexture (samplePosition))
