@@ -41,7 +41,7 @@ namespace Beans.Unity.Mathematics
 		{
 			setminmax (min (min, point), max (max, point));
 		}
-		public void enacpsulate (bounds b)
+		public void encapsulate (bounds b)
 		{
 			encapsulate (b.center - b.extents);
 			encapsulate (b.center + b.extents);
