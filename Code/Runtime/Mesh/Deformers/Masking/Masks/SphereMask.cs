@@ -58,7 +58,7 @@ namespace Deform.Masking
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			if (OuterRadius == 0f)
+			if (Mathf.Approximately (OuterRadius, 0f))
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
