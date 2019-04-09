@@ -108,7 +108,6 @@ Now it should work. If you add an Offset Deformer to a deformable and change the
 
 ![Example Deformer](https://i.imgur.com/ShOeUPI.gif)
 
-
 **Step 10**
 For a finishing touch, make sure to add the `[BurstCompile]` attribute to the `OffsetJob`. This will make your code be compiled by Burst (it'll run waaay faster).
 
