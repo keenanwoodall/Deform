@@ -160,7 +160,7 @@ namespace DeformEditor
 						Undo.RecordObject (ripple, "Changed Magnitude");
 						ripple.Amplitude = newPosition.z;
 					}
-					var offset = newPosition - ripple.Axis.position;
+
 					DeformHandles.Line (Vector3.zero, newPosition, DeformHandles.LineMode.LightDotted);
 				}
 			}
