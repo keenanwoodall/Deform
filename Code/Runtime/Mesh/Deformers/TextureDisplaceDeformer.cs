@@ -126,7 +126,7 @@ namespace Deform
 			if (textureDirty)
 				ForceUpdateNativeData ();
 
-			if (Factor == 0f || Texture == null || !nativeTexture.IsCreated)
+			if (Mathf.Approximately (Factor, 0f) || Texture == null || !nativeTexture.IsCreated)
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
