@@ -52,9 +52,9 @@ namespace DeformEditor
 
 		private Properties properties;
 
-		private ArcHandle startAngleHandle = new ArcHandle ();
-		private ArcHandle endAngleHandle = new ArcHandle ();
-		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
+		private readonly ArcHandle startAngleHandle = new ArcHandle ();
+		private readonly ArcHandle endAngleHandle = new ArcHandle ();
+		private readonly VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
