@@ -37,7 +37,7 @@ namespace DeformEditor.Masking
 
 		private Properties properties;
 
-		private BoxBoundsHandle boxHandle = new BoxBoundsHandle ();
+		private readonly BoxBoundsHandle boxHandle = new BoxBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
