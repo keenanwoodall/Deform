@@ -170,6 +170,7 @@ namespace DeformEditor
 			{
 				switch (Tools.current)
 				{
+					default:
 					case Tool.Move:
 						if (Tools.pivotRotation == PivotRotation.Local)
 							newPosition = Handles.PositionHandle (matrix.inverse.MultiplyPoint3x4 (target.position), target.rotation);
