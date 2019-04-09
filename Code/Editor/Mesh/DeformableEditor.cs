@@ -141,6 +141,8 @@ namespace DeformEditor
 				var selectedIndex = GUILayout.Toolbar (-1, Content.UtilityToolbar, EditorStyles.miniButton, GUILayout.MinWidth (0));
 				switch (selectedIndex)
 				{
+					default:
+						throw new System.ArgumentException ($"No valid action for toolbar index {selectedIndex}.");
 					case 0:
 						Undo.RecordObjects (targets, "Cleared Deformers");
 						foreach (var t in targets)
