@@ -143,6 +143,8 @@ namespace DeformEditor
 				{
 					default:
 						throw new System.ArgumentException ($"No valid action for toolbar index {selectedIndex}.");
+					case -1:
+						break;
 					case 0:
 						Undo.RecordObjects (targets, "Cleared Deformers");
 						foreach (var t in targets)
