@@ -60,7 +60,7 @@ namespace DeformEditor
 		}
 
 		private Properties properties;
-		private VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
+		private readonly VerticalBoundsHandle boundsHandle = new VerticalBoundsHandle ();
 
 		protected override void OnEnable ()
 		{
