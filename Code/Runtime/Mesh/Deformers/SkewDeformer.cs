@@ -59,6 +59,7 @@ namespace Deform
 			switch (Mode)
 			{
 				default:
+				case BoundsMode.Unlimited:
 					return new UnlimitedSkewJob
 					{
 						factor = Factor,
