@@ -8,11 +8,10 @@ namespace DeformEditor
 	/// </summary>
 	public static class DeformHandles
 	{
-		public const int DEF_CURVE_SEGMENTS = 120;
+		public static readonly int DEF_CURVE_SEGMENTS = 120;
 
 		public delegate void LineMethod (Vector3 a, Vector3 b);
 		public enum LineMode { Solid, Light, SolidDotted, LightDotted }
-
 		public enum CapType { Circle, Rectangle, Dot }
 
 		private static LineMethod GetLineMethod (LineMode mode)
