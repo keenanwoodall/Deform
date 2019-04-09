@@ -47,7 +47,7 @@ namespace Deform
 			return new MagnetJob
 			{
 				factor = Factor,
-				falloff = falloff,
+				falloff = Falloff,
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer
