@@ -84,7 +84,7 @@ namespace Deform
 
 		private void Update ()
 		{
-			speedOffset += speed * Time.deltaTime;
+			speedOffset += Speed * Time.deltaTime;
 		}
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
