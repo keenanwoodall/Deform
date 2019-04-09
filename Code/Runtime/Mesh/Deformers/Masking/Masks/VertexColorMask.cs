@@ -40,7 +40,7 @@ namespace Deform.Masking
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			if (invert)
+			if (Invert)
 				return new VertexColorJob
 				{
 					factor = Factor,
