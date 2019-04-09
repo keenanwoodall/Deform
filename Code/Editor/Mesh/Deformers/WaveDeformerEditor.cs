@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (WaveDeformer)), CanEditMultipleObjects]
 	public class WaveDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{ 
 			public static readonly GUIContent WaveLength = new GUIContent (text: "Wave Length", tooltip: "The period and magnitude of the wave.");
 			public static readonly GUIContent Steepness = new GUIContent (text: "Steepness", tooltip: "The sharpness and height of the wave peaks.");

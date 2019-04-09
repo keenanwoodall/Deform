@@ -6,7 +6,7 @@ namespace DeformEditor
 {
 	public class CreditsWindow : EditorWindow
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Title = new GUIContent (text: "Credits");
 			public static readonly GUIContent Twitter = new GUIContent (text: "Twitter");

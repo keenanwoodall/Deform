@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (NoiseDeformer), true), CanEditMultipleObjects]
 	public abstract class NoiseDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Derivative: Vertices move along vectors created by the difference between different noise samples.\nNormal: Vertices move along their normals.\nSpherical: Vertices get pushed away from the axis center.\nColor: Vertices get use the vertex color as a vector and move along it.");
 			public static readonly GUIContent Magnitude = new GUIContent (text: "Magnitude");

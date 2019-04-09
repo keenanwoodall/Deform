@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (ScaleDeformer))]
 	public class ScaleDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
 		}

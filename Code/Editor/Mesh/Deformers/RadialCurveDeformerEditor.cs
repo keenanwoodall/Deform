@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (RadialCurveDeformer)), CanEditMultipleObjects]
 	public class RadialCurveDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Offset = new GUIContent (text: "Offset");

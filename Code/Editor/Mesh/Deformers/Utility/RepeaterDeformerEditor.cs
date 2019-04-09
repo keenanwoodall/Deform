@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (RepeaterDeformer)), CanEditMultipleObjects]
 	public class RepeaterDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Iterations = new GUIContent ("Iterations", "The number of times the deformer is run. Be careful not to make it too high.");
 			public static readonly GUIContent Deformer = new GUIContent ("Deformer", "The deformer to be processed");
@@ -26,7 +26,6 @@ namespace DeformEditor
 			}
 		}
 
-		private Content content = new Content ();
 		private Properties properties = new Properties ();
 
 		protected override void OnEnable ()

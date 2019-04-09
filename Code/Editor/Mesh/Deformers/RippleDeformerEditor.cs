@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (RippleDeformer)), CanEditMultipleObjects]
 	public class RippleDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Frequency = new GUIContent (text: "Frequency", tooltip: "Higher values mean more ripples.");
 			public static readonly GUIContent Amplitude = new GUIContent (text: "Amplitude", tooltip: "The strength of the ripples,");

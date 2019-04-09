@@ -8,7 +8,7 @@ namespace DeformEditor.Masking
 	[CustomEditor (typeof (SphereMask)), CanEditMultipleObjects]
 	public class SphereMaskEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent InnerRadius = new GUIContent (text: "Inner Radius");

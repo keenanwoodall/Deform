@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (UVOffsetDeformer)), CanEditMultipleObjects]
 	public class UVOffsetDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Offset = new GUIContent (text: "Offset");
 		}

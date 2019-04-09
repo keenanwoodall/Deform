@@ -9,7 +9,7 @@ namespace DeformEditor
 	public class AutoGroupDeformerEditor : DeformerEditor
 	{
 
-		private class Content
+		private static class Content
 		{
 			public static readonly string MixedValue = "-";
 			public static readonly GUIContent RefreshGroup = new GUIContent

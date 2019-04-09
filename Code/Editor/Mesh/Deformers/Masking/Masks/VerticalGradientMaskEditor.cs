@@ -8,7 +8,7 @@ namespace DeformEditor.Masking
 	[CustomEditor (typeof (VerticalGradientMask)), CanEditMultipleObjects]
 	public class VerticalGradientMaskEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Falloff = DeformEditorGUIUtility.DefaultContent.Falloff;

@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (Deformer), false), CanEditMultipleObjects]
 	public class DeformerEditor : Editor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Update = new GUIContent (text: "Update");
 		}

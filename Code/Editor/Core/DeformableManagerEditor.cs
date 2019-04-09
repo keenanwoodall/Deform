@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (DeformableManager)), CanEditMultipleObjects]
 	public class DeformableManagerEditor : Editor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Update = new GUIContent (text: "Update", tooltip: "Should the manager update?");
 		}

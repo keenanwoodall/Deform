@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (TransformDeformer)), CanEditMultipleObjects]
 	public class TransformDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Target = new GUIContent (text: "Target", tooltip: "The target transform will basically replace the mesh transform. This is handy for changing the pivot of the mesh.");
 		}

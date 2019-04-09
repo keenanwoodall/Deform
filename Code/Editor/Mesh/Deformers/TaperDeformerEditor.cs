@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (TaperDeformer)), CanEditMultipleObjects]
 	public class TaperDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Top = new GUIContent (text: "Top", tooltip: "Vertices above this will be fully scaled by the top factor.");
 			public static readonly GUIContent Bottom = new GUIContent (text: "Bottom", tooltip: "Vertices below this will be fully scaled by the bottom factor.");

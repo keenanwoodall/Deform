@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (BlendDeformer)), CanEditMultipleObjects]
 	public class BlendDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Cache = new GUIContent (text: "Cache", tooltip: "The vertex cache to blend towards. It must have the same vertex count as the deformable.");

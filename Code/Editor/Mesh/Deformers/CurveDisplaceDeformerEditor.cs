@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (CurveDisplaceDeformer)), CanEditMultipleObjects]
 	public class CurveDisplaceDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Offset = new GUIContent (text: "Offset");

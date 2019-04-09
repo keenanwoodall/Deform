@@ -9,7 +9,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (TwirlDeformer)), CanEditMultipleObjects]
 	public class TwirlDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Angle = new GUIContent (text: "Angle", tooltip: "How many degrees each vertice will rotate around the axis based on distance between the inner and outer bounds.");
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;

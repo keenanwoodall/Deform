@@ -8,7 +8,7 @@ namespace DeformEditor
     [CustomEditor (typeof (SquashAndStretchDeformer)), CanEditMultipleObjects]
     public class SquashAndStretchDeformerEditor : DeformerEditor
     {
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Curvature = new GUIContent (text: "Curvature", tooltip: "How much the mesh is bulged when squashed and squeezed when stretched.");

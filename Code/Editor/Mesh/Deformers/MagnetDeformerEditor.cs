@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (MagnetDeformer)), CanEditMultipleObjects]
 	public class MagnetDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Falloff = new GUIContent (text: "Falloff", tooltip: "The sharpness of the effect's transition.");

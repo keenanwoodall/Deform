@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (SineDeformer)), CanEditMultipleObjects]
 	public class SineDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Frequency = new GUIContent (text: "Frequency", tooltip: "Number of crests and troughs per unit.");
 			public static readonly GUIContent Amplitude = new GUIContent (text: "Amplitude", tooltip: "The strength of the wave.");

@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (GroupDeformer)), CanEditMultipleObjects]
 	public class GroupDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent ClearDeformers = new GUIContent 
 			(

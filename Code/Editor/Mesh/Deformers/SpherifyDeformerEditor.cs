@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (SpherifyDeformer)), CanEditMultipleObjects]
 	public class SpherifyDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Radius = new GUIContent (text: "Radius", tooltip: "The radius of the sphere that the points are pushed towards.");

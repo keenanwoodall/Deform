@@ -8,7 +8,7 @@ namespace DeformEditor.Masking
 	[CustomEditor (typeof (BoxMask)), CanEditMultipleObjects]
 	public class BoxMaskEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent InnerBounds = new GUIContent (text: "Inner Bounds");

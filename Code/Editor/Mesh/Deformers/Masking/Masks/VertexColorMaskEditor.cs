@@ -8,7 +8,7 @@ namespace DeformEditor.Masking
 	[CustomEditor (typeof (VertexColorMask)), CanEditMultipleObjects]
 	public class VertexColorMaskEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Falloff = DeformEditorGUIUtility.DefaultContent.Falloff;

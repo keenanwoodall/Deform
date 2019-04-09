@@ -11,7 +11,7 @@ namespace DeformEditor
 	{
 		private const float ANGLE_HANDLE_RADIUS = 1.25f;
 
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent StartAngle = new GUIContent (text: "Start Angle", tooltip: "When mode is limited this is how many degrees the vertices are twisted at the bottom bounds. When unlimited the vertices are twisted based on the different between the start and end angle.");
 			public static readonly GUIContent EndAngle = new GUIContent (text: "End Angle", tooltip: "When mode is limited this is how many degrees the vertices are twisted at the top bounds. When unlimited the vertices are twisted based on the different between the start and end angle.");

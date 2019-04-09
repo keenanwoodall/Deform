@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (UVScaleDeformer)), CanEditMultipleObjects]
 	public class UVScaleDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Scale = new GUIContent (text: "Scale");

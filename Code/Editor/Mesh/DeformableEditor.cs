@@ -19,7 +19,7 @@ namespace DeformEditor
 			}
 		}
 
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent UpdateMode = new GUIContent (text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
 			public static readonly GUIContent NormalsRecalculation = new GUIContent (text: "Normals", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");

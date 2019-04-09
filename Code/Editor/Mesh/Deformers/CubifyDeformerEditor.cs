@@ -9,7 +9,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (CubifyDeformer)), CanEditMultipleObjects]
 	public class CubifyDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Width = new GUIContent (text: "Width", tooltip: "The width of the cube.");

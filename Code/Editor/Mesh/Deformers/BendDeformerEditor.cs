@@ -9,7 +9,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (BendDeformer)), CanEditMultipleObjects]
 	public class BendDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Angle = new GUIContent (text: "Angle", tooltip: "How many degrees the mesh should be bent by the time it reaches the top bounds.");
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;

@@ -9,7 +9,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (TextureDisplaceDeformer)), CanEditMultipleObjects]
 	public class TextureDisplaceDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly string NotReadableWarning = "Texture is not marked as readable.";
 

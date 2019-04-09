@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (SkewDeformer)), CanEditMultipleObjects]
 	public class SkewDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: The entire mesh is skewed.\nLimited: Only vertices between the bounds are skewed.");

@@ -7,7 +7,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (TransformOffsetDeformer)), CanEditMultipleObjects]
 	public class TransformOffsetDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Target = new GUIContent (text: "Target", tooltip: "The target transform's position, rotation and scale will be added to the deformable's mesh.");
 		}

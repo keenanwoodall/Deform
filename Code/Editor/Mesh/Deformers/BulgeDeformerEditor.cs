@@ -8,7 +8,7 @@ namespace DeformEditor
 	[CustomEditor (typeof (BulgeDeformer)), CanEditMultipleObjects]
 	public class BulgeDeformerEditor : DeformerEditor
 	{
-		private class Content
+		private static class Content
 		{
 			public static readonly GUIContent Factor	= DeformEditorGUIUtility.DefaultContent.Factor;
 			public static readonly GUIContent Top		= DeformEditorGUIUtility.DefaultContent.Top;
