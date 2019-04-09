@@ -35,7 +35,7 @@ namespace Beans.Unity.Collections
 		public void Update (AnimationCurve curve, int resolution)
 		{
 			if (curve == null)
-				throw new NullReferenceException ("Animation curve is null.");
+				throw new ArgumentNullException ("curve");
 
 			preWrapMode = curve.preWrapMode;
 			postWrapMode = curve.postWrapMode;
