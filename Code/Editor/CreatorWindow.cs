@@ -20,7 +20,7 @@ namespace DeformEditor
 			public const int PAD_X = 5;
 			public const int PAD_Y = 2;
 
-			public static GUIStyle Button;
+			public static readonly GUIStyle Button;
 
 			static Styles ()
 			{
