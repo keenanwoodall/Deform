@@ -104,8 +104,7 @@ namespace Beans.Unity.Mathematics
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static float pingpong (float t, float length)
 		{
-			t = repeat (t, length * 2f);
-			return length - abs (t - length);
+			return length - abs (repeat (t, length * 2f) - length);
 		}
 
 		/// <summary>
