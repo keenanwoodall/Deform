@@ -103,7 +103,7 @@ namespace DeformEditor
 		/// <summary>
 		/// Draws an animation curve in the scene, in 3D space.
 		/// </summary>
-		public static void Curve (AnimationCurve curve, Transform axis, float magnitude, float xOffset, float yOffset, int segments = DEF_CURVE_SEGMENTS)
+		public static void Curve (AnimationCurve curve, Vector3 position, Quaternion rotation, Vector3 scale, float magnitude, float xOffset, float yOffset, int segments = DEF_CURVE_SEGMENTS)
 		{
 			if (curve == null || curve.length == 0)
 				return;
@@ -119,7 +119,8 @@ namespace DeformEditor
 				point.z -= xOffset;
 				point.y = (height * magnitude) + yOffset;
 
-				var worldPoint = axis.localToWorldMatrix.MultiplyPoint3x4 (point);
+				var worldPoint = Matrix4x4.TRS (position, rotation, scale).MultiplyPoint3x4 (point);
+				//axis.localToWorldMatrix.MultiplyPoint3x4 (point);
 
 				if (lastPointSet)
 					Line (lastPoint, worldPoint, LineMode.Solid);
@@ -127,6 +128,11 @@ namespace DeformEditor
 				lastPoint = worldPoint;
 				lastPointSet = true;
 			}
+		}
+
+		public static void Curve (AnimationCurve curve, Transform axis, float magnitude, float xOffset, float yOffset, int segments = DEF_CURVE_SEGMENTS)
+		{
+			Curve (curve, axis.position, axis.rotation, axis.lossyScale, magnitude, xOffset, yOffset, segments);
 		}
 
 		public static void Bounds (Bounds bounds, Matrix4x4 matrix, LineMode mode)
