@@ -12,7 +12,7 @@ namespace Deform
 	{
 		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)
 		{
-			return new DerivativeNoiseJob
+			return new _3DNoiseJob
 			{
 				magnitude = GetActualMagnitude (),
 				frequency = GetActualFrequency (),
@@ -81,7 +81,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		protected struct DerivativeNoiseJob : IJobParallelFor
+		protected struct _3DNoiseJob : IJobParallelFor
 		{
 			public float3 magnitude;
 			public float3 frequency;
