@@ -201,7 +201,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct WorldTextureDisplaceJob : IJobParallelFor
+		public struct WorldTextureDisplaceJob : IJobParallelFor
 		{
 			public float factor;
 			public bool repeat;
@@ -245,7 +245,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct WorldTextureDisplaceBilinearJob : IJobParallelFor
+		public struct WorldTextureDisplaceBilinearJob : IJobParallelFor
 		{
 			public float factor;
 			public bool repeat;
@@ -288,7 +288,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UVTextureDisplaceJob : IJobParallelFor
+		public struct UVTextureDisplaceJob : IJobParallelFor
 		{
 			public float factor;
 			public bool repeat;
@@ -328,7 +328,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UVTextureDisplaceBilinearJob : IJobParallelFor
+		public struct UVTextureDisplaceBilinearJob : IJobParallelFor
 		{
 			public float factor;
 			public bool repeat;

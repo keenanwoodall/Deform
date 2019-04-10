@@ -93,7 +93,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct SineJob : IJobParallelFor
+		public struct SineJob : IJobParallelFor
 		{
 			public float frequency;
 			public float magnitude;

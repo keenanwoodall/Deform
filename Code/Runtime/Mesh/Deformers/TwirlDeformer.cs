@@ -98,7 +98,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedTwistJob : IJobParallelFor
+		public struct UnlimitedTwistJob : IJobParallelFor
 		{
 			public float angle;
 			public float4x4 meshToAxis;
@@ -123,7 +123,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedTwistJob : IJobParallelFor
+		public struct LimitedTwistJob : IJobParallelFor
 		{
 			public float angle;
 			public float inner;

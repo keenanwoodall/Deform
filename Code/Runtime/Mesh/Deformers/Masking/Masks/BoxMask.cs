@@ -79,7 +79,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CubeMaskJob : IJobParallelFor
+		public struct CubeMaskJob : IJobParallelFor
 		{
 			public float factor;
 			public bounds innerBounds;
@@ -116,7 +116,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct InvertedCubeMaskJob : IJobParallelFor
+		public struct InvertedCubeMaskJob : IJobParallelFor
 		{
 			public float factor;
 			public bounds innerBounds;

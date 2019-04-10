@@ -20,7 +20,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct MaskStateJob : IJobParallelFor
+		public struct MaskStateJob : IJobParallelFor
 		{
 			[ReadOnly]
 			public NativeArray<float3> currentVertices;

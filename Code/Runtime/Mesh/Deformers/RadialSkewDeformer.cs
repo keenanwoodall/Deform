@@ -80,7 +80,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedRadialSkewJob : IJobParallelFor
+		public struct UnlimitedRadialSkewJob : IJobParallelFor
 		{
 			public float factor;
 			public float4x4 meshToAxis;
@@ -97,7 +97,7 @@ namespace Deform
 			}
 		}
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedRadialSkewJob : IJobParallelFor
+		public struct LimitedRadialSkewJob : IJobParallelFor
 		{
 			public float factor;
 			public float top;

@@ -86,7 +86,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CurveDisplaceJob : IJobParallelFor
+		public struct CurveDisplaceJob : IJobParallelFor
 		{
 			public float factor;
 			public float offset;

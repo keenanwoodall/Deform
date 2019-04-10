@@ -128,7 +128,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedRippleJob : IJobParallelFor
+		public struct UnlimitedRippleJob : IJobParallelFor
 		{
 			public float frequency;
 			public float amplitude;
@@ -150,7 +150,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedRippleJob : IJobParallelFor
+		public struct LimitedRippleJob : IJobParallelFor
 		{
 			public float frequency;
 			public float amplitude;

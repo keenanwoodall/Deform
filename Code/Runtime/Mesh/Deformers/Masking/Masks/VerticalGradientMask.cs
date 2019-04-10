@@ -66,7 +66,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct VerticalGradientJob : IJobParallelFor
+		public struct VerticalGradientJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;
@@ -89,7 +89,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct InvertedVerticalGradientJob : IJobParallelFor
+		public struct InvertedVerticalGradientJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;

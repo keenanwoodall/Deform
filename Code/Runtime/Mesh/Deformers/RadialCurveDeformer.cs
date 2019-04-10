@@ -92,7 +92,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct RadialCurveJob : IJobParallelFor
+		public struct RadialCurveJob : IJobParallelFor
 		{
 			public float factor;
 			public float offset;

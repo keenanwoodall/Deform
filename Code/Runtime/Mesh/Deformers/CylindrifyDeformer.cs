@@ -55,7 +55,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CylindrifyJob : IJobParallelFor
+		public struct CylindrifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float radius;

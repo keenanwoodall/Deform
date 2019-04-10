@@ -88,7 +88,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct SphereMaskJob : IJobParallelFor
+		public struct SphereMaskJob : IJobParallelFor
 		{
 			public float factor;
 			public float innerRadius;
@@ -123,7 +123,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct InvertedSphereMaskJob : IJobParallelFor
+		public struct InvertedSphereMaskJob : IJobParallelFor
 		{
 			public float factor;
 			public float innerRadius;

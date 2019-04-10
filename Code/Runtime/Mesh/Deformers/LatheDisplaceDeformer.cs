@@ -91,7 +91,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LatheDisplaceJob : IJobParallelFor
+		public struct LatheDisplaceJob : IJobParallelFor
 		{
 			public float factor;
 			public float bias;

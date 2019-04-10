@@ -42,7 +42,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct InflateJob : IJobParallelFor
+		public struct InflateJob : IJobParallelFor
 		{
 			public float factor;
 			public NativeArray<float3> vertices;

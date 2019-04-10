@@ -86,7 +86,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct WaveJob : IJobParallelFor
+		public struct WaveJob : IJobParallelFor
 		{
 			public float waveLength;
 			public float steepness;

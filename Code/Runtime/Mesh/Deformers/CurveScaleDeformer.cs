@@ -90,7 +90,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CurveScaleJob : IJobParallelFor
+		public struct CurveScaleJob : IJobParallelFor
 		{
 			public float factor;
 			public float bias;

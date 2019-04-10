@@ -69,7 +69,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct CubifyJob : IJobParallelFor
+		public struct CubifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float width;

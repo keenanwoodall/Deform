@@ -40,7 +40,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct ScaleJob : IJobParallelFor
+		public struct ScaleJob : IJobParallelFor
 		{
 			public float3 scale;
 			public float4x4 meshToAxis;

@@ -63,7 +63,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct VertexColorJob : IJobParallelFor
+		public struct VertexColorJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;
@@ -86,7 +86,7 @@ namespace Deform.Masking
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct InvertedVertexColorJob : IJobParallelFor
+		public struct InvertedVertexColorJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;

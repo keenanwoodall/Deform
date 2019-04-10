@@ -55,7 +55,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct MagnetJob : IJobParallelFor
+		public struct MagnetJob : IJobParallelFor
 		{
 			public float factor;
 			public float falloff;

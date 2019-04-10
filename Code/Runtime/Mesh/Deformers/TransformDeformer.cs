@@ -38,7 +38,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct TransformJob : IJobParallelFor
+		public struct TransformJob : IJobParallelFor
 		{
 			public float4x4 matrix;
 			public NativeArray<float3> vertices;

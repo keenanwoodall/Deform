@@ -90,7 +90,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedBendJob : IJobParallelFor
+		public struct UnlimitedBendJob : IJobParallelFor
 		{
 			public float angle;
 			public float top;
@@ -120,7 +120,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedBendJob : IJobParallelFor
+		public struct LimitedBendJob : IJobParallelFor
 		{
 			public float angle;
 			public float top;

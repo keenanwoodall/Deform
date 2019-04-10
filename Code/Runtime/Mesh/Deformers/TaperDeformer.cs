@@ -86,7 +86,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct TaperJob : IJobParallelFor
+		public struct TaperJob : IJobParallelFor
 		{
 			public float top;
 			public float bottom;

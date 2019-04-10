@@ -82,7 +82,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UnlimitedSpherifyJob : IJobParallelFor
+		public struct UnlimitedSpherifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float radius;
@@ -102,7 +102,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct LimitedSpherifyJob : IJobParallelFor
+		public struct LimitedSpherifyJob : IJobParallelFor
 		{
 			public float factor;
 			public float radius;

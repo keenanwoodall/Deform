@@ -35,7 +35,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UVScaleJob : IJobParallelFor
+		public struct UVScaleJob : IJobParallelFor
 		{
 			public float2 scale;
 			public NativeArray<float2> uvs;

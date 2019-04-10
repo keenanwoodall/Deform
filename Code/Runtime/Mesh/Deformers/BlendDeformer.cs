@@ -76,7 +76,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct BlendJob : IJobParallelFor
+		public struct BlendJob : IJobParallelFor
 		{
 			public float factor;
 

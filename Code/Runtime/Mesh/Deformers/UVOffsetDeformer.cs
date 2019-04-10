@@ -29,7 +29,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct UVOffsetJob : IJobParallelFor
+		public struct UVOffsetJob : IJobParallelFor
 		{
 			public float2 offset;
 			public NativeArray<float2> uvs;
