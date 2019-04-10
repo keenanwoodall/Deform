@@ -30,7 +30,7 @@ namespace Deform
 		{
 			var dataTargetTransform = data.Target.GetTransform ();
 			var matrix = Matrix4x4.TRS (Target.position, Target.rotation, Target.lossyScale);
-			return new TransformJob
+			return new TransformOffsetJob
 			{
 				matrix = matrix,
 				vertices = data.DynamicNative.VertexBuffer
@@ -38,7 +38,7 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		private struct TransformJob : IJobParallelFor
+		public struct TransformOffsetJob : IJobParallelFor
 		{
 			public float4x4 matrix;
 			public NativeArray<float3> vertices;
