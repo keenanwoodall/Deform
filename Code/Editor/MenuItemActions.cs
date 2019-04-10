@@ -80,5 +80,11 @@ namespace DeformEditor
 
 			Selection.objects = newSelection.ToArray ();
 		}
+
+		[MenuItem ("Tools/Deform/Report Bug", priority = 10203)]
+		public static void ReportBug ()
+		{
+			Application.OpenURL ("https://github.com/keenanwoodall/Deform/issues/new");
+		}
 	}
 }
