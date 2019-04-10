@@ -65,7 +65,8 @@ namespace DeformEditor
 
 			var curveScale = target as CurveScaleDeformer;
 
-			DeformHandles.Curve (curveScale.Curve, curveScale.Axis, curveScale.Factor * 0.5f, curveScale.Offset, curveScale.Bias * 0.5f);
+			var handleScale = new Vector3 (1f, 1f, curveScale.Axis.lossyScale.z);
+			DeformHandles.Curve (curveScale.Curve, curveScale.Axis.position, curveScale.Axis.rotation, handleScale, curveScale.Factor * 0.5f, curveScale.Offset, curveScale.Bias * 0.5f);
 		}
 	}
 }
