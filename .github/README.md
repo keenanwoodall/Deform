@@ -50,7 +50,7 @@ Yes. You can create a single deformer and add it to multiple deformables.
 Each deformable has it's own unique mesh. Duplicating and instantiating deformables shouldn't cause any issues.
 
 ## Limitations
-Deform is runs on the CPU. While it *is* incredibly fast, you should not expect to get performance comparable to vertex shaders. Also, because meshes are modified on the CPU each mesh has to be unique. From what I understand, this means each mesh will require a new draw call. Deform is not meant to be used at a massive scale. If you need to deform an entire world, tons of meshes, or an incredibly high poly model use vertex shaders. 
+Deform runs on the CPU. While it *is* incredibly fast, you should not expect to get performance comparable to vertex shaders. Because meshes are modified on the CPU each mesh has to be unique. From what I understand, this means each mesh will require a new draw call. Deform is not meant to be used at a massive scale. If you need to deform an entire world, tons of meshes, or an incredibly high poly model use vertex shaders. 
 
 **tldr:** Use shaders if you need speed, use Deform if you need modularity and ease-of-use.
 
