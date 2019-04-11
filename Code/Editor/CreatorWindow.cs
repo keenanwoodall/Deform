@@ -17,15 +17,15 @@ namespace DeformEditor
 
 		private static class Styles
 		{
-			public const int PAD_X = 5;
-			public const int PAD_Y = 2;
+			public const int MARGIN_X = 2;
+			public const int MARGIN_Y = 2;
 
 			public static readonly GUIStyle Button;
 
 			static Styles ()
 			{
 				Button = new GUIStyle (EditorStyles.miniButton);
-				Button.margin = new RectOffset (PAD_X, PAD_X, PAD_Y, PAD_Y);
+				Button.margin = new RectOffset (MARGIN_X, MARGIN_X, MARGIN_Y, MARGIN_Y);
 			}
 		}
 
@@ -88,9 +88,9 @@ namespace DeformEditor
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
 					var rect = GUILayoutUtility.GetRect (1, 1, 18, 18, GUILayout.ExpandWidth (true));
-					rect.width -= Styles.PAD_X * 2;
-					rect.x += Styles.PAD_X;
-					rect.y += Styles.PAD_Y * 2;
+					rect.width -= Styles.MARGIN_X * 2;
+					rect.x += Styles.MARGIN_X;
+					rect.y += Styles.MARGIN_Y * 2;
 
 					var newSearchQuery = searchField.OnToolbarGUI (rect, searchQuery);
 					if (check.changed)
