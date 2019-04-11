@@ -16,6 +16,8 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 
 ✔️ 40+ deformers!
 
+✔️ Meshes can be saved!
+
 ✔️ Easily extendable!
 
 ✔️ Works in worldspace!
@@ -46,6 +48,11 @@ Yes. You can create a single deformer and add it to multiple deformables.
 > How do deformables handle instancing?
 
 Each deformable has it's own unique mesh. Duplicating and instantiating deformables shouldn't cause any issues.
+
+## Limitations
+Deform is runs on the CPU. While it *is* incredibly fast, you should not expect to get performance comparable to vertex shaders. Also, because meshes are modified on the CPU each mesh has to be unique. From what I understand, this means each mesh will require a new draw call. Deform is not meant to be used at a massive scale. If you need to deform an entire world, tons of meshes, or an incredibly high poly model use vertex shaders. 
+
+**tldr:** Use shaders if you need speed, use Deform if you need modularity and ease-of-use.
 
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
