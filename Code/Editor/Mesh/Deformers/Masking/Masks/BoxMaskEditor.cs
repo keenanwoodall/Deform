@@ -52,8 +52,24 @@ namespace DeformEditor.Masking
 			serializedObject.UpdateIfRequiredOrScript ();
 
 			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
+
 			EditorGUILayout.PropertyField (properties.InnerBounds, Content.InnerBounds);
+			var innerBounds = properties.InnerBounds.boundsValue;
+			var outerBounds = properties.OuterBounds.boundsValue;
+
+			innerBounds = EnforcePositiveExtents (innerBounds);
+
+			innerBounds.min = new Vector3 (Mathf.Max (innerBounds.min.x, outerBounds.min.x), Mathf.Max (innerBounds.min.y, outerBounds.min.y), Mathf.Max (innerBounds.min.z, outerBounds.min.z));
+			innerBounds.max = new Vector3 (Mathf.Min (innerBounds.max.x, outerBounds.max.x), Mathf.Min (innerBounds.max.y, outerBounds.max.y), Mathf.Min (innerBounds.max.z, outerBounds.max.z));
+
 			EditorGUILayout.PropertyField (properties.OuterBounds, Content.OuterBounds);
+			outerBounds = properties.OuterBounds.boundsValue;
+			outerBounds.min = new Vector3 (Mathf.Min (innerBounds.min.x, outerBounds.min.x), Mathf.Min (innerBounds.min.y, outerBounds.min.y), Mathf.Min (innerBounds.min.z, outerBounds.min.z));
+			outerBounds.max = new Vector3 (Mathf.Max (innerBounds.max.x, outerBounds.max.x), Mathf.Max (innerBounds.max.y, outerBounds.max.y), Mathf.Max (innerBounds.max.z, outerBounds.max.z));
+
+			properties.InnerBounds.boundsValue = innerBounds;
+			properties.OuterBounds.boundsValue = outerBounds;
+
 			EditorGUILayout.PropertyField (properties.Invert, Content.Invert);
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
 
@@ -69,7 +85,24 @@ namespace DeformEditor.Masking
 			var boxMask = target as BoxMask;
 
 			DrawInnerBoundsHandle (boxMask);
+
+			var innerBounds = boxMask.InnerBounds;
+			var outerBounds = boxMask.OuterBounds;
+
+			innerBounds = EnforcePositiveExtents (innerBounds);
+
+			innerBounds.min = new Vector3 (Mathf.Max (innerBounds.min.x, outerBounds.min.x), Mathf.Max (innerBounds.min.y, outerBounds.min.y), Mathf.Max (innerBounds.min.z, outerBounds.min.z));
+			innerBounds.max = new Vector3 (Mathf.Min (innerBounds.max.x, outerBounds.max.x), Mathf.Min (innerBounds.max.y, outerBounds.max.y), Mathf.Min (innerBounds.max.z, outerBounds.max.z));
+
 			DrawOuterBoundsHandle (boxMask);
+
+			outerBounds = boxMask.OuterBounds;
+
+			outerBounds.min = new Vector3 (Mathf.Min (innerBounds.min.x, outerBounds.min.x), Mathf.Min (innerBounds.min.y, outerBounds.min.y), Mathf.Min (innerBounds.min.z, outerBounds.min.z));
+			outerBounds.max = new Vector3 (Mathf.Max (innerBounds.max.x, outerBounds.max.x), Mathf.Max (innerBounds.max.y, outerBounds.max.y), Mathf.Max (innerBounds.max.z, outerBounds.max.z));
+
+			boxMask.InnerBounds = innerBounds;
+			boxMask.OuterBounds = outerBounds;
 
 			EditorApplication.QueuePlayerLoopUpdate ();
 		}
@@ -114,6 +147,19 @@ namespace DeformEditor.Masking
 					}
 				}
 			}
+		}
+
+		private Bounds EnforcePositiveExtents (Bounds bounds)
+		{
+			var extents = bounds.extents;
+
+			extents.x = Mathf.Max (0f, extents.x);
+			extents.y = Mathf.Max (0f, extents.y);
+			extents.z = Mathf.Max (0f, extents.z);
+
+			bounds.extents = extents;
+
+			return bounds;
 		}
 	}
 }
