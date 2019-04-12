@@ -289,6 +289,11 @@ namespace Deform
 			}
 		}
 
+		public void ChangeMesh (Mesh mesh)
+		{
+			data.ChangeMesh (mesh);
+		}
+
 		/// <summary>
 		/// Returns the dynamic mesh.
 		/// </summary>
@@ -320,11 +325,6 @@ namespace Deform
 		public bool HasTarget ()
 		{
 			return data.Target.Exists ();
-		}
-
-		public void ChangeMesh (Mesh mesh)
-		{
-			data.ChangeMesh (mesh);
 		}
 	}
 }

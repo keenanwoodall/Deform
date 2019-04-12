@@ -20,7 +20,7 @@ namespace DeformEditor
 		}
 
 		[MenuItem ("Tools/Deform/Actions/Strip All Deformables", priority = 10101)]
-		public static void StripAllDeformablesFromMesh ()
+		public static void StripAllDeformablesFromMeshes ()
 		{
 			var deformables = GameObject.FindObjectsOfType<Deformable> ();
 			Undo.SetCurrentGroupName ("Stripped All Deformables");

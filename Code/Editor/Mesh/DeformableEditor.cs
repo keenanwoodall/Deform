@@ -235,5 +235,11 @@ namespace DeformEditor
 				DeformHandles.Bounds (deformable.GetMesh ().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.LightDotted);
 			}
 		}
+
+		[MenuItem ("CONTEXT/Deformable/Strip")]
+		private static void Strip ()
+		{
+			MenuItemActions.StripDeformableFromMesh ();
+		}
 	}
 }
