@@ -237,9 +237,14 @@ namespace DeformEditor
 		}
 
 		[MenuItem ("CONTEXT/Deformable/Strip")]
-		private static void Strip ()
+		private static void Strip (MenuCommand command)
 		{
-			MenuItemActions.StripDeformableFromMesh ();
+			var deformable = (Deformable)command.context;
+
+			Undo.SetCurrentGroupName ("Strip Selected Deformables");
+			Undo.RecordObject (deformable, "Changed Assign Original Mesh On Disable");
+			deformable.assignOriginalMeshOnDisable = false;
+			Undo.DestroyObjectImmediate (deformable);
 		}
 	}
 }

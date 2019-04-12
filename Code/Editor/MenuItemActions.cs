@@ -35,7 +35,7 @@ namespace DeformEditor
 		}
 
 		[MenuItem ("Tools/Deform/Actions/Strip Selected Deformables", priority = 10102)]
-		public static void StripDeformableFromMesh ()
+		public static void StripSelectedDeformablesFromMeshes ()
 		{
 			var selections = Selection.gameObjects;
 			Undo.SetCurrentGroupName ("Stripped Selected Deformables");
