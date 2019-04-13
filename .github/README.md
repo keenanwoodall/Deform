@@ -25,10 +25,10 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 ✔️ Custom editors and handles!
 
 
-## Documentation
-* [Installation](Documentation/Installation.md) (Important)
-* [Getting Started](Documentation/GettingStarted.md)
-* [Creating a Custom Deformer](Documentation/CustomDeformer.md)
+## [Documentation](https://github.com/keenanwoodall/Deform/wiki)
+* [Installation](https://github.com/keenanwoodall/Deform/wiki/Installation) (Important)
+* [Getting Started](https://github.com/keenanwoodall/Deform/wiki/Getting-Started)
+* [Creating a Custom Deformer](https://github.com/keenanwoodall/Deform/wiki/Creating-A-Custom-Deformer)
 
 You can find all the deformers [here,](../Code/Runtime/Mesh/Deformers) and all their editors [here.](../Code/Editor/Mesh/Deformers)
 
