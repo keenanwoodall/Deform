@@ -30,8 +30,6 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 * [Getting Started](https://github.com/keenanwoodall/Deform/wiki/Getting-Started)
 * [Creating a Custom Deformer](https://github.com/keenanwoodall/Deform/wiki/Creating-A-Custom-Deformer)
 
-You can find all the deformers [here,](../Code/Runtime/Mesh/Deformers) and all their editors [here.](../Code/Editor/Mesh/Deformers)
-
 ## FAQ
 > Does Deform work with the new prefab system?
 
