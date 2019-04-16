@@ -60,10 +60,15 @@ namespace DeformEditor
 			{
 				CreateCachedEditor (deformer, null, ref deformerEditor);
 
-				SceneView.onSceneGUIDelegate -= SceneGUI;
-				SceneView.onSceneGUIDelegate += SceneGUI;
+#if UNITY_2019_1_OR_NEWER
+                SceneView.duringSceneGui -= SceneGUI;
+                SceneView.duringSceneGui += SceneGUI;
+#else
+                SceneView.onSceneGUIDelegate -= SceneGUI;
+                SceneView.onSceneGUIDelegate += SceneGUI;
+#endif
 
-				using (new EditorGUILayout.VerticalScope (DeformEditorResources.GetStyle ("Box")))
+                using (new EditorGUILayout.VerticalScope (DeformEditorResources.GetStyle ("Box")))
 					deformerEditor.OnInspectorGUI ();
 			}
 
@@ -78,8 +83,12 @@ namespace DeformEditor
 
 		public void Dispose ()
 		{
-			SceneView.onSceneGUIDelegate -= SceneGUI;
-			Object.DestroyImmediate (deformerEditor, true);
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui -= SceneGUI;
+#else
+            SceneView.onSceneGUIDelegate -= SceneGUI;
+#endif
+            Object.DestroyImmediate (deformerEditor, true);
 			deformerEditor = null;
 		}
 	}
