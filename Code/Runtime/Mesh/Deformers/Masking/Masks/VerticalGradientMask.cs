@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform.Masking
 {
 	[Deformer (Name = "Vertical Gradient Mask", Description = "Mask vertices based on distance along an axis", Type = typeof (VerticalGradientMask), Category = Category.Mask, XRotation = -90f)]
-	public class VerticalGradientMask : Deformer, IFactor
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/VerticalGradientMask")]
+    public class VerticalGradientMask : Deformer, IFactor
 	{
 		public float Factor
 		{

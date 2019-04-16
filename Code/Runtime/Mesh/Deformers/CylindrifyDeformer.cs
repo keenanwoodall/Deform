@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Cylindrify", Description = "Blends mesh into a cylinder", XRotation = -90f, Type = typeof (CylindrifyDeformer))]
-	public class CylindrifyDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/CylindrifyDeformer")]
+    public class CylindrifyDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

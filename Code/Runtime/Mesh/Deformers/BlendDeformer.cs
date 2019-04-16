@@ -10,7 +10,8 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name = "Blend", Description = "Blends between current vertices and vertices stored in a vertex cache", Type = typeof (BlendDeformer))]
-	public class BlendDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/BlendDeformer")]
+    public class BlendDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

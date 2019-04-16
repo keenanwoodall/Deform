@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Ripple", Description = "Adds ripple to mesh", XRotation = -90f, Type = typeof (RippleDeformer))]
-	public class RippleDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/RippleDeformer")]
+    public class RippleDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

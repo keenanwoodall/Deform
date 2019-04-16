@@ -10,7 +10,8 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name ="Curve Displace", Description = "Pushes vertices in a direction based on distance along a curve", Type = typeof (CurveDisplaceDeformer))]
-	public class CurveDisplaceDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/CurveDisplaceDeformer")]
+    public class CurveDisplaceDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

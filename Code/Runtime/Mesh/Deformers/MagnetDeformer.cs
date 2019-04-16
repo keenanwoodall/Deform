@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Magnet", Description = "Attracts or repels vertices from a point", Type = typeof (MagnetDeformer))]
-	public class MagnetDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/MagnetDeformer")]
+    public class MagnetDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

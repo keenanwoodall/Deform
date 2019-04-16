@@ -10,7 +10,8 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name = "Lathe Displace", Description = "Moves vertices away from axis based on distance along curve", Type = typeof (LatheDisplaceDeformer), XRotation = -90f)]
-	public class LatheDisplaceDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/LatheDisplaceDeformer")]
+    public class LatheDisplaceDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

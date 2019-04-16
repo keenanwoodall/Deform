@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Star", Description = "Moves vertices away from axis based on angle around axis on a sine wave", Type = typeof (StarDeformer))]
-	public class StarDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/StarDeformer")]
+    public class StarDeformer : Deformer, IFactor
 	{
 		public float Factor { get => Magnitude; set => Magnitude = value; }
 

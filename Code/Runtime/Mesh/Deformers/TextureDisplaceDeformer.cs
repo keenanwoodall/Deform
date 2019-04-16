@@ -11,7 +11,8 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name = "Texture Displace", Description = "Displaces mesh based off a texture", Type = typeof (TextureDisplaceDeformer), XRotation = -90f)]
-	public class TextureDisplaceDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/TextureDisplaceDeformer")]
+    public class TextureDisplaceDeformer : Deformer, IFactor
 	{
 		private const float _1OVER255 = 1f / 255f;
 

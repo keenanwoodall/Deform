@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Transform Offset", Description = "Offsets the position, rotation and scale of a mesh", Type = typeof (TransformOffsetDeformer))]
-	public class TransformOffsetDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/TransformOffsetDeformer")]
+    public class TransformOffsetDeformer : Deformer
 	{
 		public Transform Target
 		{

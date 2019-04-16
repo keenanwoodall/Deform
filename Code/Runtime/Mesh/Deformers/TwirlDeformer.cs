@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Twirl", Description = "Rotates vertices around an axis based off of distance from that axis", XRotation = -90f, Type = typeof (TwirlDeformer))]
-	public class TwirlDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/TwirlDeformer")]
+    public class TwirlDeformer : Deformer, IFactor
 	{
 		private const float MIN_RANGE = 0.0001f;
 

@@ -7,7 +7,8 @@ using Unity.Mathematics;
 namespace Deform
 {
 	[Deformer (Name = "UV Offset", Description = "Offsets the mesh's UVs", Type = typeof (UVOffsetDeformer), Category = Category.Normal)]
-	public class UVOffsetDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/UVOffsetDeformer")]
+    public class UVOffsetDeformer : Deformer
 	{
 		public Vector2 Offset
 		{

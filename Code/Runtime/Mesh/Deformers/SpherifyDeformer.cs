@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Spherify", Description = "Morphs vertices onto a sphere", Type = typeof (SpherifyDeformer))]
-	public class SpherifyDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/SpherifyDeformer")]
+    public class SpherifyDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

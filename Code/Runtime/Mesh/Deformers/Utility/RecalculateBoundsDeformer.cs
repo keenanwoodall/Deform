@@ -1,9 +1,11 @@
-﻿using Unity.Jobs;
+﻿using UnityEngine;
+using Unity.Jobs;
 
 namespace Deform
 {
 	[Deformer (Name = "Recalculate Bounds", Description = "Recalculates the bounds", Type = typeof (RecalculateBoundsDeformer), Category = Category.Utility)]
-	public class RecalculateBoundsDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/RecalculateBoundsDeformer")]
+    public class RecalculateBoundsDeformer : Deformer
 	{
 		public override DataFlags DataFlags => DataFlags.Bounds;
 

@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Taper", Description = "Tapers a mesh", XRotation = -90f, Type = typeof (TaperDeformer))]
-	public class TaperDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/TaperDeformer")]
+    public class TaperDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

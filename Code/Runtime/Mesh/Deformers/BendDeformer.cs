@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Bend", Description = "Bends a mesh", Type = typeof (BendDeformer))]
-	public class BendDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/BendDeformer")]
+    public class BendDeformer : Deformer, IFactor
 	{
 		public float Angle
 		{

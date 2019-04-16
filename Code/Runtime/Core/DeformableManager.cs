@@ -7,6 +7,7 @@ namespace Deform
 	/// <summary>
 	/// Manages scheduling deformables.
 	/// </summary>
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/DeformableManager")]
 	public class DeformableManager : MonoBehaviour
 	{
 		private static readonly string DEF_MANAGER_NAME = "DefaultDeformableManager";

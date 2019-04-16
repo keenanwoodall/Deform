@@ -9,6 +9,7 @@ using Beans.Unity.Mathematics;
 namespace Deform.Masking
 {
 	[Deformer (Name = "Sphere Mask", Description = "Masks deformation in a sphere", Type = typeof (SphereMask), Category = Category.Mask)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/SphereMask")]
 	public class SphereMask : Deformer, IFactor
 	{
 		public float Factor

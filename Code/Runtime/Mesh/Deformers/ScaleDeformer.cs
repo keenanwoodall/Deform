@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Scale", Description = "Scales the mesh along an arbitrary axis", Type = typeof (ScaleDeformer), Category = Category.Normal)]
-	public class ScaleDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/ScaleDeformer")]
+    public class ScaleDeformer : Deformer
 	{
 		public Transform Axis
 		{

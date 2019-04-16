@@ -8,6 +8,7 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Simplex Noise", Description = "Adds simplex noise to mesh", Type = typeof (SimplexNoiseDeformer), Category = Category.Noise)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/SimplexNoiseDeformer")]
 	public class SimplexNoiseDeformer : NoiseDeformer, IFactor
 	{
 		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)

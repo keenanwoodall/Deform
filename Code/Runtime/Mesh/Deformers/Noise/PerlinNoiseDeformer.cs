@@ -8,6 +8,7 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Perlin Noise", Description = "Adds perlin noise to mesh", Type = typeof (PerlinNoiseDeformer), Category = Category.Noise)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/PerlinNoiseDeformer")]
 	public class PerlinNoiseDeformer : NoiseDeformer, IFactor
 	{
 		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)

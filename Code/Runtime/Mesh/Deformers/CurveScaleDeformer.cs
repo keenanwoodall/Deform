@@ -10,7 +10,8 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name ="Curve Scale", Description = "Scales vertices away from an axis based on distance along a curve", Type = typeof (CurveScaleDeformer))]
-	public class CurveScaleDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/CurveScaleDeformer")]
+    public class CurveScaleDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

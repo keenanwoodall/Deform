@@ -7,7 +7,8 @@ using Unity.Mathematics;
 namespace Deform
 {
 	[Deformer (Name = "Inflate", Description = "Moves vertices along normals", Type = typeof (InflateDeformer))]
-	public class InflateDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/InflateDeformer")]
+    public class InflateDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

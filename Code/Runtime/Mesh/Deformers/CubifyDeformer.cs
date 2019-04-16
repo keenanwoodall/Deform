@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Cubify", Description = "Morphs mesh into a cube", Type = typeof (CubifyDeformer))]
-	public class CubifyDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/CubifyDeformer")]
+    public class CubifyDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

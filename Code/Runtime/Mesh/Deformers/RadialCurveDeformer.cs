@@ -10,7 +10,8 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name = "Radial Curve", Description = "Moves vertices up based on distance from point along a curve (similar to ripple)", Type = typeof (RadialCurveDeformer), XRotation = -90f)]
-	public class RadialCurveDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/RadialCurveDeformer")]
+    public class RadialCurveDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

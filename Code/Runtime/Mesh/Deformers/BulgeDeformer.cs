@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Bulge", Description = "Bulges a mesh", Type = typeof (BulgeDeformer), XRotation = -90f)]
-	public class BulgeDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/BulgeDeformer")]
+    public class BulgeDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{
