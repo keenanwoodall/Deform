@@ -50,7 +50,7 @@ namespace DeformEditor
 		};
 
 		[MenuItem ("Window/Deform/Creator", priority = 10000)]
-		[MenuItem ("Tools/Deform/Creator", priority = 10000)]
+		[MenuItem ("Tools/Deform/Creator Window", priority = 10000)]
 		public static void ShowWindow ()
 		{
 			GetWindow<CreatorWindow> ("Creator", true);
