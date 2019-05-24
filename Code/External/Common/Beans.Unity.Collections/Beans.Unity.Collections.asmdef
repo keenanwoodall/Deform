@@ -1,8 +1,7 @@
 {
     "name": "Beans.Unity.Collections",
     "references": [
-        "Unity.Mathematics",
-        "Beans.Unity.Mathematics"
+        "Unity.Mathematics"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
@@ -11,5 +10,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }
