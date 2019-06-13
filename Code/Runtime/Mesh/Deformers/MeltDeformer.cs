@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Melt", Description = "Melts mesh onto flat surface", XRotation = -90f, Type = typeof (MeltDeformer))]
-	public class MeltDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/MeltDeformer")]
+    public class MeltDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Wave", Description = "Moves vertices up and down based on distance along a gerstner wave", Type = typeof (WaveDeformer))]
-	public class WaveDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/WaveDeformer")]
+    public class WaveDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

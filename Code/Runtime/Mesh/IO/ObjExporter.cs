@@ -44,11 +44,11 @@ namespace Deform
 
 			stringBuilder.Append ("g ").Append (name).Append ("\n");
 			foreach (var vertice in mesh.vertices)
-				stringBuilder.Append ($"v {vertice.x} {vertice.y} {vertice.z}\n");
+				stringBuilder.Append ($"v {-vertice.x} {vertice.y} {vertice.z}\n");
 
 			stringBuilder.Append ("\n");
 			foreach (var normal in mesh.normals)
-				stringBuilder.Append ($"vn {normal.x} {normal.y} {normal.z}\n");
+				stringBuilder.Append ($"vn {-normal.x} {normal.y} {normal.z}\n");
 
 			stringBuilder.Append ("\n");
 			foreach (var uv in mesh.uv)
@@ -69,9 +69,9 @@ namespace Deform
 						string.Format
 						(
 							"f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
-							triangles[i] + 1,
+							triangles[i + 2] + 1,
 							triangles[i + 1] + 1,
-							triangles[i + 2] + 1
+							triangles[i] + 1
 						)
 					);
 				}

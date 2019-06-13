@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Radial Skew", Description = "Skews vertices away from axis", Type = typeof (RadialSkewDeformer))]
-	public class RadialSkewDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/RadialSkewDeformer")]
+    public class RadialSkewDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

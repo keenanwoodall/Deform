@@ -7,7 +7,8 @@ using Unity.Mathematics;
 namespace Deform
 {
 	[Deformer (Name = "UV Scale", Description = "Scales the mesh's UVs", Type = typeof (UVScaleDeformer), Category = Category.Normal)]
-	public class UVScaleDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/UVScaleDeformer")]
+    public class UVScaleDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

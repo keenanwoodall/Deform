@@ -65,10 +65,15 @@ namespace DeformEditor
 					{
 						// create it's editor and draw it
 						Editor.CreateCachedEditor (component, null, ref selectedComponentInspectorEditor);
-						SceneView.onSceneGUIDelegate -= SceneGUI;
+#if UNITY_2019_1_OR_NEWER
+                        SceneView.duringSceneGui -= SceneGUI;
+                        SceneView.duringSceneGui += SceneGUI;
+#else
+                        SceneView.onSceneGUIDelegate -= SceneGUI;
 						SceneView.onSceneGUIDelegate += SceneGUI;
+#endif
 
-						var foldoutName = $"{ObjectNames.NicifyVariableName (componentProperty.objectReferenceValue.GetType ().Name)} Properties";
+                        var foldoutName = $"{ObjectNames.NicifyVariableName (componentProperty.objectReferenceValue.GetType ().Name)} Properties";
 						using (var foldout = new EditorGUILayoutx.FoldoutContainerScope (list.serializedProperty, foldoutName, DeformEditorResources.GetStyle ("Box"), EditorStyles.foldout))
 						{
 							if (foldout.isOpen)
@@ -112,7 +117,11 @@ namespace DeformEditor
 
 		public void Dispose ()
 		{
-			SceneView.onSceneGUIDelegate -= SceneGUI;
+#if UNITY_2019_1_OR_NEWER
+            SceneView.duringSceneGui -= SceneGUI;
+#else
+            SceneView.onSceneGUIDelegate -= SceneGUI;
+#endif
 			Object.DestroyImmediate (selectedComponentInspectorEditor, true);
 			selectedComponentInspectorEditor = null;
 		}

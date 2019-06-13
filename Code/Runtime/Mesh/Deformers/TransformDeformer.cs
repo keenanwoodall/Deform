@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Transform", Description = "Gives the mesh a new position, rotation and scale", Type = typeof (TransformDeformer))]
-	public class TransformDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/TransformDeformer")]
+    public class TransformDeformer : Deformer
 	{
 		public Transform Target
 		{

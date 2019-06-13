@@ -13,6 +13,5 @@
     "dependencies": 
     {
         "com.unity.mathematics": "0.0.12-preview.19",
-        "com.beans.unity.mathematics": "0.0.1-preview.1"
     }
 }

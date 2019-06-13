@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Sine", Description = "Moves vertices in direction based on distance along sine wave", Type = typeof (SineDeformer))]
-	public class SineDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/SineDeformer")]
+    public class SineDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

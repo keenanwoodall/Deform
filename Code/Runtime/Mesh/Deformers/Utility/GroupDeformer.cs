@@ -5,7 +5,8 @@ using Unity.Jobs;
 namespace Deform
 {
 	[Deformer (Name = "Group", Description = "Combines deformers into a group", Type = typeof (GroupDeformer), Category = Category.Utility)]
-	public class GroupDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/GroupDeformer")]
+    public class GroupDeformer : Deformer
 	{
 		public List<DeformerElement> DeformerElements
 		{

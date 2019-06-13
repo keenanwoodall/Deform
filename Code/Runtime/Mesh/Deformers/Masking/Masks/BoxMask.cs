@@ -9,6 +9,7 @@ using Beans.Unity.Mathematics;
 namespace Deform.Masking
 {
 	[Deformer (Name = "Box Mask", Description = "Masks deformation in a box", Type = typeof (BoxMask), Category = Category.Mask)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/BoxMask")]
 	public class BoxMask : Deformer, IFactor
 	{
 		public float Factor

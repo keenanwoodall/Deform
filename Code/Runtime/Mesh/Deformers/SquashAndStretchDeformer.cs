@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Squash and Stretch", Description = "Squashes and stretches a mesh", XRotation = -90f, Type = typeof (SquashAndStretchDeformer))]
-	public class SquashAndStretchDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/SquashAndStretchDeformer")]
+    public class SquashAndStretchDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{

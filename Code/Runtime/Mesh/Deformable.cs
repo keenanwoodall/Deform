@@ -8,7 +8,8 @@ namespace Deform
 	/// The implementation of IDeformable meant for deforming a MeshFilter or SkinnedMeshRenderer's mesh.
 	/// </summary>
 	[ExecuteAlways, DisallowMultipleComponent]
-	public class Deformable : MonoBehaviour, IDeformable
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/Deformable")]
+    public class Deformable : MonoBehaviour, IDeformable
 	{
 		public UpdateMode UpdateMode
 		{

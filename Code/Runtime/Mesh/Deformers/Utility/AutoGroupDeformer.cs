@@ -7,6 +7,7 @@ namespace Deform
 {
 	[ExecuteAlways]
 	[Deformer (Name = "Auto Group", Description = "Delegates deformation to deformers on child game objects", Type = typeof (AutoGroupDeformer), Category = Category.Utility)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/AutoGroupDeformer")]
 	public class AutoGroupDeformer : Deformer
 	{
 		public bool RefreshGroup

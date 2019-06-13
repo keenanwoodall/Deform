@@ -8,6 +8,7 @@ using static Unity.Mathematics.math;
 namespace Deform.Masking
 {
 	[Deformer (Name = "Vertex Color Mask", Description = "Masks vertices based on their color", Type = typeof (VertexColorMask), Category = Category.Mask)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/VertexColorMask")]
 	public class VertexColorMask : Deformer, IFactor
 	{
 		public float Factor

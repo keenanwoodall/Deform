@@ -4,7 +4,8 @@ using Unity.Jobs;
 namespace Deform
 {
 	[Deformer (Name = "Repeater", Description = "Applies the same deformer multiple times", Type = typeof (RepeaterDeformer), Category = Category.Utility)]
-	public class RepeaterDeformer : Deformer
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/RepeaterDeformer")]
+    public class RepeaterDeformer : Deformer
 	{
 		public int Iterations
 		{

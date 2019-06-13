@@ -18,6 +18,7 @@ namespace Deform
 		/// References the copy of the original mesh that processed data is applied to.
 		/// Once this class is initialized, this is the mesh that will be used by MeshFilter.
 		/// </summary>
+		[NonSerialized]
 		public Mesh DynamicMesh;
 
 		/// <summary>

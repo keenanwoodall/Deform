@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Twist", Description = "Rotates vertices around an axis based on distance along that axis", XRotation = -90f, Type = typeof (TwistDeformer))]
-	public class TwistDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/TwistDeformer")]
+    public class TwistDeformer : Deformer, IFactor
 	{
 		public float StartAngle
 		{

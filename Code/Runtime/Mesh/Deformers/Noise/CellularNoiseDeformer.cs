@@ -8,6 +8,7 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Cellular Noise", Description = "Adds cellular noise to mesh", Type = typeof (CellularNoiseDeformer), Category = Category.Noise)]
+    [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/CellularNoiseDeformer")]
 	public class CellularNoiseDeformer : NoiseDeformer, IFactor
 	{
 		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)

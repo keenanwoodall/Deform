@@ -8,7 +8,8 @@ using static Unity.Mathematics.math;
 namespace Deform
 {
 	[Deformer (Name = "Skew", Description = "Skews mesh", Type = typeof (SkewDeformer))]
-	public class SkewDeformer : Deformer, IFactor
+    [HelpURL("https://github.com/keenanwoodall/Deform/wiki/SkewDeformer")]
+    public class SkewDeformer : Deformer, IFactor
 	{
 		public float Factor
 		{
