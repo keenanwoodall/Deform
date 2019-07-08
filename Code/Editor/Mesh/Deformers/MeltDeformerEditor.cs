@@ -78,7 +78,7 @@ namespace DeformEditor
 
 			serializedObject.UpdateIfRequiredOrScript ();
 
-			EditorGUILayoutx.MinField (properties.Factor, 0f, Content.Factor);
+			EditorGUILayout.Slider (properties.Factor, 0f, 1f, Content.Factor);
 			EditorGUILayoutx.MinField (properties.Falloff, 0f);
 			EditorGUILayout.PropertyField (properties.Radius, Content.Radius);
 			EditorGUILayout.PropertyField (properties.UseNormals, Content.UseNormals);
