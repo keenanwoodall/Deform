@@ -10,18 +10,12 @@
 A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is multi-threaded with the [Job System](https://unity.com/dots), compiled with [Burst](https://unity.com/dots) and calculations are done using the [Mathematics library](https://github.com/Unity-Technologies/Unity.Mathematics/blob/master/readme.md).
 
 ## Features
-✔️ Lightning fast!
-
-✔️ Fully multi-threaded!
-
-✔️ 40+ deformers!
-
-✔️ Meshes can be saved!
-
-✔️ Easily extendable!
-
-✔️ Works in worldspace!
-
+✔️ Lightning fast!</br>
+✔️ Fully multi-threaded!</br>
+✔️ 40+ deformers!</br>
+✔️ Meshes can be saved!</br>
+✔️ Easily extendable!</br>
+✔️ Works in worldspace!</br>
 ✔️ Custom editors and handles!
 
 

@@ -14,7 +14,7 @@ namespace Deform
 		public float Factor
 		{
 			get => factor;
-			set => factor = value;
+			set => factor = Mathf.Clamp01 (value);
 		}
 		public float Falloff
 		{
@@ -156,7 +156,7 @@ namespace Deform
 
 				var verticalNoise = noise.snoise (point * verticalFrequency) * verticalMagnitude;
 				var verticalNoiseMask = sin (saturate ((point.z - bottom) / range) * (float)PI);
-				point.z += verticalNoise * verticalNoiseMask;
+				point.z += verticalNoise * verticalNoiseMask * meltAmount;
 
 				if (clampAtBottom)
 					point.z = max (bottom, point.z);
