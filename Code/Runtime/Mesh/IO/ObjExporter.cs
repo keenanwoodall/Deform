@@ -56,7 +56,6 @@ namespace Deform
 			foreach (var uv in mesh.uv)
 				stringBuilder.AppendFormat (culture, "vt {0} {1}\n", uv.x, uv.y);
 
-
 			for (int material = 0; material < mesh.subMeshCount; material++)
 			{
 				stringBuilder.Append ("\n");
@@ -68,6 +67,7 @@ namespace Deform
 				{
 					stringBuilder.AppendFormat
 					(
+						culture,
 						"f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
 						triangles[i + 2] + 1,
 						triangles[i + 1] + 1,
