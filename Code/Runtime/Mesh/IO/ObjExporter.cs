@@ -41,7 +41,6 @@ namespace Deform
 			var materials = renderer.sharedMaterials;
 
 			var stringBuilder = new StringBuilder ();
-			Debug.Log (System.Globalization.CultureInfo.CurrentCulture.DisplayName);
 			var culture = System.Globalization.CultureInfo.InvariantCulture;
 
 			stringBuilder.Append ("g ").Append (name).Append ("\n");
