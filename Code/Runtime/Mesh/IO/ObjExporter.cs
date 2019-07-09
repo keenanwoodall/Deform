@@ -41,18 +41,20 @@ namespace Deform
 			var materials = renderer.sharedMaterials;
 
 			var stringBuilder = new StringBuilder ();
+			Debug.Log (System.Globalization.CultureInfo.CurrentCulture.DisplayName);
+			var culture = System.Globalization.CultureInfo.InvariantCulture;
 
 			stringBuilder.Append ("g ").Append (name).Append ("\n");
 			foreach (var vertice in mesh.vertices)
-				stringBuilder.Append ($"v {-vertice.x} {vertice.y} {vertice.z}\n");
+				stringBuilder.AppendFormat (culture, "v {0} {1} {2}\n", -vertice.x, vertice.y, vertice.z);
 
 			stringBuilder.Append ("\n");
 			foreach (var normal in mesh.normals)
-				stringBuilder.Append ($"vn {-normal.x} {normal.y} {normal.z}\n");
+				stringBuilder.AppendFormat (culture, "vn {0} {1} {2}\n", -normal.x, normal.y, normal.z);
 
 			stringBuilder.Append ("\n");
 			foreach (var uv in mesh.uv)
-				stringBuilder.Append ($"vt {uv.x} {uv.y}\n");
+				stringBuilder.AppendFormat (culture, "vt {0} {1}\n", uv.x, uv.y);
 
 
 			for (int material = 0; material < mesh.subMeshCount; material++)
@@ -64,15 +66,12 @@ namespace Deform
 				var triangles = mesh.GetTriangles (material);
 				for (int i = 0; i < triangles.Length; i += 3)
 				{
-					stringBuilder.Append
+					stringBuilder.AppendFormat
 					(
-						string.Format
-						(
-							"f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
-							triangles[i + 2] + 1,
-							triangles[i + 1] + 1,
-							triangles[i] + 1
-						)
+						"f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}\n",
+						triangles[i + 2] + 1,
+						triangles[i + 1] + 1,
+						triangles[i] + 1
 					);
 				}
 			}
