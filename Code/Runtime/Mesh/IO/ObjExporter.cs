@@ -38,7 +38,7 @@ namespace Deform
 		/// </summary>
 		private static string MeshToString (Mesh mesh, Renderer renderer, string name)
 		{
-			var materials = renderer.sharedMaterials;
+			var materials = renderer?.sharedMaterials;
 
 			var stringBuilder = new StringBuilder ();
 			var culture = System.Globalization.CultureInfo.InvariantCulture;
@@ -58,8 +58,9 @@ namespace Deform
 			for (int material = 0; material < mesh.subMeshCount; material++)
 			{
 				stringBuilder.Append ("\n");
-				stringBuilder.Append ("usemtl ").Append (materials[material].name).Append ("\n");
-				stringBuilder.Append ("usemap ").Append (materials[material].name).Append ("\n");
+				var materialName = (materials != null && material < materials.Length) ? materials[material].name : "Material";
+				stringBuilder.Append ("usemtl ").Append (materialName).Append ("\n");
+				stringBuilder.Append ("usemap ").Append (materialName).Append ("\n");
 
 				var triangles = mesh.GetTriangles (material);
 				for (int i = 0; i < triangles.Length; i += 3)
