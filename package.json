@@ -16,7 +16,7 @@
     ],
     "dependencies": 
     {
-        "com.unity.burst": "1.1.1",
+        "com.unity.burst": "1.1.2",
         "com.unity.mathematics": "1.1.0"
     }
 }
