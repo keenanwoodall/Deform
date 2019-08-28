@@ -1,7 +1,7 @@
 ![Header](https://imgur.com/NpPsjQj.png)
 
 [![Unity Version](https://img.shields.io/badge/unity-2018.3%2B-blue.svg)](https://unity3d.com/get-unity/download)
-[![GitHub](https://img.shields.io/github/license/keenanwoodall/Deform.svg)](https://github.com/keenanwoodall/Deform/blob/master/LICENSE.md)
+[![GitHub](https://img.shields.io/github/license/keenanwoodall/Deform.svg)](https://github.com/keenanwoodall/Deform/blob/master/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/keenanwoodall/Deform/compare)
 
 [![Twitter](https://img.shields.io/twitter/follow/keenanwoodall.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=keenanwoodall)
@@ -17,7 +17,6 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 ✔️ Easily extendable!</br>
 ✔️ Works in worldspace!</br>
 ✔️ Custom editors and handles!
-
 
 ## [Documentation](https://github.com/keenanwoodall/Deform/wiki)
 * [Installation](https://github.com/keenanwoodall/Deform/wiki/Installation) (Important)
