@@ -36,6 +36,10 @@ namespace Deform
 			Triangles = mesh.triangles;
 			Bounds = mesh.bounds;
 
+			if (Normals == null || Normals.Length != mesh.vertexCount)
+				Normals = new Vector3[mesh.vertexCount];
+			if (Tangents == null || Tangents.Length != mesh.vertexCount)
+				Tangents = new Vector4[mesh.vertexCount];
 			if (UVs == null || UVs.Length != mesh.vertexCount)
 				UVs = new Vector2[mesh.vertexCount];
 			if (Colors == null || Colors.Length != mesh.vertexCount)
