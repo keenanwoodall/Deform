@@ -9,6 +9,8 @@
 
 A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is multi-threaded with the [Job System](https://unity.com/dots), compiled with [Burst](https://unity.com/dots) and calculations are done using the [Mathematics library](https://github.com/Unity-Technologies/Unity.Mathematics/blob/master/readme.md).
 
+*Now available for download on the [Asset Store.](https://assetstore.unity.com/packages/tools/modeling/deform-148425)*
+
 ## Features
 ✔️ Lightning fast!</br>
 ✔️ Fully multi-threaded!</br>
@@ -27,6 +29,10 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 > Does Deform work with the new prefab system?
 
 Yes. Deform works seamlessly with nested prefabs and prefab variants.
+
+> Are skinned mesh renderers supported?
+
+Yes. However because of how Unity handles skinned mesh renderers; the mesh cannot be modified after its bones are animated. This means that animations to the skinned mesh renderer are applied *after* Deform modifies the mesh; which is often not the desired effect.
 
 > Do deformers have to be on the object they are deforming?
 
