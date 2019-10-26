@@ -126,6 +126,9 @@ namespace Deform
 			return true;
 		}
 
+		public ManagedMeshData GetOriginalManagedData() => originalManaged;
+		public ManagedMeshData GetDynamicManagedData() => dynamicManaged;
+
 		/// <summary>
 		/// Disposes of current data and reinitializes with the targetObject's filter's shared mesh.
 		/// </summary>
