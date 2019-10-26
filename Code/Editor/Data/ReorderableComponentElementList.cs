@@ -93,7 +93,12 @@ namespace DeformEditor
 
 		private void SceneGUI (SceneView sceneView)
 		{
-			selectedComponentInspectorEditor?.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke (selectedComponentInspectorEditor, null);
+			if (selectedComponentInspectorEditor == null)
+				return;
+			var method = selectedComponentInspectorEditor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			if (method == null)
+				return;
+			method.Invoke (selectedComponentInspectorEditor, null);
 			selectedComponentInspectorEditor.Repaint ();
 		}
 

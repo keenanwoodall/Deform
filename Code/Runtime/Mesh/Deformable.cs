@@ -59,9 +59,11 @@ namespace Deform
 			get => manager;
 			set
 			{
-				manager?.RemoveDeformable (this);
+				if (manager != null)
+					manager.RemoveDeformable (this);
 				manager = value;
-				manager?.AddDeformable (this);
+				if (manager != null)
+					manager.AddDeformable (this);
 			}
 		}
 
@@ -92,7 +94,8 @@ namespace Deform
 			{
 				if (Manager == null)
 					Manager = DeformableManager.GetDefaultManager (true);
-				Manager?.AddDeformable (this);
+				if (Manager != null)
+					Manager.AddDeformable (this);
 			}
 
 			InitializeData ();
@@ -110,7 +113,8 @@ namespace Deform
 		{
 			Complete ();
 			data.Dispose (assignOriginalMeshOnDisable);
-			Manager?.RemoveDeformable (this);
+			if (Manager != null)
+				Manager.RemoveDeformable (this);
 		}
 
 		/// <summary>

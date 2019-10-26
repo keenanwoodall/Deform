@@ -38,7 +38,10 @@ namespace Deform
 		/// </summary>
 		private static string MeshToString (Mesh mesh, Renderer renderer, string name)
 		{
-			var materials = renderer?.sharedMaterials;
+			if (renderer == null)
+				throw new System.NullReferenceException("Renderer cannot be null to convert mesh to string.");
+
+			var materials = renderer.sharedMaterials;
 
 			var stringBuilder = new StringBuilder ();
 			var culture = System.Globalization.CultureInfo.InvariantCulture;
