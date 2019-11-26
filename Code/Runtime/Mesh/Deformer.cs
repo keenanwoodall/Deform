@@ -39,7 +39,7 @@ namespace Deform
 
 		public virtual bool CanProcess ()
 		{
-			return update && isActiveAndEnabled;
+			return update && gameObject.activeInHierarchy && enabled;
 		}
 	}
 }

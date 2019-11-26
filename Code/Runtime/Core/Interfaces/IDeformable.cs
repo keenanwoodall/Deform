@@ -27,6 +27,8 @@ namespace Deform
 		/// </summary>
 		void ApplyData ();
 
+		void ForceImmediateUpdate();
+
 		/// <summary>
 		/// Returns true if this deformable should be processed.
 		/// </summary>

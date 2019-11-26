@@ -90,19 +90,15 @@ namespace Deform
 
 		private void OnEnable ()
 		{
-			if (Application.isPlaying)
-			{
-				if (Manager == null)
-					Manager = DeformableManager.GetDefaultManager (true);
-				if (Manager != null)
-					Manager.AddDeformable (this);
-			}
-
 			InitializeData ();
+
+			if (Application.isPlaying)
+				Manager = DeformableManager.GetDefaultManager (true);
 
 #if UNITY_EDITOR
 			if (!Application.isPlaying && handle.IsCompleted)
 			{
+				PreSchedule();
 				Schedule ().Complete ();
 				ApplyData ();
 			}
@@ -165,6 +161,8 @@ namespace Deform
 			// Don't try to process any data if we're disabled or our data is broken.
 			if (!CanUpdate ())
 				return dependency;
+
+			//print($"{name} - Deformer Count: {deformerElements.Count}");
 
 			// We need to dispose of this objects data if it is destroyed.
 			// We can't destroy the data if there's a job currently using it,
@@ -246,6 +244,13 @@ namespace Deform
 				RecalculateMeshCollider ();
 
 			ResetDynamicData ();
+		}
+
+		public void ForceImmediateUpdate()
+		{
+			PreSchedule();
+			Schedule().Complete();
+			ApplyData();
 		}
 
 		/// <summary>
