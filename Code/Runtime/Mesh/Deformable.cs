@@ -68,6 +68,11 @@ namespace Deform
 			get => customBounds;
 			set => customBounds = value;
 		}
+
+		/// <summary>
+		/// Setting the Manager property unregisters this deformable from it's current manager and registers it with the new one.
+		/// Assign null if you want to unregister.
+		/// </summary>
 		public DeformableManager Manager
 		{
 			get => manager;
