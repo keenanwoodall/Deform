@@ -301,6 +301,7 @@ namespace Deform
 
 		public void ChangeMesh (Mesh mesh)
 		{
+			Complete();
 			data.ChangeMesh (mesh);
 		}
 
