@@ -11,15 +11,29 @@ namespace Deform
     [HelpURL ("https://github.com/keenanwoodall/Deform/wiki/Deformable")]
     public class Deformable : MonoBehaviour, IDeformable
 	{
+		/// <summary>
+		/// Assigning Auto sets Manager to the default manager.
+		/// Assigning Stop resets data and mesh and prevents prescheduling, scheduling and applying.
+		/// Assigning Custom sets Manager to null.
+		/// </summary>
 		public UpdateMode UpdateMode
 		{
 			get => updateMode;
 			set
 			{
-				if (value == UpdateMode.Stop)
+				switch (value)
 				{
-					data.ResetData (DataFlags.All);
-					ResetMesh ();
+					case UpdateMode.Auto:
+						Manager = DeformableManager.GetDefaultManager(true);
+						break;
+					case UpdateMode.Stop:
+						data.ResetData(DataFlags.All);
+						ResetMesh();
+						break;
+					case UpdateMode.Custom:
+						Manager = null;
+						Complete();
+						break;
 				}
 				updateMode = value;
 			}
@@ -141,6 +155,8 @@ namespace Deform
 		/// </summary>
 		public void PreSchedule ()
 		{
+			if (!CanUpdate())
+				return;
 			foreach (var element in DeformerElements)
 			{
 				var deformer = element.Component;
@@ -161,8 +177,6 @@ namespace Deform
 			// Don't try to process any data if we're disabled or our data is broken.
 			if (!CanUpdate ())
 				return dependency;
-
-			//print($"{name} - Deformer Count: {deformerElements.Count}");
 
 			// We need to dispose of this objects data if it is destroyed.
 			// We can't destroy the data if there's a job currently using it,

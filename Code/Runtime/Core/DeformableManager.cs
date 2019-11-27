@@ -103,6 +103,7 @@ namespace Deform
 		/// </summary>
 		public void RemoveDeformable (IDeformable deformable)
 		{
+			addedDeformables.Remove(deformable);
 			deformables.Remove (deformable);
 		}
 	}
