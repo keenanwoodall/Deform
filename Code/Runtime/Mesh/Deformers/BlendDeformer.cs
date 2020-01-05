@@ -65,7 +65,7 @@ namespace Deform
 			return new BlendJob
 			{
 				factor = Factor,
-				currentVertices = data.DynamicNative.VertexBuffer,
+				currentVertices = data.TargetDynamicNative.VertexBuffer,
 				cachedVertices = vertices
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}

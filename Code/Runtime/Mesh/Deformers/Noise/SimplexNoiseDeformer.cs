@@ -19,7 +19,7 @@ namespace Deform
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
 				meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
-				vertices = data.DynamicNative.VertexBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
@@ -33,8 +33,8 @@ namespace Deform
 				offset = GetActualOffset (),
 				axisSpace = meshToAxis,
 				inverseAxisSpace = meshToAxis.inverse,
-				vertices = data.DynamicNative.VertexBuffer,
-				normals = data.DynamicNative.NormalBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer,
+				normals = data.TargetDynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
@@ -46,8 +46,8 @@ namespace Deform
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
 				axisSpace = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
-				vertices = data.DynamicNative.VertexBuffer,
-				normals = data.DynamicNative.NormalBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer,
+				normals = data.TargetDynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
@@ -61,8 +61,8 @@ namespace Deform
 				offset = GetActualOffset (),
 				axisSpace = meshToAxis,
 				inverseAxisSpace = meshToAxis.inverse,
-				vertices = data.DynamicNative.VertexBuffer,
-				normals = data.DynamicNative.NormalBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer,
+				normals = data.TargetDynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
@@ -76,8 +76,8 @@ namespace Deform
 				offset = GetActualOffset (),
 				axisSpace = meshToAxis,
 				inverseAxisSpace = meshToAxis.inverse,
-				vertices = data.DynamicNative.VertexBuffer,
-				colors = data.DynamicNative.ColorBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer,
+				colors = data.TargetDynamicNative.ColorBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

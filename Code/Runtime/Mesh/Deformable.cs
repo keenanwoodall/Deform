@@ -58,6 +58,16 @@ namespace Deform
 			get => meshCollider;
 			set => meshCollider = value;
 		}
+		public float ElasticForce
+		{
+			get => elasticForce;
+			set => elasticForce = value;
+		}
+		public float ElasticDampening
+		{
+			get => elasticDampening;
+			set => elasticDampening = value;
+		}
 		public List<DeformerElement> DeformerElements
 		{
 			get => deformerElements;
@@ -95,6 +105,8 @@ namespace Deform
 		[SerializeField, HideInInspector] private BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
 		[SerializeField, HideInInspector] private ColliderRecalculation colliderRecalculation = ColliderRecalculation.None;
 		[SerializeField, HideInInspector] private MeshCollider meshCollider;
+		[SerializeField, HideInInspector] private float elasticForce = 2f;
+		[SerializeField, HideInInspector] private float elasticDampening = 0.9f;
 
 		[SerializeField, HideInInspector] private MeshData data;
 		[SerializeField, HideInInspector] private List<DeformerElement> deformerElements = new List<DeformerElement> ();
@@ -203,7 +215,7 @@ namespace Deform
 					// to the end of the chain.
 					if (deformer.RequiresUpdatedBounds && BoundsRecalculation == BoundsRecalculation.Auto)
 					{
-						handle = MeshUtils.RecalculateBounds (data.DynamicNative, handle);
+						handle = MeshUtils.RecalculateBounds (data.TargetDynamicNative, handle);
 						currentModifiedDataFlags |= DataFlags.Bounds;
 					}
 
@@ -216,13 +228,13 @@ namespace Deform
 			if (NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
-				handle = MeshUtils.RecalculateNormals (data.DynamicNative, handle);
+				handle = MeshUtils.RecalculateNormals (data.TargetDynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
 			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
-				handle = MeshUtils.RecalculateBounds (data.DynamicNative, handle);
+				handle = MeshUtils.RecalculateBounds (data.TargetDynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
@@ -254,7 +266,10 @@ namespace Deform
 			if (!CanUpdate ())
 				return;
 
-			data.ApplyData (currentModifiedDataFlags | lastModifiedDataFlags);
+			if (Application.isPlaying)
+				data.ApplyDataElastic (currentModifiedDataFlags | lastModifiedDataFlags, ElasticForce, ElasticDampening);
+			else
+				data.ApplyData (currentModifiedDataFlags | lastModifiedDataFlags);
 
 			if (BoundsRecalculation == BoundsRecalculation.Custom )
 				data.DynamicMesh.bounds = CustomBounds;

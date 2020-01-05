@@ -148,8 +148,8 @@ namespace Deform
 							direction = Quaternion.Inverse (data.Target.GetTransform ().rotation) * Axis.forward,
 							meshToAxis = meshToAxis,
 							texture = nativeTexture,
-							vertices = data.DynamicNative.VertexBuffer,
-							normals = data.DynamicNative.NormalBuffer
+							vertices = data.TargetDynamicNative.VertexBuffer,
+							normals = data.TargetDynamicNative.NormalBuffer
 						}.Schedule (data.Length, 32, dependency);
 					else
 						newHandle = new WorldTextureDisplaceBilinearJob
@@ -162,8 +162,8 @@ namespace Deform
 							direction = Quaternion.Inverse (data.Target.GetTransform ().rotation) * Axis.forward,
 							meshToAxis = meshToAxis,
 							texture = nativeTexture,
-							vertices = data.DynamicNative.VertexBuffer,
-							normals = data.DynamicNative.NormalBuffer
+							vertices = data.TargetDynamicNative.VertexBuffer,
+							normals = data.TargetDynamicNative.NormalBuffer
 						}.Schedule (data.Length, 32, dependency);
 					break;
 				case TextureSampleSpace.UV:
@@ -176,9 +176,9 @@ namespace Deform
 							offset = Offset,
 							tiling = Tiling,
 							texture = nativeTexture,
-							uvs = data.DynamicNative.UVBuffer,
-							vertices = data.DynamicNative.VertexBuffer,
-							normals = data.DynamicNative.NormalBuffer
+							uvs = data.TargetDynamicNative.UVBuffer,
+							vertices = data.TargetDynamicNative.VertexBuffer,
+							normals = data.TargetDynamicNative.NormalBuffer
 						}.Schedule (data.Length, 32, dependency);
 					else
 						newHandle = new UVTextureDisplaceBilinearJob
@@ -189,9 +189,9 @@ namespace Deform
 							offset = Offset,
 							tiling = Tiling,
 							texture = nativeTexture,
-							uvs = data.DynamicNative.UVBuffer,
-							vertices = data.DynamicNative.VertexBuffer,
-							normals = data.DynamicNative.NormalBuffer
+							uvs = data.TargetDynamicNative.UVBuffer,
+							vertices = data.TargetDynamicNative.VertexBuffer,
+							normals = data.TargetDynamicNative.NormalBuffer
 						}.Schedule (data.Length, 32, dependency);
 					break;
 			}

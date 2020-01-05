@@ -36,7 +36,7 @@ namespace Deform
 				scale = Axis.localScale,
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
-				vertices = data.DynamicNative.VertexBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

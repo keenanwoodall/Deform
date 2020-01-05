@@ -32,13 +32,13 @@ namespace Deform
 				return dependency;
 
 			if (UseUpdatedNormals)
-				dependency = MeshUtils.RecalculateNormals (data.DynamicNative, dependency);
+				dependency = MeshUtils.RecalculateNormals (data.TargetDynamicNative, dependency);
 
 			return new InflateJob
 			{
 				factor = Factor,
-				vertices = data.DynamicNative.VertexBuffer,
-				normals = data.DynamicNative.NormalBuffer,
+				vertices = data.TargetDynamicNative.VertexBuffer,
+				normals = data.TargetDynamicNative.NormalBuffer,
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

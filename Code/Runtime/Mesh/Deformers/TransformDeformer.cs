@@ -50,7 +50,7 @@ namespace Deform
 			return new TransformJob
 			{
 				matrix = matrix,
-				vertices = data.DynamicNative.VertexBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer
 			}.Schedule (data.Length, 256, dependency);
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -32,9 +33,13 @@ namespace Deform
 		public NativeMeshData OriginalNative;
 
 		/// <summary>
+		/// Stores previous mesh data in NativeArrays for fast processing and multithreading.
+		/// </summary>
+		public NativeMeshData CurrentDynamicNative;
+		/// <summary>
 		/// Stores current mesh data in NativeArrays for fast processing and multithreading.
 		/// </summary>
-		public NativeMeshData DynamicNative;
+		public NativeMeshData TargetDynamicNative;
 
 		// Must be serialized so that if the Deformable that encapsulates this class is duplicated the reference won't be broken.
 		[SerializeField, HideInInspector]
@@ -119,15 +124,16 @@ namespace Deform
 			dynamicManaged = new ManagedMeshData (DynamicMesh);
 			// Copy the managed data into native data.
 			OriginalNative = new NativeMeshData (originalManaged);
-			DynamicNative = new NativeMeshData (dynamicManaged);
+			TargetDynamicNative = new NativeMeshData (dynamicManaged);
+			CurrentDynamicNative = new NativeMeshData (dynamicManaged);
 
 			initialized = true;
 
 			return true;
 		}
 
-		public ManagedMeshData GetOriginalManagedData() => originalManaged;
-		public ManagedMeshData GetDynamicManagedData() => dynamicManaged;
+		public ManagedMeshData GetOriginalManagedData () => originalManaged;
+		public ManagedMeshData GetDynamicManagedData () => dynamicManaged;
 
 		/// <summary>
 		/// Disposes of current data and reinitializes with the targetObject's filter's shared mesh.
@@ -158,13 +164,45 @@ namespace Deform
 		public void ApplyData (DataFlags dataFlags)
 		{
 			// Copy the native data into the managed data for efficient transfer into the actual mesh.
-			DataUtils.CopyNativeDataToManagedData (dynamicManaged, DynamicNative, dataFlags);
+			DataUtils.CopyNativeDataToManagedData (dynamicManaged, TargetDynamicNative, dataFlags);
 
 			if (DynamicMesh == null)
 				return;
 			// Send managed data to mesh.
 			if ((dataFlags & DataFlags.Vertices) != 0)
 				DynamicMesh.vertices = dynamicManaged.Vertices;
+			if ((dataFlags & DataFlags.Normals) != 0)
+				DynamicMesh.normals = dynamicManaged.Normals;
+			if ((dataFlags & DataFlags.Tangents) != 0)
+				DynamicMesh.tangents = dynamicManaged.Tangents;
+			if ((dataFlags & DataFlags.UVs) != 0)
+				DynamicMesh.uv = dynamicManaged.UVs;
+			if ((dataFlags & DataFlags.Colors) != 0)
+				DynamicMesh.colors = dynamicManaged.Colors;
+			if ((dataFlags & DataFlags.Triangles) != 0)
+				DynamicMesh.triangles = dynamicManaged.Triangles;
+			if ((dataFlags & DataFlags.Bounds) != 0)
+				DynamicMesh.bounds = dynamicManaged.Bounds;
+		}
+
+		/// <summary>
+		/// Applies the dynamic native data's vertices, normals and bounds to the dynamic mesh.
+		/// </summary>
+		public void ApplyDataElastic(DataFlags dataFlags, float strength, float dampening)
+		{
+			// Copy the native data into the managed data for efficient transfer into the actual mesh.
+			// Specifically don't apply vertices since they'll be applied elasticly.
+			DataUtils.CopyNativeDataToManagedData(dynamicManaged, CurrentDynamicNative, dataFlags & (~DataFlags.Vertices));
+
+			if (DynamicMesh == null)
+				return;
+			// Send managed data to mesh.
+
+			// Always apply vertices since the effect is elastic and needs to keep running even if no deformables flag the vertices.
+			DataUtils.ElasticlyInterpolateMeshData(this, strength, dampening);
+			CurrentDynamicNative.VertexBuffer.MemCpy(dynamicManaged.Vertices);
+			DynamicMesh.vertices = dynamicManaged.Vertices;
+
 			if ((dataFlags & DataFlags.Normals) != 0)
 				DynamicMesh.normals = dynamicManaged.Normals;
 			if ((dataFlags & DataFlags.Tangents) != 0)
@@ -198,7 +236,7 @@ namespace Deform
 		public void ResetData (DataFlags dataFlags)
 		{
 			// Copy the original mesh data into the native data to remove any changes.
-			DataUtils.CopyNativeDataToNativeData (OriginalNative, DynamicNative, dataFlags);
+			DataUtils.CopyNativeDataToNativeData (OriginalNative, TargetDynamicNative, dataFlags);
 		}
 
 		/// <summary>
@@ -256,8 +294,10 @@ namespace Deform
 				Target.SetMesh (OriginalMesh);
 			}
 
-			if (DynamicNative != null)
-				DynamicNative.Dispose ();
+			if (CurrentDynamicNative != null)
+				CurrentDynamicNative.Dispose ();
+			if (TargetDynamicNative != null)
+				TargetDynamicNative.Dispose ();
 			if (OriginalNative != null)
 				OriginalNative.Dispose ();
 		}

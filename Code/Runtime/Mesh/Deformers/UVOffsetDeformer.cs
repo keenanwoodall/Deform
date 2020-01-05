@@ -25,7 +25,7 @@ namespace Deform
 			return new UVOffsetJob
 			{
 				offset = offset,
-				uvs = data.DynamicNative.UVBuffer
+				uvs = data.TargetDynamicNative.UVBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

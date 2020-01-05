@@ -34,7 +34,7 @@ namespace Deform
 			return new TransformOffsetJob
 			{
 				matrix = matrix,
-				vertices = data.DynamicNative.VertexBuffer
+				vertices = data.TargetDynamicNative.VertexBuffer
 			}.Schedule (data.Length, 256, dependency);
 		}
 

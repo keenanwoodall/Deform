@@ -66,7 +66,7 @@ namespace Deform
 						factor = Factor,
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer
+						vertices = data.TargetDynamicNative.VertexBuffer
 					}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 				case BoundsMode.Limited:
 					return new LimitedSkewJob
@@ -76,7 +76,7 @@ namespace Deform
 						bottom = Bottom,
 						meshToAxis = meshToAxis,
 						axisToMesh = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer
+						vertices = data.TargetDynamicNative.VertexBuffer
 					}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 			}
 		}
