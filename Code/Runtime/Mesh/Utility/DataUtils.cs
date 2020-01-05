@@ -49,42 +49,6 @@ namespace Deform
 				native.Bounds[0] = managed.Bounds;
 		}
 
-		public static void ElasticlyInterpolateMeshData(MeshData meshData, float strength, float dampening)
-		{
-			for (int i = 0; i < meshData.Length; i++)
-			{
-				var currentVertices = meshData.CurrentDynamicNative.VertexBuffer;
-				var targetVertices = meshData.TargetDynamicNative.VertexBuffer;
-				var velocities = meshData.TargetDynamicNative.VelocityBuffer;
-
-				var currentVertice = currentVertices[i];
-				var targetVertice = targetVertices[i];
-
-				var transform = meshData.Target.GetTransform();
-
-				var currentWorldVertice = math.mul(transform.localToWorldMatrix, math.float4(currentVertice, 1f)).xyz;
-				var targetWorldVertice = math.mul(transform.localToWorldMatrix, math.float4(targetVertice, 1f)).xyz;
-
-				var difference = currentWorldVertice - targetWorldVertice;
-				var distance = math.length(difference);
-
-				if (distance < 0.0001f && math.lengthsq(velocities[i]) < 0.0001f)
-					continue;
-
-				var direction = math.normalize(difference);
-
-				var velocity = direction * (distance * strength * Time.deltaTime);
-				velocities[i] -= velocity;
-				velocities[i] *= dampening;
-
-				currentWorldVertice += velocities[i];
-
-				Debug.DrawRay(currentWorldVertice, velocity * 2f, Color.red);
-
-				currentVertices[i] = math.mul(transform.worldToLocalMatrix, math.float4(currentWorldVertice, 1f)).xyz;
-			}
-		}
-
 		/// <summary>
 		/// Copies mesh data from native arrays into managed ones.
 		/// </summary>

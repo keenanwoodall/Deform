@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
+using Unity.Mathematics;
+using Unity.Collections;
 
 namespace Deform
 {
@@ -58,10 +60,10 @@ namespace Deform
 			get => meshCollider;
 			set => meshCollider = value;
 		}
-		public float ElasticForce
+		public float ElasticStrength
 		{
-			get => elasticForce;
-			set => elasticForce = value;
+			get => elasticStrength;
+			set => elasticStrength = value;
 		}
 		public float ElasticDampening
 		{
@@ -105,7 +107,7 @@ namespace Deform
 		[SerializeField, HideInInspector] private BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
 		[SerializeField, HideInInspector] private ColliderRecalculation colliderRecalculation = ColliderRecalculation.None;
 		[SerializeField, HideInInspector] private MeshCollider meshCollider;
-		[SerializeField, HideInInspector] private float elasticForce = 2f;
+		[SerializeField, HideInInspector] private float elasticStrength = 2f;
 		[SerializeField, HideInInspector] private float elasticDampening = 0.9f;
 
 		[SerializeField, HideInInspector] private MeshData data;
@@ -225,16 +227,37 @@ namespace Deform
 				}
 			}
 
+			if (Application.isPlaying)
+			{
+				handle = new ElasticVertexUpdateJob
+				{
+					strength = ElasticStrength,
+					dampening = ElasticDampening,
+					deltaTime = Time.deltaTime,
+					localToWorld = transform.localToWorldMatrix,
+					worldToLocal = transform.worldToLocalMatrix,
+					velocities = data.CurrentDynamicNative.VelocityBuffer,
+					currentVertices = data.CurrentDynamicNative.VertexBuffer,
+					targetVertices = data.TargetDynamicNative.VertexBuffer
+				}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
+			}
+
 			if (NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
-				handle = MeshUtils.RecalculateNormals (data.TargetDynamicNative, handle);
+				if (Application.isPlaying)
+					handle = MeshUtils.RecalculateNormals(data.CurrentDynamicNative, handle);
+				else
+					handle = MeshUtils.RecalculateNormals(data.TargetDynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
 			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
-				handle = MeshUtils.RecalculateBounds (data.TargetDynamicNative, handle);
+				if (Application.isPlaying)
+					handle = MeshUtils.RecalculateBounds (data.CurrentDynamicNative, handle);
+				else
+					handle = MeshUtils.RecalculateBounds(data.TargetDynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
@@ -266,10 +289,13 @@ namespace Deform
 			if (!CanUpdate ())
 				return;
 
+			var flags = currentModifiedDataFlags | lastModifiedDataFlags;
+
+			// If in play-mode, always apply vertices since it's an elastic effect
 			if (Application.isPlaying)
-				data.ApplyDataElastic (currentModifiedDataFlags | lastModifiedDataFlags, ElasticForce, ElasticDampening);
-			else
-				data.ApplyData (currentModifiedDataFlags | lastModifiedDataFlags);
+				flags |= DataFlags.Vertices;
+
+			data.ApplyData (flags, Application.isPlaying ? data.CurrentDynamicNative : data.TargetDynamicNative);
 
 			if (BoundsRecalculation == BoundsRecalculation.Custom )
 				data.DynamicMesh.bounds = CustomBounds;

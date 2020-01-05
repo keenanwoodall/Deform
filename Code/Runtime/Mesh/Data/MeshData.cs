@@ -159,12 +159,12 @@ namespace Deform
 		}
 
 		/// <summary>
-		/// Applies the dynamic native data's vertices, normals and bounds to the dynamic mesh.
+		/// Applies the data's vertices, normals and bounds to the dynamic mesh.
 		/// </summary>
-		public void ApplyData (DataFlags dataFlags)
+		public void ApplyData (DataFlags dataFlags, NativeMeshData data)
 		{
 			// Copy the native data into the managed data for efficient transfer into the actual mesh.
-			DataUtils.CopyNativeDataToManagedData (dynamicManaged, TargetDynamicNative, dataFlags);
+			DataUtils.CopyNativeDataToManagedData (dynamicManaged, data, dataFlags);
 
 			if (DynamicMesh == null)
 				return;
@@ -184,37 +184,12 @@ namespace Deform
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				DynamicMesh.bounds = dynamicManaged.Bounds;
 		}
-
 		/// <summary>
-		/// Applies the dynamic native data's vertices, normals and bounds to the dynamic mesh.
+		/// Applies the target dynamic native data's vertices, normals and bounds to the dynamic mesh.
 		/// </summary>
-		public void ApplyDataElastic(DataFlags dataFlags, float strength, float dampening)
+		public void ApplyData(DataFlags dataFlags)
 		{
-			// Copy the native data into the managed data for efficient transfer into the actual mesh.
-			// Specifically don't apply vertices since they'll be applied elasticly.
-			DataUtils.CopyNativeDataToManagedData(dynamicManaged, CurrentDynamicNative, dataFlags & (~DataFlags.Vertices));
-
-			if (DynamicMesh == null)
-				return;
-			// Send managed data to mesh.
-
-			// Always apply vertices since the effect is elastic and needs to keep running even if no deformables flag the vertices.
-			DataUtils.ElasticlyInterpolateMeshData(this, strength, dampening);
-			CurrentDynamicNative.VertexBuffer.MemCpy(dynamicManaged.Vertices);
-			DynamicMesh.vertices = dynamicManaged.Vertices;
-
-			if ((dataFlags & DataFlags.Normals) != 0)
-				DynamicMesh.normals = dynamicManaged.Normals;
-			if ((dataFlags & DataFlags.Tangents) != 0)
-				DynamicMesh.tangents = dynamicManaged.Tangents;
-			if ((dataFlags & DataFlags.UVs) != 0)
-				DynamicMesh.uv = dynamicManaged.UVs;
-			if ((dataFlags & DataFlags.Colors) != 0)
-				DynamicMesh.colors = dynamicManaged.Colors;
-			if ((dataFlags & DataFlags.Triangles) != 0)
-				DynamicMesh.triangles = dynamicManaged.Triangles;
-			if ((dataFlags & DataFlags.Bounds) != 0)
-				DynamicMesh.bounds = dynamicManaged.Bounds;
+			ApplyData(dataFlags, TargetDynamicNative);
 		}
 
 		/// <summary>

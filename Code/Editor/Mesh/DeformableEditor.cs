@@ -26,7 +26,7 @@ namespace DeformEditor
 			public static readonly GUIContent BoundsRecalculation = new GUIContent (text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent (text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent (text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
-			public static readonly GUIContent ElasticForce = new GUIContent (text: "Elastic Force");
+			public static readonly GUIContent ElasticStrength = new GUIContent (text: "Elastic Strength");
 			public static readonly GUIContent ElasticDampening = new GUIContent (text: "Elastic Dampening");
 			public static readonly GUIContent CustomBounds = new GUIContent (text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
 
@@ -48,7 +48,7 @@ namespace DeformEditor
 			public SerializedProperty BoundsRecalculation;
 			public SerializedProperty ColliderRecalculation;
 			public SerializedProperty MeshCollider;
-			public SerializedProperty ElasticForce;
+			public SerializedProperty ElasticStrength;
 			public SerializedProperty ElasticDampening;
 			public SerializedProperty CustomBounds;
 
@@ -58,7 +58,7 @@ namespace DeformEditor
 				NormalsRecalculation	= obj.FindProperty ("normalsRecalculation");
 				BoundsRecalculation		= obj.FindProperty ("boundsRecalculation");
 				ColliderRecalculation	= obj.FindProperty ("colliderRecalculation");
-				ElasticForce			= obj.FindProperty ("elasticForce");
+				ElasticStrength			= obj.FindProperty ("elasticStrength");
 				ElasticDampening		= obj.FindProperty ("elasticDampening");
 				MeshCollider			= obj.FindProperty ("meshCollider");
 				CustomBounds			= obj.FindProperty ("customBounds");
@@ -115,7 +115,7 @@ namespace DeformEditor
 					EditorGUILayout.PropertyField (properties.MeshCollider, Content.MeshCollider);
 			}
 
-			EditorGUILayout.PropertyField(properties.ElasticForce, Content.ElasticForce);
+			EditorGUILayout.PropertyField(properties.ElasticStrength, Content.ElasticStrength);
 			EditorGUILayout.PropertyField(properties.ElasticDampening, Content.ElasticDampening);
 
 			EditorGUILayout.Space ();
