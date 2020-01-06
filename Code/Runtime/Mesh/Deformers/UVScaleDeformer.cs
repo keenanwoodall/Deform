@@ -31,7 +31,7 @@ namespace Deform
 			return new UVScaleJob
 			{
 				scale = Scale * Factor,
-				uvs = data.TargetDynamicNative.UVBuffer
+				uvs = data.DynamicNative.UVBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

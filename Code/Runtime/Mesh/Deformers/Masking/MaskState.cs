@@ -16,8 +16,8 @@ namespace Deform.Masking
 		{
 			return new MaskStateJob
 			{
-				currentVertices = data.TargetDynamicNative.VertexBuffer,
-				maskVertices = data.TargetDynamicNative.MaskVertexBuffer
+				currentVertices = data.DynamicNative.VertexBuffer,
+				maskVertices = data.DynamicNative.MaskVertexBuffer
 			}.Schedule (data.Length, 256, dependency);
 		}
 

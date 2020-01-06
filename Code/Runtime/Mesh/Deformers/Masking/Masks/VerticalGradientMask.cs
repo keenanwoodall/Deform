@@ -52,8 +52,8 @@ namespace Deform.Masking
 					factor = Factor,
 					falloff = Falloff,
 					meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
-					currentVertices = data.TargetDynamicNative.VertexBuffer,
-					maskVertices = data.TargetDynamicNative.MaskVertexBuffer
+					currentVertices = data.DynamicNative.VertexBuffer,
+					maskVertices = data.DynamicNative.MaskVertexBuffer
 				}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 			else
 				return new InvertedVerticalGradientJob
@@ -61,8 +61,8 @@ namespace Deform.Masking
 					factor = Factor,
 					falloff = Falloff,
 					meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
-					currentVertices = data.TargetDynamicNative.VertexBuffer,
-					maskVertices = data.TargetDynamicNative.MaskVertexBuffer
+					currentVertices = data.DynamicNative.VertexBuffer,
+					maskVertices = data.DynamicNative.MaskVertexBuffer
 				}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

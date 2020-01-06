@@ -11,7 +11,7 @@ namespace Deform
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default)
 		{
-			return MeshUtils.RecalculateBounds (data.TargetDynamicNative, dependency);
+			return MeshUtils.RecalculateBounds (data.DynamicNative, dependency);
 		}
 	}
 }

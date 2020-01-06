@@ -11,7 +11,6 @@ namespace Deform
 	public class NativeMeshData : IDisposable
 	{
 		public NativeArray<float3> VertexBuffer;
-		public NativeArray<float3> VelocityBuffer;
 		public NativeArray<float3> NormalBuffer;
 		public NativeArray<float4> TangentBuffer;
 		public NativeArray<float2> UVBuffer;
@@ -23,7 +22,6 @@ namespace Deform
 		public NativeMeshData (ManagedMeshData data, Allocator allocator = Allocator.Persistent)
 		{
 			VertexBuffer		= new NativeArray<float3> (data.Vertices.Length,  allocator, NativeArrayOptions.UninitializedMemory);
-			VelocityBuffer		= new NativeArray<float3> (data.Vertices.Length,  allocator, NativeArrayOptions.ClearMemory);
 			NormalBuffer		= new NativeArray<float3> (data.Normals.Length,	  allocator, NativeArrayOptions.UninitializedMemory);
 			TangentBuffer		= new NativeArray<float4> (data.Tangents.Length,  allocator, NativeArrayOptions.UninitializedMemory);
 			UVBuffer			= new NativeArray<float2> (data.UVs.Length,		  allocator, NativeArrayOptions.UninitializedMemory);
@@ -42,8 +40,6 @@ namespace Deform
 		{
 			if (VertexBuffer.IsCreated)
 				VertexBuffer.Dispose ();
-			if (VelocityBuffer.IsCreated)
-				VelocityBuffer.Dispose();
 			if (NormalBuffer.IsCreated)
 				NormalBuffer.Dispose ();
 			if (TangentBuffer.IsCreated)

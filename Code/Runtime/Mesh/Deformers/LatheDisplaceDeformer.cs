@@ -83,7 +83,7 @@ namespace Deform
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
 				curve = nativeCurve,
-				vertices = data.TargetDynamicNative.VertexBuffer
+				vertices = data.DynamicNative.VertexBuffer
 			}.Schedule (data.Length, 128, dependency);
 
 			combinedHandle = JobHandle.CombineDependencies (combinedHandle, newHandle);

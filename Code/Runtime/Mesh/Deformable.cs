@@ -124,7 +124,7 @@ namespace Deform
 #endif
 		}
 
-		private void OnDisable()
+		protected virtual void OnDisable()
 		{
 			Complete();
 			data.Dispose(assignOriginalMeshOnDisable);
@@ -135,7 +135,7 @@ namespace Deform
 		/// <summary>
 		/// Initializes mesh data.
 		/// </summary>
-		public void InitializeData()
+		public virtual void InitializeData()
 		{
 			// Don't create a new instance if one already exists because it'll will lose any serialized data from the previous instance.
 			if (data == null)
@@ -203,7 +203,7 @@ namespace Deform
 					// to the end of the chain.
 					if (deformer.RequiresUpdatedBounds && BoundsRecalculation == BoundsRecalculation.Auto)
 					{
-						handle = MeshUtils.RecalculateBounds(data.TargetDynamicNative, handle);
+						handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 						currentModifiedDataFlags |= DataFlags.Bounds;
 					}
 
@@ -216,13 +216,13 @@ namespace Deform
 			if (NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
-				handle = MeshUtils.RecalculateNormals(data.TargetDynamicNative, handle);
+				handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
 			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
-				handle = MeshUtils.RecalculateBounds(data.TargetDynamicNative, handle);
+				handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 

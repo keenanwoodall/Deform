@@ -72,8 +72,8 @@ namespace Deform.Masking
 					outerRadius = OuterRadius * 0.5f,
 					meshToAxis = meshToAxis,
 					axisToMesh = meshToAxis.inverse,
-					currentVertices = data.TargetDynamicNative.VertexBuffer,
-					maskVertices = data.TargetDynamicNative.MaskVertexBuffer
+					currentVertices = data.DynamicNative.VertexBuffer,
+					maskVertices = data.DynamicNative.MaskVertexBuffer
 				}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 			else
 				return new InvertedSphereMaskJob
@@ -83,8 +83,8 @@ namespace Deform.Masking
 					outerRadius = OuterRadius * 0.5f,
 					meshToAxis = meshToAxis,
 					axisToMesh = meshToAxis.inverse,
-					currentVertices = data.TargetDynamicNative.VertexBuffer,
-					maskVertices = data.TargetDynamicNative.MaskVertexBuffer
+					currentVertices = data.DynamicNative.VertexBuffer,
+					maskVertices = data.DynamicNative.MaskVertexBuffer
 				}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

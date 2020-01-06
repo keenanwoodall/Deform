@@ -82,7 +82,7 @@ namespace Deform
 				smooth = Smooth,
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
-				vertices = data.TargetDynamicNative.VertexBuffer
+				vertices = data.DynamicNative.VertexBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

@@ -33,13 +33,9 @@ namespace Deform
 		public NativeMeshData OriginalNative;
 
 		/// <summary>
-		/// Stores previous mesh data in NativeArrays for fast processing and multithreading.
+		/// Stores mesh data in NativeArrays for fast processing and multithreading.
 		/// </summary>
-		public NativeMeshData CurrentDynamicNative;
-		/// <summary>
-		/// Stores current mesh data in NativeArrays for fast processing and multithreading.
-		/// </summary>
-		public NativeMeshData TargetDynamicNative;
+		public NativeMeshData DynamicNative;
 
 		// Must be serialized so that if the Deformable that encapsulates this class is duplicated the reference won't be broken.
 		[SerializeField, HideInInspector]
@@ -124,8 +120,7 @@ namespace Deform
 			dynamicManaged = new ManagedMeshData (DynamicMesh);
 			// Copy the managed data into native data.
 			OriginalNative = new NativeMeshData (originalManaged);
-			TargetDynamicNative = new NativeMeshData (dynamicManaged);
-			CurrentDynamicNative = new NativeMeshData (dynamicManaged);
+			DynamicNative = new NativeMeshData (dynamicManaged);
 
 			initialized = true;
 
@@ -159,12 +154,12 @@ namespace Deform
 		}
 
 		/// <summary>
-		/// Applies the data's vertices, normals and bounds to the dynamic mesh.
+		/// Applies the dynamic native data's vertices, normals and bounds to the dynamic mesh.
 		/// </summary>
-		public void ApplyData (DataFlags dataFlags, NativeMeshData data)
+		public void ApplyData(DataFlags dataFlags)
 		{
 			// Copy the native data into the managed data for efficient transfer into the actual mesh.
-			DataUtils.CopyNativeDataToManagedData (dynamicManaged, data, dataFlags);
+			DataUtils.CopyNativeDataToManagedData(dynamicManaged, DynamicNative, dataFlags);
 
 			if (DynamicMesh == null)
 				return;
@@ -183,13 +178,6 @@ namespace Deform
 				DynamicMesh.triangles = dynamicManaged.Triangles;
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				DynamicMesh.bounds = dynamicManaged.Bounds;
-		}
-		/// <summary>
-		/// Applies the target dynamic native data's vertices, normals and bounds to the dynamic mesh.
-		/// </summary>
-		public void ApplyData(DataFlags dataFlags)
-		{
-			ApplyData(dataFlags, TargetDynamicNative);
 		}
 
 		/// <summary>
@@ -211,7 +199,7 @@ namespace Deform
 		public void ResetData (DataFlags dataFlags)
 		{
 			// Copy the original mesh data into the native data to remove any changes.
-			DataUtils.CopyNativeDataToNativeData (OriginalNative, TargetDynamicNative, dataFlags);
+			DataUtils.CopyNativeDataToNativeData (OriginalNative, DynamicNative, dataFlags);
 		}
 
 		/// <summary>
@@ -269,10 +257,8 @@ namespace Deform
 				Target.SetMesh (OriginalMesh);
 			}
 
-			if (CurrentDynamicNative != null)
-				CurrentDynamicNative.Dispose ();
-			if (TargetDynamicNative != null)
-				TargetDynamicNative.Dispose ();
+			if (DynamicNative != null)
+				DynamicNative.Dispose ();
 			if (OriginalNative != null)
 				OriginalNative.Dispose ();
 		}

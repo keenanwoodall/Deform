@@ -114,8 +114,8 @@ namespace Deform
 				radialMagnitude = RadialMagnitude,
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
-				vertices = data.TargetDynamicNative.VertexBuffer,
-				normals = data.TargetDynamicNative.NormalBuffer
+				vertices = data.DynamicNative.VertexBuffer,
+				normals = data.DynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 

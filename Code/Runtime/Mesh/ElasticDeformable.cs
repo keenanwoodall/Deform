@@ -27,6 +27,26 @@ namespace Deform
 		[SerializeField, HideInInspector] private float elasticStrength = 5f;
 		[SerializeField, HideInInspector] private float elasticDampening = 0.9f;
 
+		private NativeArray<float3> velocityBuffer;
+		private NativeArray<float3> currentVertexBuffer;
+
+		public override void InitializeData()
+		{
+			base.InitializeData();
+			velocityBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+			currentVertexBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+			data.OriginalNative.VertexBuffer.CopyTo(currentVertexBuffer);
+		}
+
+		protected override void OnDisable()
+		{
+			base.OnDisable();
+			if (velocityBuffer != null)
+				velocityBuffer.Dispose();
+			if (currentVertexBuffer != null)
+				currentVertexBuffer.Dispose();
+		}
+
 		/// <summary>
 		/// Creates a chain of work to deform the native mesh data.
 		/// </summary>
@@ -60,7 +80,7 @@ namespace Deform
 					// to the end of the chain.
 					if (deformer.RequiresUpdatedBounds && BoundsRecalculation == BoundsRecalculation.Auto)
 					{
-						handle = MeshUtils.RecalculateBounds(data.TargetDynamicNative, handle);
+						handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 						currentModifiedDataFlags |= DataFlags.Bounds;
 					}
 
@@ -79,9 +99,9 @@ namespace Deform
 					deltaTime = Time.deltaTime,
 					localToWorld = transform.localToWorldMatrix,
 					worldToLocal = transform.worldToLocalMatrix,
-					velocities = data.CurrentDynamicNative.VelocityBuffer,
-					currentVertices = data.CurrentDynamicNative.VertexBuffer,
-					targetVertices = data.TargetDynamicNative.VertexBuffer
+					velocities = velocityBuffer,
+					currentVertices = currentVertexBuffer,
+					targetVertices = data.DynamicNative.VertexBuffer
 				}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
 			}
 
@@ -89,18 +109,18 @@ namespace Deform
 			{
 				// Add normal recalculation to the end of the deformation chain.
 				if (Application.isPlaying)
-					handle = MeshUtils.RecalculateNormals(data.CurrentDynamicNative, handle);
+					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
 				else
-					handle = MeshUtils.RecalculateNormals(data.TargetDynamicNative, handle);
+					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
 			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
 				if (Application.isPlaying)
-					handle = MeshUtils.RecalculateBounds(data.CurrentDynamicNative, handle);
+					handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 				else
-					handle = MeshUtils.RecalculateBounds(data.TargetDynamicNative, handle);
+					handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
@@ -122,7 +142,15 @@ namespace Deform
 			if (Application.isPlaying)
 				flags |= DataFlags.Vertices;
 
-			data.ApplyData(flags, Application.isPlaying ? data.CurrentDynamicNative : data.TargetDynamicNative);
+			var originalVertexBuffer = data.DynamicNative.VertexBuffer;
+			if (Application.isPlaying)
+			{
+				// Swap out the final vertices with the ones moved by spring forces before applying...
+				data.DynamicNative.VertexBuffer = currentVertexBuffer;
+			}
+			data.ApplyData(flags);
+			// Then reassign the final vertices
+			data.DynamicNative.VertexBuffer = originalVertexBuffer;
 
 			if (BoundsRecalculation == BoundsRecalculation.Custom)
 				data.DynamicMesh.bounds = CustomBounds;

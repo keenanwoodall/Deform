@@ -47,9 +47,9 @@ namespace Deform.Masking
 					factor = Factor,
 					falloff = Falloff,
 					channel = (int)Channel,
-					currentVertices = data.TargetDynamicNative.VertexBuffer,
-					maskVertices = data.TargetDynamicNative.MaskVertexBuffer,
-					colors = data.TargetDynamicNative.ColorBuffer,
+					currentVertices = data.DynamicNative.VertexBuffer,
+					maskVertices = data.DynamicNative.MaskVertexBuffer,
+					colors = data.DynamicNative.ColorBuffer,
 				}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 			else
 				return new InvertedVertexColorJob
@@ -57,9 +57,9 @@ namespace Deform.Masking
 					factor = Factor,
 					falloff = Falloff,
 					channel = (int)Channel,
-					currentVertices = data.TargetDynamicNative.VertexBuffer,
-					maskVertices = data.TargetDynamicNative.MaskVertexBuffer,
-					colors = data.TargetDynamicNative.ColorBuffer,
+					currentVertices = data.DynamicNative.VertexBuffer,
+					maskVertices = data.DynamicNative.MaskVertexBuffer,
+					colors = data.DynamicNative.ColorBuffer,
 				}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
