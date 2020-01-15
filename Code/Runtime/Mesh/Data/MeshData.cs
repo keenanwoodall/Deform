@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -32,7 +33,7 @@ namespace Deform
 		public NativeMeshData OriginalNative;
 
 		/// <summary>
-		/// Stores current mesh data in NativeArrays for fast processing and multithreading.
+		/// Stores mesh data in NativeArrays for fast processing and multithreading.
 		/// </summary>
 		public NativeMeshData DynamicNative;
 
@@ -126,8 +127,8 @@ namespace Deform
 			return true;
 		}
 
-		public ManagedMeshData GetOriginalManagedData() => originalManaged;
-		public ManagedMeshData GetDynamicManagedData() => dynamicManaged;
+		public ManagedMeshData GetOriginalManagedData () => originalManaged;
+		public ManagedMeshData GetDynamicManagedData () => dynamicManaged;
 
 		/// <summary>
 		/// Disposes of current data and reinitializes with the targetObject's filter's shared mesh.
@@ -155,10 +156,10 @@ namespace Deform
 		/// <summary>
 		/// Applies the dynamic native data's vertices, normals and bounds to the dynamic mesh.
 		/// </summary>
-		public void ApplyData (DataFlags dataFlags)
+		public void ApplyData(DataFlags dataFlags)
 		{
 			// Copy the native data into the managed data for efficient transfer into the actual mesh.
-			DataUtils.CopyNativeDataToManagedData (dynamicManaged, DynamicNative, dataFlags);
+			DataUtils.CopyNativeDataToManagedData(dynamicManaged, DynamicNative, dataFlags);
 
 			if (DynamicMesh == null)
 				return;

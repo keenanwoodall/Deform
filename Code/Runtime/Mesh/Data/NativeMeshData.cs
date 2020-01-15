@@ -21,16 +21,14 @@ namespace Deform
 
 		public NativeMeshData (ManagedMeshData data, Allocator allocator = Allocator.Persistent)
 		{
-			var length = data.Vertices.Length;
-
-			VertexBuffer		= new NativeArray<float3>		(data.Vertices.Length,	allocator, NativeArrayOptions.UninitializedMemory);
-			NormalBuffer		= new NativeArray<float3>		(data.Normals.Length,	allocator, NativeArrayOptions.UninitializedMemory);
-			TangentBuffer		= new NativeArray<float4>		(data.Tangents.Length,	allocator, NativeArrayOptions.UninitializedMemory);
-			UVBuffer			= new NativeArray<float2>		(data.UVs.Length,		allocator, NativeArrayOptions.UninitializedMemory);
-			ColorBuffer			= new NativeArray<float4>		(data.Colors.Length,	allocator, NativeArrayOptions.UninitializedMemory);
-			IndexBuffer			= new NativeArray<int>			(data.Triangles.Length, allocator, NativeArrayOptions.UninitializedMemory);
-			MaskVertexBuffer	= new NativeArray<float3>		(data.Vertices.Length,	allocator, NativeArrayOptions.UninitializedMemory);
-			Bounds				= new NativeArray<bounds>		(1,						allocator, NativeArrayOptions.UninitializedMemory);
+			VertexBuffer		= new NativeArray<float3> (data.Vertices.Length,  allocator, NativeArrayOptions.UninitializedMemory);
+			NormalBuffer		= new NativeArray<float3> (data.Normals.Length,	  allocator, NativeArrayOptions.UninitializedMemory);
+			TangentBuffer		= new NativeArray<float4> (data.Tangents.Length,  allocator, NativeArrayOptions.UninitializedMemory);
+			UVBuffer			= new NativeArray<float2> (data.UVs.Length,		  allocator, NativeArrayOptions.UninitializedMemory);
+			ColorBuffer			= new NativeArray<float4> (data.Colors.Length,	  allocator, NativeArrayOptions.UninitializedMemory);
+			IndexBuffer			= new NativeArray<int>	  (data.Triangles.Length, allocator, NativeArrayOptions.UninitializedMemory);
+			MaskVertexBuffer	= new NativeArray<float3> (data.Vertices.Length,  allocator, NativeArrayOptions.UninitializedMemory);
+			Bounds				= new NativeArray<bounds> (1, allocator, NativeArrayOptions.UninitializedMemory);
 
 			DataUtils.CopyManagedToNativeMeshData (data, this, DataFlags.All);
 		}

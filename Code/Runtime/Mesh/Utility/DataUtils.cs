@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Unity.Mathematics;
 using Beans.Unity.Collections;
 
 namespace Deform
