@@ -5,7 +5,7 @@ using Deform;
 
 namespace DeformEditor
 {
-	[CustomEditor(typeof(Deformable)), CanEditMultipleObjects]
+	[CustomEditor(typeof(Deformable), editorForChildClasses: true), CanEditMultipleObjects]
 	public class DeformableEditor : Editor
 	{
 		private static class Styles
@@ -65,14 +65,14 @@ namespace DeformEditor
 
 		private bool foldoutDebug;
 
-		private void OnEnable()
+		protected virtual void OnEnable()
 		{
 			properties = new Properties(serializedObject);
 
 			deformerList = new ReorderableComponentElementList<Deformer>(serializedObject, serializedObject.FindProperty("deformerElements"));
 		}
 
-		private void OnDisable()
+		protected virtual void OnDisable()
 		{
 			deformerList.Dispose();
 		}
@@ -80,6 +80,22 @@ namespace DeformEditor
 		public override void OnInspectorGUI()
 		{
 			serializedObject.UpdateIfRequiredOrScript();
+
+			DrawMainSettings();
+			EditorGUILayout.Space();
+			DrawDeformersList();
+			EditorGUILayout.Space();
+			DrawUtilityToolbar();
+			EditorGUILayout.Space();
+			DrawDebugInfo();
+			DrawHelpBoxes();
+
+			serializedObject.ApplyModifiedProperties();
+			EditorApplication.QueuePlayerLoopUpdate();
+		}
+
+		protected virtual void DrawMainSettings()
+		{
 			using (var check = new EditorGUI.ChangeCheckScope())
 			{
 				EditorGUILayout.PropertyField(properties.UpdateMode, Content.UpdateMode);
@@ -108,9 +124,10 @@ namespace DeformEditor
 				using (new EditorGUI.IndentLevelScope())
 					EditorGUILayout.PropertyField(properties.MeshCollider, Content.MeshCollider);
 			}
+		}
 
-			EditorGUILayout.Space();
-
+		protected virtual void DrawDeformersList()
+		{
 			deformerList.DoLayoutList();
 
 			var newDeformers = EditorGUILayoutx.DragAndDropArea<Deformer>();
@@ -131,9 +148,10 @@ namespace DeformEditor
 				serializedObject.SetIsDifferentCacheDirty();
 				serializedObject.Update();
 			}
+		}
 
-			EditorGUILayout.Space();
-
+		protected virtual void DrawUtilityToolbar()
+		{
 			using (new EditorGUILayout.HorizontalScope())
 			{
 				var selectedIndex = GUILayout.Toolbar(-1, Content.UtilityToolbar, EditorStyles.miniButton, GUILayout.MinWidth(0));
@@ -188,9 +206,10 @@ namespace DeformEditor
 						break;
 				}
 			}
+		}
 
-			EditorGUILayout.Space();
-
+		protected virtual void DrawDebugInfo()
+		{
 			if (foldoutDebug = EditorGUILayoutx.FoldoutHeader("Debug Info", foldoutDebug))
 			{
 				var vertexCount = 0;
@@ -210,9 +229,10 @@ namespace DeformEditor
 				EditorGUILayout.LabelField($"Modified Data: {modifiedData.ToString()}", Styles.WrappedLabel);
 				EditorGUILayout.LabelField($"Bounds: {bounds.ToString()}", Styles.WrappedLabel);
 			}
+		}
 
-			serializedObject.ApplyModifiedProperties();
-
+		protected virtual void DrawHelpBoxes()
+		{
 			foreach (var t in targets)
 			{
 				var deformable = t as Deformable;
@@ -221,8 +241,6 @@ namespace DeformEditor
 				if (originalMesh != null && !originalMesh.isReadable)
 					EditorGUILayout.HelpBox(Content.ReadWriteNotEnableAlert, MessageType.Error);
 			}
-
-			EditorApplication.QueuePlayerLoopUpdate();
 		}
 
 		private void OnSceneGUI()

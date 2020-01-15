@@ -213,7 +213,7 @@ namespace Beans.Unity.Editor
 		/// </summary>
 		public static void WIPAlert ()
 		{
-			EditorGUILayout.HelpBox ("WIP", MessageType.Warning, true);
+			EditorGUILayout.HelpBox ("WIP", MessageType.Info, true);
 		}
 
 
