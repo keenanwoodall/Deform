@@ -27,6 +27,7 @@ namespace Deform
 						Manager = DeformableManager.GetDefaultManager(true);
 						break;
 					case UpdateMode.Stop:
+						Complete();
 						data.ResetData(DataFlags.All);
 						ResetMesh();
 						break;
