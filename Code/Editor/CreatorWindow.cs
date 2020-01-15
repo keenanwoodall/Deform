@@ -310,19 +310,32 @@ namespace DeformEditor
 			return sum / gameObjects.Length;
 		}
 
-		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes ()
+		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes()
 		{
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies ())
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var assembly in assemblies)
 			{
-				foreach (var type in assembly.GetTypes ())
+				foreach (var type in GetLoadableTypes(assembly))
 				{
-					if (type.IsSubclassOf (typeof (Deformer)))
+					if (type.IsSubclassOf(typeof(Deformer)))
 					{
-						var attribute = type.GetCustomAttribute<DeformerAttribute> (false);
+						var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
 						if (attribute != null)
 							yield return attribute;
 					}
 				}
+			}
+		}
+
+		public static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
+		{
+			try
+			{
+				return assembly.GetTypes();
+			}
+			catch (ReflectionTypeLoadException e)
+			{
+				return e.Types.Where(t => t != null);
 			}
 		}
 	}
