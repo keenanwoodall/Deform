@@ -32,15 +32,10 @@ namespace Deform
 
 		private HashSet<IDeformable> deformables = new HashSet<IDeformable> ();
 
-		private void Start ()
-		{
-			if (update)
-			{
-				ScheduleDeformables ();
-				CompleteDeformables ();
-				ScheduleDeformables ();
-			}
-		}
+		/// <summary>
+		/// Temporary storage for added deformables to allow them to be updated immediately on the first frame they're added
+		/// </summary>
+		private HashSet<IDeformable> addedDeformables = new HashSet<IDeformable> ();
 
 		private void Update ()
 		{
@@ -49,6 +44,12 @@ namespace Deform
 				CompleteDeformables ();
 				ScheduleDeformables ();
 			}
+
+			// Move added deformables into the main deformables collection
+			foreach (var added in addedDeformables)
+				if (added != null)
+					deformables.Add(added);
+			addedDeformables.Clear();
 		}
 
 		private void OnDisable ()
@@ -88,7 +89,13 @@ namespace Deform
 		/// </summary>
 		public void AddDeformable (IDeformable deformable)
 		{
-			deformables.Add (deformable);
+			addedDeformables.Add (deformable);
+			// Force an immediate update so the deformable isn't undeformed on the first frame.
+			deformable.ForceImmediateUpdate ();
+			// Since changes from the previous frame are applied on the next, schedule changes now so that
+			// when the next frame arrives the reset data from the immediate update isn't applied.
+			deformable.PreSchedule ();
+			deformable.Schedule ();
 		}
 
 		/// <summary>
@@ -96,6 +103,7 @@ namespace Deform
 		/// </summary>
 		public void RemoveDeformable (IDeformable deformable)
 		{
+			addedDeformables.Remove(deformable);
 			deformables.Remove (deformable);
 		}
 	}

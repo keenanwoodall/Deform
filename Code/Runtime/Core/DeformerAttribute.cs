@@ -7,7 +7,8 @@ namespace Deform
 		Normal,
 		Noise,
 		Mask,
-		Utility
+		Utility, 
+		WIP
 	}
 
 	/// <summary>

@@ -31,7 +31,8 @@ namespace DeformEditor
 
 		private static class Content
 		{
-			public static GUIContent CreateDeformable = new GUIContent (text: "Create Deformable", tooltip: "Create a deformable");
+			public static GUIContent CreateDeformable = new GUIContent (text: "Deformable", tooltip: "Create a deformable");
+			public static GUIContent CreateElasticDeformable = new GUIContent (text: "Elastic Deformable (WIP)", tooltip: "Create an elastic deformable");
 		}
 
 		[SerializeField]
@@ -47,6 +48,7 @@ namespace DeformEditor
 			{ Category.Noise, true },
 			{ Category.Mask, true },
 			{ Category.Utility, true },
+			{ Category.WIP, true }
 		};
 
 		[MenuItem ("Window/Deform/Creator", priority = 10000)]
@@ -80,8 +82,10 @@ namespace DeformEditor
 		{
 			EditorGUILayout.Space ();
 
-			if (GUILayout.Button (Content.CreateDeformable, Styles.Button))
-				AddOrCreateDeformable ();
+			if (GUILayout.Button(Content.CreateDeformable, Styles.Button))
+				AddOrCreateDeformable<Deformable>();
+			if (GUILayout.Button(Content.CreateElasticDeformable, Styles.Button))
+				AddOrCreateDeformable<ElasticDeformable>();
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
@@ -150,13 +154,13 @@ namespace DeformEditor
 			}
 		}
 
-		public static void AddOrCreateDeformable ()
+		public static void AddOrCreateDeformable<T> () where T : Deformable
 		{
 			var targets = Selection.gameObjects;
 
 			// If we don't have any objects selected, create a new Deformable.
 			if (targets == null || targets.Length == 0)
-				CreateDeformable ();
+				CreateDeformable<T> ();
 			else
 			{
 				// Keep track of whether or not we've actually been able to add a Deformable component.
@@ -164,29 +168,29 @@ namespace DeformEditor
 				foreach (var target in Selection.gameObjects)
 				{
 					// Check if there's already a Deformable/
-					var deformable = target.GetComponent<Deformable> ();
+					var deformable = target.GetComponent<T> ();
 					// If there isn't, we can add one
 					if (!PrefabUtility.IsPartOfPrefabAsset (target) && deformable == null && MeshTarget.IsValid (target))
 					{
-						Undo.AddComponent<Deformable> (target);
+						Undo.AddComponent<T> (target);
 						addedComponent = true;
 					}
 				}
 
 				// If we never ended up adding a Deformable component, we should create new one.
 				if (!addedComponent)
-					CreateDeformable ();
+					CreateDeformable<T> ();
 			}
 		}
 
-		private static Deformable CreateDeformable ()
+		private static T CreateDeformable<T> () where T : Deformable
 		{
 			var newObject = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-			newObject.name = "Deformable Object";
+			newObject.name = $"{typeof(T).Name} Object";
 
 			newObject.transform.position = SceneView.lastActiveSceneView.pivot;
 
-			var deformable = newObject.AddComponent<Deformable> ();
+			var deformable = newObject.AddComponent<T> ();
 			deformable.ChangeMesh (DeformEditorResources.LoadAssetOfType<Mesh> ("DeformDefaultMesh"));
 
 			newObject.GetComponent<Renderer> ().material = DeformEditorResources.LoadAssetOfType<Material> ("DeformDefaultMaterial");
@@ -198,7 +202,7 @@ namespace DeformEditor
 			Undo.RegisterCreatedObjectUndo
 			(
 				newObject,
-				"Created Deformable GameObject"
+				$"Created {typeof(T).Name} GameObject"
 			);
 
 			return deformable;
@@ -310,19 +314,32 @@ namespace DeformEditor
 			return sum / gameObjects.Length;
 		}
 
-		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes ()
+		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes()
 		{
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies ())
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var assembly in assemblies)
 			{
-				foreach (var type in assembly.GetTypes ())
+				foreach (var type in GetLoadableTypes(assembly))
 				{
-					if (type.IsSubclassOf (typeof (Deformer)))
+					if (type.IsSubclassOf(typeof(Deformer)))
 					{
-						var attribute = type.GetCustomAttribute<DeformerAttribute> (false);
+						var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
 						if (attribute != null)
 							yield return attribute;
 					}
 				}
+			}
+		}
+
+		public static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
+		{
+			try
+			{
+				return assembly.GetTypes();
+			}
+			catch (ReflectionTypeLoadException e)
+			{
+				return e.Types.Where(t => t != null);
 			}
 		}
 	}

@@ -77,7 +77,12 @@ namespace DeformEditor
 
 		private void SceneGUI (SceneView sceneView)
 		{
-			deformerEditor?.GetType ().GetMethod ("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke (deformerEditor, null);
+			if (deformerEditor == null)
+				return;
+			var method = deformerEditor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			if (method == null)
+				return;
+			method.Invoke(deformerEditor, null);
 			deformerEditor.Repaint ();
 		}
 
