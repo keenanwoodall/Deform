@@ -7,7 +7,7 @@ using static Unity.Mathematics.math;
 
 namespace Deform
 {
-	[Deformer (Name = "Cubify", Description = "Morphs mesh into a cube", Type = typeof (CubifyDeformer))]
+	[Deformer (Name = "Cubify (WIP)", Description = "Morphs mesh into a cube", Type = typeof (CubifyDeformer), Category = Category.WIP)]
     [HelpURL("https://github.com/keenanwoodall/Deform/wiki/CubifyDeformer")]
     public class CubifyDeformer : Deformer, IFactor
 	{

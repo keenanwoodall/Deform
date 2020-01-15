@@ -32,7 +32,7 @@ namespace DeformEditor
 		private static class Content
 		{
 			public static GUIContent CreateDeformable = new GUIContent (text: "Deformable", tooltip: "Create a deformable");
-			public static GUIContent CreateElasticDeformable = new GUIContent (text: "Elastic Deformable", tooltip: "Create an elastic deformable");
+			public static GUIContent CreateElasticDeformable = new GUIContent (text: "Elastic Deformable (WIP)", tooltip: "Create an elastic deformable");
 		}
 
 		[SerializeField]
@@ -48,6 +48,7 @@ namespace DeformEditor
 			{ Category.Noise, true },
 			{ Category.Mask, true },
 			{ Category.Utility, true },
+			{ Category.WIP, true }
 		};
 
 		[MenuItem ("Window/Deform/Creator", priority = 10000)]

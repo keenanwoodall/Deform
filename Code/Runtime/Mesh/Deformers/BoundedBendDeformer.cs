@@ -8,7 +8,7 @@ using Beans.Unity.Mathematics;
 
 namespace Deform
 {
-	[Deformer (Name = "Bounded Bend (WIP)", Description = "Bends a mesh within a bounding box", Type = typeof (BoundedBendDeformer))]
+	[Deformer (Name = "Bounded Bend (WIP)", Description = "Bends a mesh within a bounding box", Type = typeof (BoundedBendDeformer), Category = Category.WIP)]
     public class BoundedBendDeformer : Deformer, IFactor
 	{
 		public float Angle
