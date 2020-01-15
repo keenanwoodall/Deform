@@ -82,13 +82,10 @@ namespace DeformEditor
 		{
 			EditorGUILayout.Space ();
 
-			using (new EditorGUILayout.HorizontalScope())
-			{
-				if (GUILayout.Button(Content.CreateDeformable, Styles.Button))
-					AddOrCreateDeformable<Deformable>();
-				if (GUILayout.Button(Content.CreateElasticDeformable, Styles.Button))
-					AddOrCreateDeformable<ElasticDeformable>();
-			}
+			if (GUILayout.Button(Content.CreateDeformable, Styles.Button))
+				AddOrCreateDeformable<Deformable>();
+			if (GUILayout.Button(Content.CreateElasticDeformable, Styles.Button))
+				AddOrCreateDeformable<ElasticDeformable>();
 
 			using (new EditorGUILayout.HorizontalScope ())
 			{
