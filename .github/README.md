@@ -1,4 +1,4 @@
-![Header](https://imgur.com/NpPsjQj.png)
+![Header](images/banner.png)
 
 [![Unity Version](https://img.shields.io/badge/unity-2018.3%2B-blue.svg)](https://unity3d.com/get-unity/download)
 [![GitHub](https://img.shields.io/github/license/keenanwoodall/Deform.svg)](https://github.com/keenanwoodall/Deform/blob/master/LICENSE.txt)
@@ -66,24 +66,3 @@ Deform runs on the CPU. While it *is* incredibly fast, you should not expect to 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/KeenanWoodall)
 [![Donate](https://img.shields.io/badge/Donate-Kofi-green.svg)](https://ko-fi.com/keenanwoodall)
 [![Itch](https://img.shields.io/badge/Buy-Itch.io-green.svg)](https://keenanwoodall.itch.io/deform)
-
----
-
-## Example GIFs
-<table>
-  <tr>
-    <td><img src="https://i.imgur.com/h3ZcNEC.gif"></td>
-    <td><img src="https://i.imgur.com/LAzo6kT.gif"></td>
-    <td><img src="https://i.imgur.com/CgxWUod.gif"></td>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/7BSjdJF.gif"></td>
-    <td><img src="https://i.imgur.com/uFzvAlF.gif"></td>
-    <td><img src="https://i.imgur.com/UoDy1ZC.gif"></td>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/h2D0KDV.gif"></td>
-    <td><img src="https://i.imgur.com/Il2oGLH.gif"></td>
-    <td><img src="https://i.imgur.com/PQrbXrY.gif"></td>
-  </tr>
-</table>

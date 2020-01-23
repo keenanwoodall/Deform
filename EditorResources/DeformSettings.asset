@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: DeformSettings
   m_EditorClassIdentifier: 
   sceneFoldoutOpen: 1
-  solidHandleColor: {r: 1, g: 0.40000004, b: 0, a: 1}
-  lightHandleColor: {r: 1, g: 0.40000004, b: 0, a: 0.5}
+  solidHandleColor: {r: 1, g: 0.4, b: 0, a: 1}
+  lightHandleColor: {r: 1, g: 0.4, b: 0, a: 0.5}
   dottedLineSize: 5
   screenspaceHandleCapSize: 0.0275
   screenspaceAngleHandleSize: 1.25
