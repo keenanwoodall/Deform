@@ -20,8 +20,11 @@ namespace Deform
 		/// <returns></returns>
 		public static DeformableManager GetDefaultManager (bool createIfMissing)
 		{
-			if (defaultInstance == null)
-				defaultInstance = new GameObject (DEF_MANAGER_NAME).AddComponent<DeformableManager> ();
+			if (defaultInstance == null && createIfMissing)
+			{
+				defaultInstance = new GameObject(DEF_MANAGER_NAME).AddComponent<DeformableManager>();
+				GameObject.DontDestroyOnLoad(defaultInstance.gameObject);
+			}
 			return defaultInstance;
 		}
 
