@@ -24,9 +24,9 @@ namespace Deform
 		}
 
 		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
-		[SerializeField, HideInInspector, Range(0f, 1f)] private float dampingRatio = 0.4f;
+		[SerializeField, HideInInspector, Range(0f, 1f)] private float dampingRatio = 0.3f;
 		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
-		[SerializeField, HideInInspector] private float angularFrequency = 1f;
+		[SerializeField, HideInInspector] private float angularFrequency = 4f;
 
 		private NativeArray<float3> velocityBuffer;
 		private NativeArray<float3> currentPointBuffer;
