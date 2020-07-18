@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Collections;
@@ -13,29 +12,38 @@ namespace Deform
 	[HelpURL("https://github.com/keenanwoodall/Deform/wiki/Deformable")]
 	public class ElasticDeformable : Deformable
 	{
-		public float ElasticStrength
+		public float DampingRatio
 		{
-			get => elasticStrength;
-			set => elasticStrength = value;
+			get => dampingRatio;
+			set => dampingRatio = value;
 		}
-		public float ElasticDampening
+		public float AngularFrequency
 		{
-			get => elasticDampening;
-			set => elasticDampening = value;
+			get => angularFrequency;
+			set => angularFrequency = value;
 		}
 
-		[SerializeField, HideInInspector] private float elasticStrength = 5f;
-		[SerializeField, HideInInspector] private float elasticDampening = 0.9f;
+		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
+		[SerializeField, HideInInspector, Range(0f, 1f)] private float dampingRatio = 0.4f;
+		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
+		[SerializeField, HideInInspector] private float angularFrequency = 1f;
 
 		private NativeArray<float3> velocityBuffer;
-		private NativeArray<float3> currentVertexBuffer;
+		private NativeArray<float3> currentPointBuffer;
 
 		public override void InitializeData()
 		{
 			base.InitializeData();
 			velocityBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-			currentVertexBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-			data.OriginalNative.VertexBuffer.CopyTo(currentVertexBuffer);
+			currentPointBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+
+			data.OriginalNative.VertexBuffer.CopyTo(currentPointBuffer);
+			
+			new TransformPointsJob
+			{
+				points = currentPointBuffer,
+				matrix = transform.localToWorldMatrix
+			}.Schedule(currentPointBuffer.Length, 128).Complete();
 		}
 
 		protected override void OnDisable()
@@ -43,8 +51,8 @@ namespace Deform
 			base.OnDisable();
 			if (velocityBuffer != null)
 				velocityBuffer.Dispose();
-			if (currentVertexBuffer != null)
-				currentVertexBuffer.Dispose();
+			if (currentPointBuffer != null)
+				currentPointBuffer.Dispose();
 		}
 
 		/// <summary>
@@ -92,17 +100,33 @@ namespace Deform
 
 			if (Application.isPlaying)
 			{
-				handle = new ElasticVertexUpdateJob
+				// After processing all deformers, the vertex buffer holds the desired end positions in local-space.
+				// The elastic effect should be applied in world space, so the vertex buffer needs to be transformed
+				// to worldspace.
+				handle = new TransformPointsJob
 				{
-					strength = ElasticStrength,
-					dampening = ElasticDampening,
+					points = data.DynamicNative.VertexBuffer,
+					matrix = transform.localToWorldMatrix
+				}.Schedule(data.Length, 128, handle);
+				// The current and target points are now in world-space. Apply elastic forces
+				handle = new ElasticPointsUpdateJob
+				{
+					dampingRatio = DampingRatio,
+					angularFrequency = AngularFrequency,
 					deltaTime = Time.deltaTime,
-					localToWorld = transform.localToWorldMatrix,
-					worldToLocal = transform.worldToLocalMatrix,
 					velocities = velocityBuffer,
-					currentVertices = currentVertexBuffer,
-					targetVertices = data.DynamicNative.VertexBuffer
+					currentPoints = currentPointBuffer,
+					targetPoints = data.DynamicNative.VertexBuffer
 				}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
+				
+				// Before applying the mesh data, the current point buffer will be swapped with the vertex buffer
+				// so the current point buffer needs to be transformed back to local-space.
+				handle = new TransformPointsFromJob()
+				{
+					from = currentPointBuffer,
+					to = data.DynamicNative.VertexBuffer,
+					matrix = transform.worldToLocalMatrix
+				}.Schedule(data.Length, 128, handle);
 			}
 
 			if (NormalsRecalculation == NormalsRecalculation.Auto)
@@ -141,16 +165,8 @@ namespace Deform
 			// If in play-mode, always apply vertices since it's an elastic effect
 			if (Application.isPlaying)
 				flags |= DataFlags.Vertices;
-
-			var originalVertexBuffer = data.DynamicNative.VertexBuffer;
-			if (Application.isPlaying)
-			{
-				// Swap out the final vertices with the ones moved by spring forces before applying...
-				data.DynamicNative.VertexBuffer = currentVertexBuffer;
-			}
+			
 			data.ApplyData(flags);
-			// Then reassign the final vertices
-			data.DynamicNative.VertexBuffer = originalVertexBuffer;
 
 			if (BoundsRecalculation == BoundsRecalculation.Custom)
 				data.DynamicMesh.bounds = CustomBounds;

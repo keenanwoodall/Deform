@@ -8,21 +8,15 @@ namespace DeformEditor
 	[CustomEditor (typeof (ElasticDeformable)), CanEditMultipleObjects]
 	public class ElasticDeformableEditor : DeformableEditor
 	{
-		private static class Content
-		{
-			public static readonly GUIContent ElasticStrength = new GUIContent (text: "Elastic Strength");
-			public static readonly GUIContent ElasticDampening = new GUIContent (text: "Elastic Dampening");
-		}
-
 		private class Properties
 		{
-			public SerializedProperty ElasticStrength;
-			public SerializedProperty ElasticDampening;
+			public SerializedProperty DampingRatio;
+			public SerializedProperty AngularFrequency;
 
 			public Properties (SerializedObject obj)
 			{
-				ElasticStrength		= obj.FindProperty ("elasticStrength");
-				ElasticDampening	= obj.FindProperty ("elasticDampening");
+				DampingRatio		= obj.FindProperty ("dampingRatio");
+				AngularFrequency	= obj.FindProperty ("angularFrequency");
 			}
 		}
 
@@ -37,8 +31,8 @@ namespace DeformEditor
 		protected override void DrawMainSettings()
 		{
 			base.DrawMainSettings();
-			EditorGUILayout.PropertyField(properties.ElasticStrength, Content.ElasticStrength);
-			EditorGUILayout.PropertyField(properties.ElasticDampening, Content.ElasticDampening);
+			EditorGUILayout.PropertyField(properties.DampingRatio);
+			EditorGUILayout.PropertyField(properties.AngularFrequency);
 		}
 
 		protected override void DrawHelpBoxes()
