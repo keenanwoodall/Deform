@@ -10,13 +10,19 @@ namespace DeformEditor
 	{
 		private class Properties
 		{
+			public SerializedProperty MaskedDampingRatio;
+			public SerializedProperty MaskedAngularFrequency;
 			public SerializedProperty DampingRatio;
 			public SerializedProperty AngularFrequency;
+			public SerializedProperty Mask;
 
 			public Properties (SerializedObject obj)
 			{
-				DampingRatio		= obj.FindProperty ("dampingRatio");
-				AngularFrequency	= obj.FindProperty ("angularFrequency");
+				MaskedDampingRatio		= obj.FindProperty ("maskedDampingRatio");
+				MaskedAngularFrequency	= obj.FindProperty ("maskedAngularFrequency");
+				DampingRatio			= obj.FindProperty ("dampingRatio");
+				AngularFrequency		= obj.FindProperty ("angularFrequency");
+				Mask					= obj.FindProperty ("mask");
 			}
 		}
 
@@ -33,6 +39,12 @@ namespace DeformEditor
 			base.DrawMainSettings();
 			EditorGUILayout.PropertyField(properties.DampingRatio);
 			EditorGUILayout.PropertyField(properties.AngularFrequency);
+			EditorGUILayout.PropertyField(properties.Mask);
+			if (properties.Mask.enumValueIndex != 0)
+			{
+				EditorGUILayout.PropertyField(properties.MaskedDampingRatio);
+				EditorGUILayout.PropertyField(properties.MaskedAngularFrequency);
+			}
 		}
 
 		protected override void DrawHelpBoxes()

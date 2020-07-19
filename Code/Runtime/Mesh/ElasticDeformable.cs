@@ -12,10 +12,12 @@ namespace Deform
 	[HelpURL("https://github.com/keenanwoodall/Deform/wiki/Deformable")]
 	public class ElasticDeformable : Deformable
 	{
+		public enum VertexColorMask { None = -1, R = 0, G = 1, B = 2, A = 3 }
+		
 		public float DampingRatio
 		{
 			get => dampingRatio;
-			set => dampingRatio = value;
+			set => dampingRatio = Mathf.Clamp01(value);
 		}
 		public float AngularFrequency
 		{
@@ -23,10 +25,24 @@ namespace Deform
 			set => angularFrequency = value;
 		}
 
+		public VertexColorMask Mask
+		{
+			get => mask;
+			set => mask = value;
+		}
+
 		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
-		[SerializeField, HideInInspector, Range(0f, 1f)] private float dampingRatio = 0.3f;
+		[SerializeField, Range(0f, 1f)] private float maskedDampingRatio = .8f;
 		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
-		[SerializeField, HideInInspector] private float angularFrequency = 4f;
+		[SerializeField] private float maskedAngularFrequency = 8f;
+		
+		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
+		[SerializeField, Range(0f, 1f)] private float dampingRatio = 0.3f;
+		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
+		[SerializeField] private float angularFrequency = 4f;
+
+		[SerializeField]
+		private VertexColorMask mask = VertexColorMask.None;
 
 		private NativeArray<float3> velocityBuffer;
 		private NativeArray<float3> currentPointBuffer;
@@ -111,16 +127,35 @@ namespace Deform
 					matrix = transform.localToWorldMatrix
 				}.Schedule(data.Length, 128, handle);
 				// The current and target points are now in world-space. Apply elastic forces
-				handle = new ElasticPointsUpdateJob
+				if (Mask == VertexColorMask.None)
 				{
-					dampingRatio = DampingRatio,
-					angularFrequency = AngularFrequency,
-					deltaTime = Time.deltaTime,
-					velocities = velocityBuffer,
-					currentPoints = currentPointBuffer,
-					targetPoints = data.DynamicNative.VertexBuffer
-				}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
-				
+					handle = new ElasticPointsUpdateJob
+					{
+						dampingRatio = DampingRatio,
+						angularFrequency = AngularFrequency,
+						deltaTime = Time.deltaTime,
+						velocities = velocityBuffer,
+						currentPoints = currentPointBuffer,
+						targetPoints = data.DynamicNative.VertexBuffer
+					}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
+				}
+				else
+				{
+					handle = new MaskedElasticPointsUpdateJob
+					{
+						unmaskedDampingRatio = DampingRatio,
+						unmaskedAngularFrequency = AngularFrequency,
+						maskedDampingRatio = maskedDampingRatio,
+						maskedAngularFrequency =  maskedAngularFrequency,
+						deltaTime = Time.deltaTime, 
+						velocities = velocityBuffer,
+						currentPoints = currentPointBuffer,
+						targetPoints = data.DynamicNative.VertexBuffer,
+						colors = data.DynamicNative.ColorBuffer,
+						maskIndex = (int) Mask
+					}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);;
+				}
+
 				// Before applying the mesh data, the current point buffer will be swapped with the vertex buffer
 				// so the current point buffer needs to be transformed back to local-space.
 				handle = new TransformPointsFromJob()
