@@ -24,7 +24,8 @@ namespace Deform
 				switch (value)
 				{
 					case UpdateMode.Auto:
-						Manager = DeformableManager.GetDefaultManager(true);
+						if (Application.isPlaying)
+							Manager = DeformableManager.GetDefaultManager(true);
 						break;
 					case UpdateMode.Stop:
 						Complete();

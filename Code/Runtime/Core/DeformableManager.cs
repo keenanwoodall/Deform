@@ -46,8 +46,9 @@ namespace Deform
 		{
 			if (update)
 			{
-				CompleteDeformables (deformables, true);
-				ScheduleDeformables (deformables, false);
+				CompleteDeformables (deformables);
+				ScheduleDeformables (deformables);
+				ScheduleDeformables (immediateDeformables);
 			}
 
 			// Move added deformables into the main deformables collection
@@ -68,34 +69,24 @@ namespace Deform
 		private void LateUpdate()
 		{
 			if (update)
-			{
-				ScheduleDeformables (immediateDeformables, false);
-				CompleteDeformables (immediateDeformables, true);
-			}
+				CompleteDeformables (immediateDeformables);
 		}
 
 		private void OnDisable ()
 		{
-			CompleteDeformables (deformables, false);	
-			CompleteDeformables (immediateDeformables, false);	
+			CompleteDeformables (deformables);	
+			CompleteDeformables (immediateDeformables);	
 		}
 
 		/// <summary>
 		/// Creates a chain of work from the deformables and schedules it.
 		/// </summary>
-		public void ScheduleDeformables (HashSet<IDeformable> deformables, bool apply)
+		public void ScheduleDeformables (HashSet<IDeformable> deformables)
 		{
 			foreach (var deformable in deformables)
 				deformable.PreSchedule ();
 			foreach (var deformable in deformables)
-			{
-				if (apply)
-				{
-					deformable.ApplyData();
-				}
-
 				deformable.Schedule ();
-			}
 
 			// Schedule the chain.
 			JobHandle.ScheduleBatchedJobs ();
@@ -104,13 +95,12 @@ namespace Deform
 		/// <summary>
 		/// Finishes the schedules work chain.
 		/// </summary>
-		public void CompleteDeformables (HashSet<IDeformable> deformables, bool apply)
+		public void CompleteDeformables (HashSet<IDeformable> deformables)
 		{
 			foreach (var deformable in deformables)
 			{
 				deformable.Complete();
-				if (apply)
-					deformable.ApplyData();
+				deformable.ApplyData();
 			}
 		}
 
@@ -126,6 +116,9 @@ namespace Deform
 			// when the next frame arrives the reset data from the immediate update isn't applied.
 			deformable.PreSchedule ();
 			deformable.Schedule ();
+			
+			if (deformable.UpdateFrequency == UpdateFrequency.Immediate)
+				deformable.Complete();
 		}
 
 		/// <summary>
