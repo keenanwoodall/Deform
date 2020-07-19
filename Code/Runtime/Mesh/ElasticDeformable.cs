@@ -160,13 +160,13 @@ namespace Deform
 			if (!CanUpdate())
 				return;
 
-			var flags = currentModifiedDataFlags | lastModifiedDataFlags;
-
 			// If in play-mode, always apply vertices since it's an elastic effect
 			if (Application.isPlaying)
-				flags |= DataFlags.Vertices;
-			
-			data.ApplyData(flags);
+			{
+				currentModifiedDataFlags |= DataFlags.Vertices;
+			}
+
+			data.ApplyData(currentModifiedDataFlags);
 
 			if (BoundsRecalculation == BoundsRecalculation.Custom)
 				data.DynamicMesh.bounds = CustomBounds;
