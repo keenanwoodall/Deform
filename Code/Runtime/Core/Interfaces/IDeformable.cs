@@ -7,6 +7,8 @@ namespace Deform
 	/// </summary>
 	public interface IDeformable
 	{
+		UpdateFrequency UpdateFrequency { get; }
+		
 		/// <summary>
 		/// Called before all other Deformables with the same DeformableManager have Schedule called.
 		/// </summary>

@@ -88,6 +88,7 @@ namespace Deform
 		}
 
 		public DataFlags ModifiedDataFlags => lastModifiedDataFlags;
+		public virtual UpdateFrequency UpdateFrequency => UpdateFrequency.Default;
 
 		public bool assignOriginalMeshOnDisable = true;
 

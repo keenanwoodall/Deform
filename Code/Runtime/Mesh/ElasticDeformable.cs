@@ -31,6 +31,8 @@ namespace Deform
 		private NativeArray<float3> velocityBuffer;
 		private NativeArray<float3> currentPointBuffer;
 
+		public override UpdateFrequency UpdateFrequency => UpdateFrequency.Immediate;
+
 		public override void InitializeData()
 		{
 			base.InitializeData();

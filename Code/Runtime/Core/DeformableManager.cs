@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
 
@@ -34,6 +35,7 @@ namespace Deform
 		public bool update = true;
 
 		private HashSet<IDeformable> deformables = new HashSet<IDeformable> ();
+		private HashSet<IDeformable> immediateDeformables = new HashSet<IDeformable> ();
 
 		/// <summary>
 		/// Temporary storage for added deformables to allow them to be updated immediately on the first frame they're added
@@ -44,33 +46,54 @@ namespace Deform
 		{
 			if (update)
 			{
-				CompleteDeformables ();
-				ScheduleDeformables ();
+				CompleteDeformables (deformables, true);
+				ScheduleDeformables (deformables, false);
 			}
 
 			// Move added deformables into the main deformables collection
 			foreach (var added in addedDeformables)
+			{
 				if (added != null)
-					deformables.Add(added);
+				{
+					if (added.UpdateFrequency == UpdateFrequency.Default)
+						deformables.Add(added);
+					else
+						immediateDeformables.Add(added);
+				}
+			}
+
 			addedDeformables.Clear();
+		}
+
+		private void LateUpdate()
+		{
+			if (update)
+			{
+				ScheduleDeformables (immediateDeformables, false);
+				CompleteDeformables (immediateDeformables, true);
+			}
 		}
 
 		private void OnDisable ()
 		{
-			CompleteDeformables ();	
+			CompleteDeformables (deformables, false);	
+			CompleteDeformables (immediateDeformables, false);	
 		}
 
 		/// <summary>
 		/// Creates a chain of work from the deformables and schedules it.
 		/// </summary>
-		public void ScheduleDeformables ()
+		public void ScheduleDeformables (HashSet<IDeformable> deformables, bool apply)
 		{
 			foreach (var deformable in deformables)
 				deformable.PreSchedule ();
 			foreach (var deformable in deformables)
 			{
-				// Apply the finished work.
-				deformable.ApplyData ();
+				if (apply)
+				{
+					deformable.ApplyData();
+				}
+
 				deformable.Schedule ();
 			}
 
@@ -81,10 +104,14 @@ namespace Deform
 		/// <summary>
 		/// Finishes the schedules work chain.
 		/// </summary>
-		public void CompleteDeformables ()
+		public void CompleteDeformables (HashSet<IDeformable> deformables, bool apply)
 		{
 			foreach (var deformable in deformables)
-				deformable.Complete ();
+			{
+				deformable.Complete();
+				if (apply)
+					deformable.ApplyData();
+			}
 		}
 
 		/// <summary>
@@ -106,8 +133,9 @@ namespace Deform
 		/// </summary>
 		public void RemoveDeformable (IDeformable deformable)
 		{
-			addedDeformables.Remove(deformable);
+			addedDeformables.Remove (deformable);
 			deformables.Remove (deformable);
+			immediateDeformables.Remove(deformable);
 		}
 	}
 }
