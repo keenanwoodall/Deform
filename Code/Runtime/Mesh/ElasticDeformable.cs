@@ -30,19 +30,31 @@ namespace Deform
 			get => mask;
 			set => mask = value;
 		}
-
-		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
-		[SerializeField, Range(0f, 1f)] private float maskedDampingRatio = .8f;
-		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
-		[SerializeField] private float maskedAngularFrequency = 8f;
 		
+		public float MaskedDampingRatio
+		{
+			get => maskedDampingRatio;
+			set => maskedDampingRatio = Mathf.Clamp01(value);
+		}
+		public float MaskedAngularFrequency
+		{
+			get => maskedAngularFrequency;
+			set => maskedAngularFrequency = value;
+		}
+
 		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
 		[SerializeField, Range(0f, 1f)] private float dampingRatio = 0.3f;
 		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
 		[SerializeField] private float angularFrequency = 4f;
-
+		[SerializeField] private Vector3 gravity = Vector3.zero;
+		
 		[SerializeField]
 		private VertexColorMask mask = VertexColorMask.None;
+		
+		[Tooltip("A value of zero will result in infinite oscillation. A value of one will result in no oscillation.")]
+		[SerializeField, Range(0f, 1f)] private float maskedDampingRatio = .8f;
+		[Tooltip("An angular frequency of 1 means the oscillation completes one full period over one second.")]
+		[SerializeField] private float maskedAngularFrequency = 8f;
 
 		private NativeArray<float3> velocityBuffer;
 		private NativeArray<float3> currentPointBuffer;
@@ -118,6 +130,15 @@ namespace Deform
 
 			if (Application.isPlaying)
 			{
+				if (!Mathf.Approximately(gravity.sqrMagnitude, 0f))
+				{
+					handle = new AddFloat3ToFloat3sJob
+					{
+						value = gravity * Time.deltaTime,
+						values = velocityBuffer
+					}.Schedule(velocityBuffer.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
+				}
+				
 				// After processing all deformers, the vertex buffer holds the desired end positions in local-space.
 				// The elastic effect should be applied in world space, so the vertex buffer needs to be transformed
 				// to worldspace.
@@ -125,7 +146,7 @@ namespace Deform
 				{
 					points = data.DynamicNative.VertexBuffer,
 					matrix = transform.localToWorldMatrix
-				}.Schedule(data.Length, 128, handle);
+				}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
 				// The current and target points are now in world-space. Apply elastic forces
 				if (Mask == VertexColorMask.None)
 				{
