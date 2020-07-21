@@ -8,9 +8,9 @@
 [![Twitter](https://img.shields.io/twitter/follow/keenanwoodall.svg?label=Follow&style=social)](https://twitter.com/intent/follow?screen_name=keenanwoodall)
 [![Discord](https://img.shields.io/discord/503808487520993280.svg?logo=Discord&style=social)](https://discord.gg/NnX5cpr)
 
-A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is multi-threaded with the [Job System](https://unity.com/dots), compiled with [Burst](https://unity.com/dots) and calculations are done using the [Mathematics library](https://github.com/Unity-Technologies/Unity.Mathematics/blob/master/readme.md).
+A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is multi-threaded with the Job System, compiled with Burst and calculations are done using the Mathematics library.
 
-*Now available for download on the [Asset Store.](https://assetstore.unity.com/packages/tools/modeling/deform-148425)*
+*Also available on the [Asset Store.](https://assetstore.unity.com/packages/tools/modeling/deform-148425)*
 
 ## Features
 ⚡ Lightning fast!</br>
@@ -49,16 +49,18 @@ Yes. You can create a single deformer and add it to multiple deformables.
 
 > How do deformables handle instancing?
 
-Each deformable has it's own unique mesh. Duplicating and instantiating deformables shouldn't cause any issues.
+Each deformable has it's own unique mesh.
 
 ## Limitations
-Deform runs on the CPU. While it *is* incredibly fast, you should not expect to get performance comparable to vertex shaders. Because meshes are modified on the CPU each mesh has to be unique. From what I understand, this means each mesh will require a new draw call. Deform is not meant to be used at a massive scale. If you need to deform an entire world, tons of meshes, or an incredibly high poly model use vertex shaders. 
+Deform runs on the CPU. While it *is* incredibly fast, you should not expect to get performance comparable to vertex shaders. Because meshes are modified on the CPU each mesh has to be unique. This means that, unless dynamically batched (which comes with its own performance costs), each mesh will require a new draw call. Deform is not meant to be used at a massive scale. If you need to deform an entire world, tons of meshes, or an incredibly high poly model use vertex shaders. 
 
 **tldr:** Use shaders if you need speed, use Deform if you need modularity and ease-of-use.
 
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
 * Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for testing Deform and giving helpful feedback.
+
+I love seeing creative and cool uses of this tool. If you make something you're proud of, lemme take a lookie!
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
 
