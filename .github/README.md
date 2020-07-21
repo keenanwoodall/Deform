@@ -25,6 +25,7 @@ A fully-featured deformer system for [Unity](https://unity3d.com/). Deform is mu
 * [Installation](https://github.com/keenanwoodall/Deform/wiki/Installation) (Important)
 * [Getting Started](https://github.com/keenanwoodall/Deform/wiki/Getting-Started)
 * [Creating a Custom Deformer](https://github.com/keenanwoodall/Deform/wiki/Creating-A-Custom-Deformer)
+* [Optimization Tips](https://github.com/keenanwoodall/Deform/wiki/Optimization-Tips)
 
 ## FAQ
 > Does Deform work with the new prefab system?
