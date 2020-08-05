@@ -129,13 +129,6 @@ namespace Deform
 			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
 #endif
 		}
-#if UNITY_EDITOR
-		private void OnSceneSaving(Scene scene, string path)
-		{
-			if (data != null && data.Target != null)
-				data.Target.SetMesh(data.OriginalMesh);
-		}
-#endif
 
 		protected virtual void OnDisable()
 		{
@@ -148,6 +141,14 @@ namespace Deform
 			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving -= OnSceneSaving;
 #endif
 		}
+		
+#if UNITY_EDITOR
+		private void OnSceneSaving(Scene scene, string path)
+		{
+			if (data != null && data.Target != null)
+				data.Target.SetMesh(data.OriginalMesh);
+		}
+#endif
 
 		/// <summary>
 		/// Initializes mesh data.
