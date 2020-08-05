@@ -42,7 +42,6 @@ namespace Deform
 		private bool initialized;
 
 		/// Stores the original state of the mesh before any changes were made.
-		[SerializeField, HideInInspector]
 		private ManagedMeshData originalManaged;
 
 		/// We can't directly transfer from a NativeArray to a mesh, so this is used as a middle-ground. 

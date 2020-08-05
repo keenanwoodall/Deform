@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
+using UnityEngine.SceneManagement;
 
 namespace Deform
 {
@@ -124,8 +125,17 @@ namespace Deform
 				Schedule().Complete();
 				ApplyData();
 			}
+			
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
 #endif
 		}
+#if UNITY_EDITOR
+		private void OnSceneSaving(Scene scene, string path)
+		{
+			if (data != null && data.Target != null)
+				data.Target.SetMesh(data.OriginalMesh);
+		}
+#endif
 
 		protected virtual void OnDisable()
 		{
@@ -133,6 +143,10 @@ namespace Deform
 			data.Dispose(assignOriginalMeshOnDisable);
 			if (Manager != null)
 				Manager.RemoveDeformable(this);
+			
+#if UNITY_EDITOR
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving -= OnSceneSaving;
+#endif
 		}
 
 		/// <summary>
