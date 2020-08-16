@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
@@ -85,7 +85,7 @@ namespace Deform
 		[SerializeField, HideInInspector] private Transform axis;
 
 		private JobHandle handle;
-		private Color32[] managedPixels;
+		private NativeArray<Color32> managedPixels;
 		private NativeTexture2D nativeTexture;
 		private bool textureDirty = false;
 
@@ -114,7 +114,7 @@ namespace Deform
 		{
 			if (Texture != null && Texture.isReadable)
 			{
-				managedPixels = texture.GetPixels32 ();
+				managedPixels = texture.GetRawTextureData<Color32>();
 				nativeTexture.Update (managedPixels, texture.width, texture.height);
 			}
 			else if (nativeTexture.IsCreated)
