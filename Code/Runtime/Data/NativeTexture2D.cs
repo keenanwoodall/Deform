@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using Unity.Collections;
@@ -17,14 +17,14 @@ namespace Beans.Unity.Collections
 
 		private NativeArray<Color32> nativePixels;
 
-		private void InitializeNativeData (Color32[] managedPixels)
+		private void InitializeNativeData (NativeArray<Color32> managedPixels)
 		{
 			if (nativePixels.IsCreated)
 				nativePixels.Dispose ();
 			nativePixels = new NativeArray<Color32> (managedPixels, Allocator.Persistent);
 		}
 
-		public void Update (Color32[] managedPixels, int width, int height)
+		public void Update (NativeArray<Color32> managedPixels, int width, int height)
 		{
 			if (!nativePixels.IsCreated || nativePixels.Length != managedPixels.Length)
 				InitializeNativeData (managedPixels);
