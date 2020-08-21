@@ -73,8 +73,8 @@ namespace Deform
 			{
 				factor = Factor,
 				offset = Offset,
-				firstKeyTime = Curve.keys[0].time,
-				lastKeyTime = Curve.keys[Curve.length - 1].time,
+				firstKeyTime = Curve[0].time,
+				lastKeyTime = Curve[Curve.length - 1].time,
 				meshToAxis = meshToAxis,
 				axisToMesh = meshToAxis.inverse,
 				curve = nativeCurve,
