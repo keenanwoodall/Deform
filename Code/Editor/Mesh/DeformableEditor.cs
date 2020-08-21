@@ -214,7 +214,7 @@ namespace DeformEditor
 			{
 				var vertexCount = 0;
 				var modifiedData = DataFlags.None;
-				var bounds = (target as Deformable).GetMesh().bounds;
+				var bounds = (target as Deformable).GetCurrentMesh().bounds;
 				foreach (var t in targets)
 				{
 					var deformable = t as Deformable;
@@ -248,8 +248,8 @@ namespace DeformEditor
 			if (foldoutDebug)
 			{
 				var deformable = target as Deformable;
-
-				DeformHandles.Bounds(deformable.GetMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.LightDotted);
+				if (deformable != null)
+					DeformHandles.Bounds(deformable.GetCurrentMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.LightDotted);
 			}
 		}
 

@@ -1,6 +1,8 @@
 ﻿using System;
+using Beans.Unity.Collections;
 using Unity.Collections;
 using Unity.Mathematics;
+using UnityEngine;
 using Beans.Unity.Mathematics;
 
 namespace Deform
@@ -19,6 +21,74 @@ namespace Deform
 		public NativeArray<float3> MaskVertexBuffer;
 		public NativeArray<bounds> Bounds;
 
+		public NativeMeshData (Mesh mesh, Allocator allocator = Allocator.Persistent)
+		{
+			int vertexCount = mesh.vertexCount;
+			
+			var vertices = mesh.vertices;
+			var normals = mesh.normals;
+			var tangents = mesh.tangents;
+			var uvs = mesh.uv;
+			var colors = mesh.colors;
+			var indices = mesh.triangles;
+			var bounds = mesh.bounds;
+
+			if (vertices == null || vertices.Length != vertexCount)
+				VertexBuffer = new NativeArray<float3>(vertexCount, allocator);
+			else
+			{
+				VertexBuffer = new NativeArray<float3>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				vertices.MemCpy(VertexBuffer);
+			}
+
+			if (normals == null || normals.Length != vertexCount)
+				NormalBuffer = new NativeArray<float3>(vertexCount, allocator);
+			else
+			{
+				NormalBuffer = new NativeArray<float3>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				normals.MemCpy(NormalBuffer);
+			}
+
+			if (tangents == null || tangents.Length != vertexCount)
+				TangentBuffer = new NativeArray<float4>(vertexCount, allocator);
+			else
+			{
+				TangentBuffer = new NativeArray<float4>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				tangents.MemCpy(TangentBuffer);
+			}
+
+			if (uvs == null || uvs.Length != vertexCount)
+				UVBuffer = new NativeArray<float2>(vertexCount, allocator);
+			else
+			{
+				UVBuffer = new NativeArray<float2>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				uvs.MemCpy(UVBuffer);
+			}
+
+			if (colors == null || colors.Length != vertexCount)
+				ColorBuffer = new NativeArray<float4>(vertexCount, allocator);
+			else
+			{
+				ColorBuffer = new NativeArray<float4>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				colors.MemCpy(ColorBuffer);
+			}
+
+			if (indices == null)
+				IndexBuffer = new NativeArray<int>(0, allocator);
+			else
+			{
+				IndexBuffer = new NativeArray<int>(indices.Length, allocator, NativeArrayOptions.UninitializedMemory);
+				indices.MemCpy(IndexBuffer);
+			}
+			
+			MaskVertexBuffer	= new NativeArray<float3> (vertexCount, allocator, NativeArrayOptions.ClearMemory);
+			Bounds				= new NativeArray<bounds> (1, 			allocator, NativeArrayOptions.UninitializedMemory);
+			Bounds[0] = bounds;
+			
+			if (vertices != null)
+				vertices.MemCpy(VertexBuffer);
+		}
+		
 		public NativeMeshData (ManagedMeshData data, Allocator allocator = Allocator.Persistent)
 		{
 			VertexBuffer		= new NativeArray<float3> (data.Vertices.Length,  allocator, NativeArrayOptions.UninitializedMemory);

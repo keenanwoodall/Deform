@@ -358,8 +358,10 @@ namespace Deform
 			return data.OriginalMesh;
 		}
 
-		public ManagedMeshData GetOriginalManagedMeshData() => data.GetOriginalManagedData();
-		public ManagedMeshData GetDynamicManagedMeshData() => data.GetDynamicManagedData();
+		public Mesh GetCurrentMesh()
+		{
+			return data.Target.GetMesh();
+		}
 
 		/// <summary>
 		/// Returns the target's renderer.
