@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -36,6 +35,15 @@ namespace Deform
 		/// Stores mesh data in NativeArrays for fast processing and multithreading.
 		/// </summary>
 		public NativeMeshData DynamicNative;
+		
+#if !UNITY_2019_3_OR_NEWER
+		// You cannot copy directly from native arrays to a mesh before 2019.3, so we need to store
+		// the mesh data in a managed form.
+		[NonSerialized]
+		public ManagedMeshData OriginalManaged;
+		[NonSerialized]
+		public ManagedMeshData DynamicManaged;
+#endif
 
 		// Must be serialized so that if the Deformable that encapsulates this class is duplicated the reference won't be broken.
 		[SerializeField, HideInInspector]
@@ -95,6 +103,11 @@ namespace Deform
 			// Store the native data.
 			OriginalNative = new NativeMeshData (DynamicMesh);
 			DynamicNative = new NativeMeshData (DynamicMesh);
+			
+#if !UNITY_2019_3_OR_NEWER
+			OriginalManaged = new ManagedMeshData(OriginalMesh);
+			DynamicManaged = new ManagedMeshData(OriginalMesh);
+#endif
 
 			initialized = true;
 
@@ -131,7 +144,13 @@ namespace Deform
 		{
 			if (DynamicMesh == null)
 				return;
+			
+#if UNITY_2019_3_OR_NEWER
 			DataUtils.CopyNativeDataToMesh(DynamicNative, DynamicMesh, dataFlags);
+#else
+			DataUtils.CopyNativeDataToManagedData(DynamicManaged, DynamicNative, dataFlags);
+			DataUtils.CopyManagedDataToMesh(DynamicManaged, DynamicMesh, dataFlags);
+#endif
 		}
 
 		/// <summary>
@@ -139,7 +158,11 @@ namespace Deform
 		/// </summary>
 		public void ApplyOriginalData ()
 		{
+#if UNITY_2019_3_OR_NEWER
 			DataUtils.CopyNativeDataToMesh(OriginalNative, DynamicMesh, DataFlags.All);
+#else
+			DataUtils.CopyManagedDataToMesh(OriginalManaged, DynamicMesh, DataFlags.All);
+#endif
 		}
 
 		/// <summary>

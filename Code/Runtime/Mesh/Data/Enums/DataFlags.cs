@@ -14,6 +14,6 @@ namespace Deform
 		Triangles		= 1 << 5,
 		MaskVertices	= 1 << 6,
 		Bounds			= 1 << 7,
-		All =			0xFF
+		All =			~0
 	}
 }

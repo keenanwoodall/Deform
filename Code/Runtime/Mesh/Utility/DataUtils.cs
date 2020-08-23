@@ -115,6 +115,39 @@ namespace Deform
 			return true;
 		}
 		
+		public static bool CopyManagedDataToMesh(ManagedMeshData from, Mesh to, DataFlags dataFlags)
+		{
+			if (!from.HasValidData ())
+			{
+				Debug.LogError ("Cannot copy data as some of it is invalid");
+				return false;
+			}
+			if (to == null)
+			{
+				Debug.LogError("Cannot copy data to null mesh");
+				return false;
+			}
+
+			// Send managed data to mesh.
+			if ((dataFlags & DataFlags.Vertices) != 0)
+				to.vertices = from.Vertices;
+			if ((dataFlags & DataFlags.Normals) != 0)
+				to.normals = from.Normals;
+			if ((dataFlags & DataFlags.Tangents) != 0)
+				to.tangents = from.Tangents;
+			if ((dataFlags & DataFlags.UVs) != 0)
+				to.uv = from.UVs;
+			if ((dataFlags & DataFlags.Colors) != 0)
+				to.colors = from.Colors;
+			if ((dataFlags & DataFlags.Triangles) != 0)
+				to.triangles = from.Triangles;
+			if ((dataFlags & DataFlags.Bounds) != 0)
+				to.bounds = from.Bounds;
+
+			return true;
+		}
+		
+#if UNITY_2019_3_OR_NEWER
 		/// <summary>
 		/// Copies mesh data from one native array to another
 		/// </summary>
@@ -149,5 +182,6 @@ namespace Deform
 
 			return true;
 		}
+#endif
 	}
 }
