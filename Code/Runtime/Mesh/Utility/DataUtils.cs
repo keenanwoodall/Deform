@@ -176,7 +176,23 @@ namespace Deform
 			if ((dataFlags & DataFlags.Colors) != 0)
 				to.SetColors(from.ColorBuffer);
 			if ((dataFlags & DataFlags.Triangles) != 0)
-				to.SetIndices(from.IndexBuffer, 0, from.IndexBuffer.Length, MeshTopology.Triangles, 0, false);
+			{
+				for (int i = 0; i < to.subMeshCount; i++)
+				{
+					var submesh = to.GetSubMesh(i);
+					to.SetIndices
+					(
+						indices: 			from.IndexBuffer,
+						indicesStart: 		submesh.indexStart, 
+						indicesLength: 		submesh.indexCount, 
+						topology: 			submesh.topology, 
+						submesh: 			i, 
+						calculateBounds: 	false, 
+						baseVertex: 		submesh.baseVertex
+					);
+				}
+			}
+
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				to.bounds = from.Bounds[0];
 

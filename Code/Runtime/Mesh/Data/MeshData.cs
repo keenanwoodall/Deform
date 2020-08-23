@@ -84,9 +84,8 @@ namespace Deform
 				DynamicMesh = GameObject.Instantiate (OriginalMesh);
 			else if (DynamicMesh != null)
 			{
-				Debug.Log ($"Original mesh is missing. Attempting to create one from dynamic mesh ({DynamicMesh.name}) and original managed mesh data.", targetObject);
+				Debug.Log ($"Original mesh is missing. Recreating one from dynamic mesh (\"{DynamicMesh.name}\"). This is not ideal, but prevents stuff from breaking when an original mesh is deleted. The best solution is to find and reassign the original mesh.", targetObject);
 				OriginalMesh = GameObject.Instantiate (DynamicMesh);
-				Debug.Log ($"Original mesh was recreated from {DynamicMesh.name}. This is not ideal, but prevents stuff from breaking when an original mesh is deleted. The best solution is to find and reassign the original mesh.", targetObject);
 				return false;
 			}
 			else
@@ -105,8 +104,8 @@ namespace Deform
 			DynamicNative = new NativeMeshData (DynamicMesh);
 			
 #if !UNITY_2019_3_OR_NEWER
-			OriginalManaged = new ManagedMeshData(OriginalMesh);
-			DynamicManaged = new ManagedMeshData(OriginalMesh);
+			OriginalManaged = new ManagedMeshData(DynamicMesh);
+			DynamicManaged = new ManagedMeshData(DynamicMesh);
 #endif
 
 			initialized = true;
