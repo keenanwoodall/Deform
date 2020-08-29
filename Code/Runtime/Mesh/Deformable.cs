@@ -115,7 +115,7 @@ namespace Deform
 		{
 			InitializeData();
 
-			if (Application.isPlaying)
+			if (Application.isPlaying && UpdateMode == UpdateMode.Auto)
 				Manager = DeformableManager.GetDefaultManager(true);
 
 #if UNITY_EDITOR
