@@ -34,11 +34,17 @@ namespace Deform
 			var bounds = mesh.bounds;
 
 			if (vertices == null || vertices.Length != vertexCount)
+			{
 				VertexBuffer = new NativeArray<float3>(vertexCount, allocator);
+				MaskVertexBuffer = new NativeArray<float3> (vertexCount, allocator);
+			}
 			else
 			{
 				VertexBuffer = new NativeArray<float3>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				MaskVertexBuffer = new NativeArray<float3>(vertexCount, allocator, NativeArrayOptions.UninitializedMemory);
+				
 				vertices.MemCpy(VertexBuffer);
+				vertices.MemCpy(MaskVertexBuffer);
 			}
 
 			if (normals == null || normals.Length != vertexCount)
@@ -81,12 +87,10 @@ namespace Deform
 				indices.MemCpy(IndexBuffer);
 			}
 			
-			MaskVertexBuffer	= new NativeArray<float3> (vertexCount, allocator, NativeArrayOptions.ClearMemory);
 			Bounds				= new NativeArray<bounds> (1, 			allocator, NativeArrayOptions.UninitializedMemory);
 			Bounds[0] = bounds;
-			
-			if (vertices != null)
-				vertices.MemCpy(VertexBuffer);
+
+			vertices?.MemCpy(VertexBuffer);
 		}
 		
 		public NativeMeshData (ManagedMeshData data, Allocator allocator = Allocator.Persistent)
