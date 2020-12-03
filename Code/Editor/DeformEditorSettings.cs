@@ -74,6 +74,16 @@ namespace DeformEditor
 			}
 		}
 
+		public static bool ModelsReadableByDefault
+		{
+			get => SettingsAsset.modelsReadableByDefault;
+			set
+			{
+				SettingsAsset.modelsReadableByDefault = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
+		}
+
 		public static void SelectSettingsAsset ()
 		{
 			Selection.activeObject = SettingsAsset;

@@ -13,6 +13,7 @@ namespace DeformEditor
 			public static GUIContent DottedLineSize = new GUIContent (text: "Dotted Line Size");
 			public static GUIContent ScreenspaceSliderHandleCapSize= new GUIContent (text: "Handle Size");
 			public static GUIContent ScreenspaceAngleHandleSize = new GUIContent (text: "Angle Handle Size");
+			public static GUIContent ModelsReadableByDefault = new GUIContent (text: "Models Readable By Default", tooltip: "When true, any newly imported models will be marked as readable.");
 		}
 
 		private SerializedObject serializedAsset;
@@ -38,8 +39,8 @@ namespace DeformEditor
 
 		private void OnGUI ()
 		{
-			var foldoutProperty = serializedAsset.FindProperty ("sceneFoldoutOpen");
-			if (foldoutProperty.boolValue = EditorGUILayoutx.FoldoutHeader ("Scene", foldoutProperty.boolValue))
+			var sceneExpandedProperty = serializedAsset.FindProperty (nameof(DeformEditorSettingsAsset.dottedLineSize));
+			if (sceneExpandedProperty.isExpanded = EditorGUILayoutx.FoldoutHeader ("Scene", sceneExpandedProperty.isExpanded))
 			{
 				using (var check = new EditorGUI.ChangeCheckScope ())
 				{
@@ -84,6 +85,20 @@ namespace DeformEditor
 					{
 						Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Angle Handle Size Settings");
 						DeformEditorSettings.ScreenspaceAngleHandleSize = angleHandleSize;
+					}
+				}
+			}
+			
+			var importerExpandedProperty = serializedAsset.FindProperty (nameof(DeformEditorSettingsAsset.modelsReadableByDefault));
+			if (importerExpandedProperty.isExpanded = EditorGUILayoutx.FoldoutHeader("Importer", importerExpandedProperty.isExpanded))
+			{
+				using (var check = new EditorGUI.ChangeCheckScope ())
+				{
+					var modelsReadableByDefault = EditorGUILayout.Toggle(Content.ModelsReadableByDefault, DeformEditorSettings.ModelsReadableByDefault);
+					if (check.changed)
+					{
+						Undo.RecordObject (DeformEditorSettings.SettingsAsset, "Changed Models Readable By Default");
+						DeformEditorSettings.ModelsReadableByDefault = modelsReadableByDefault;
 					}
 				}
 			}
