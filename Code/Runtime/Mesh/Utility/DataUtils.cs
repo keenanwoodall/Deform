@@ -12,7 +12,6 @@ namespace Deform
 		/// <summary>
 		/// Copies mesh data from managed arrays into native ones.
 		/// </summary>
-		/// <param name="onlyEssentials">If true, only vertices, normals, bounds, and mask vertices will be copied.</param>
 		public static void CopyManagedToNativeMeshData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
 		{
 			var dataIsValid = true;
@@ -52,7 +51,6 @@ namespace Deform
 		/// <summary>
 		/// Copies mesh data from native arrays into managed ones.
 		/// </summary>
-		/// <param name="onlyEssentials">If true, only vertices, normals and bounds are copied. The mask data isn't copied because is only exists in native data.</param>
 		public static void CopyNativeDataToManagedData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
 		{
 			var dataIsValid = true;
@@ -86,17 +84,15 @@ namespace Deform
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				managed.Bounds = native.Bounds[0];
 		}
-
 		/// <summary>
 		/// Copies mesh data from one native array to another
 		/// </summary>
-		/// <param name="onlyEssentials">If true, only vertices, normals, bounds, and mask vertices will be copied.</param>
-		public static void CopyNativeDataToNativeData (NativeMeshData from, NativeMeshData to, DataFlags dataFlags)
+		public static bool CopyNativeDataToNativeData (NativeMeshData from, NativeMeshData to, DataFlags dataFlags)
 		{
 			if (!to.HasValidData () || !from.HasValidData ())
 			{
 				Debug.LogError ("Cannot copy data as some of it is invalid");
-				return;
+				return false;
 			}
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
@@ -115,6 +111,93 @@ namespace Deform
 				from.IndexBuffer.CopyTo (to.IndexBuffer);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				from.Bounds.CopyTo (to.Bounds);
+
+			return true;
 		}
+		
+		public static bool CopyManagedDataToMesh(ManagedMeshData from, Mesh to, DataFlags dataFlags)
+		{
+			if (!from.HasValidData ())
+			{
+				Debug.LogError ("Cannot copy data as some of it is invalid");
+				return false;
+			}
+			if (to == null)
+			{
+				Debug.LogError("Cannot copy data to null mesh");
+				return false;
+			}
+
+			// Send managed data to mesh.
+			if ((dataFlags & DataFlags.Vertices) != 0)
+				to.vertices = from.Vertices;
+			if ((dataFlags & DataFlags.Normals) != 0)
+				to.normals = from.Normals;
+			if ((dataFlags & DataFlags.Tangents) != 0)
+				to.tangents = from.Tangents;
+			if ((dataFlags & DataFlags.UVs) != 0)
+				to.uv = from.UVs;
+			if ((dataFlags & DataFlags.Colors) != 0)
+				to.colors = from.Colors;
+			if ((dataFlags & DataFlags.Triangles) != 0)
+				to.triangles = from.Triangles;
+			if ((dataFlags & DataFlags.Bounds) != 0)
+				to.bounds = from.Bounds;
+
+			return true;
+		}
+		
+#if UNITY_2019_3_OR_NEWER
+		/// <summary>
+		/// Copies mesh data from one native array to another
+		/// </summary>
+		public static bool CopyNativeDataToMesh (NativeMeshData from, Mesh to, DataFlags dataFlags)
+		{
+			if (!from.HasValidData ())
+			{
+				Debug.LogError ("Cannot copy data as some of it is invalid");
+				return false;
+			}
+
+			if (to == null)
+			{
+				Debug.LogError("Cannot copy data to null mesh");
+				return false;
+			}
+
+			if ((dataFlags & DataFlags.Vertices) != 0)
+				to.SetVertices(from.VertexBuffer);
+			if ((dataFlags & DataFlags.Normals) != 0)
+				to.SetNormals(from.NormalBuffer);
+			if ((dataFlags & DataFlags.Tangents) != 0)
+				to.SetTangents(from.TangentBuffer);
+			if ((dataFlags & DataFlags.UVs) != 0)
+				to.SetUVs(0, from.UVBuffer);
+			if ((dataFlags & DataFlags.Colors) != 0)
+				to.SetColors(from.ColorBuffer);
+			if ((dataFlags & DataFlags.Triangles) != 0)
+			{
+				for (int i = 0; i < to.subMeshCount; i++)
+				{
+					var submesh = to.GetSubMesh(i);
+					to.SetIndices
+					(
+						indices: 			from.IndexBuffer,
+						indicesStart: 		submesh.indexStart, 
+						indicesLength: 		submesh.indexCount, 
+						topology: 			submesh.topology, 
+						submesh: 			i, 
+						calculateBounds: 	false, 
+						baseVertex: 		submesh.baseVertex
+					);
+				}
+			}
+
+			if ((dataFlags & DataFlags.Bounds) != 0)
+				to.bounds = from.Bounds[0];
+
+			return true;
+		}
+#endif
 	}
 }

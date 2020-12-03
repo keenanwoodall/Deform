@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
 
@@ -20,8 +21,11 @@ namespace Deform
 		/// <returns></returns>
 		public static DeformableManager GetDefaultManager (bool createIfMissing)
 		{
-			if (defaultInstance == null)
-				defaultInstance = new GameObject (DEF_MANAGER_NAME).AddComponent<DeformableManager> ();
+			if (defaultInstance == null && createIfMissing)
+			{
+				defaultInstance = new GameObject(DEF_MANAGER_NAME).AddComponent<DeformableManager>();
+				GameObject.DontDestroyOnLoad(defaultInstance.gameObject);
+			}
 			return defaultInstance;
 		}
 
@@ -31,6 +35,7 @@ namespace Deform
 		public bool update = true;
 
 		private HashSet<IDeformable> deformables = new HashSet<IDeformable> ();
+		private HashSet<IDeformable> immediateDeformables = new HashSet<IDeformable> ();
 
 		/// <summary>
 		/// Temporary storage for added deformables to allow them to be updated immediately on the first frame they're added
@@ -41,35 +46,47 @@ namespace Deform
 		{
 			if (update)
 			{
-				CompleteDeformables ();
-				ScheduleDeformables ();
+				CompleteDeformables (deformables);
+				ScheduleDeformables (deformables);
+				ScheduleDeformables (immediateDeformables);
 			}
 
 			// Move added deformables into the main deformables collection
 			foreach (var added in addedDeformables)
+			{
 				if (added != null)
-					deformables.Add(added);
+				{
+					if (added.UpdateFrequency == UpdateFrequency.Default)
+						deformables.Add(added);
+					else
+						immediateDeformables.Add(added);
+				}
+			}
+
 			addedDeformables.Clear();
+		}
+
+		private void LateUpdate()
+		{
+			if (update)
+				CompleteDeformables (immediateDeformables);
 		}
 
 		private void OnDisable ()
 		{
-			CompleteDeformables ();	
+			CompleteDeformables (deformables);	
+			CompleteDeformables (immediateDeformables);	
 		}
 
 		/// <summary>
 		/// Creates a chain of work from the deformables and schedules it.
 		/// </summary>
-		public void ScheduleDeformables ()
+		public void ScheduleDeformables (HashSet<IDeformable> deformables)
 		{
 			foreach (var deformable in deformables)
 				deformable.PreSchedule ();
 			foreach (var deformable in deformables)
-			{
-				// Apply the finished work.
-				deformable.ApplyData ();
 				deformable.Schedule ();
-			}
 
 			// Schedule the chain.
 			JobHandle.ScheduleBatchedJobs ();
@@ -78,10 +95,13 @@ namespace Deform
 		/// <summary>
 		/// Finishes the schedules work chain.
 		/// </summary>
-		public void CompleteDeformables ()
+		public void CompleteDeformables (HashSet<IDeformable> deformables)
 		{
 			foreach (var deformable in deformables)
-				deformable.Complete ();
+			{
+				deformable.Complete();
+				deformable.ApplyData();
+			}
 		}
 
 		/// <summary>
@@ -96,6 +116,9 @@ namespace Deform
 			// when the next frame arrives the reset data from the immediate update isn't applied.
 			deformable.PreSchedule ();
 			deformable.Schedule ();
+			
+			if (deformable.UpdateFrequency == UpdateFrequency.Immediate)
+				deformable.Complete();
 		}
 
 		/// <summary>
@@ -103,8 +126,9 @@ namespace Deform
 		/// </summary>
 		public void RemoveDeformable (IDeformable deformable)
 		{
-			addedDeformables.Remove(deformable);
+			addedDeformables.Remove (deformable);
 			deformables.Remove (deformable);
+			immediateDeformables.Remove(deformable);
 		}
 	}
 }

@@ -8,21 +8,23 @@ namespace DeformEditor
 	[CustomEditor (typeof (ElasticDeformable)), CanEditMultipleObjects]
 	public class ElasticDeformableEditor : DeformableEditor
 	{
-		private static class Content
-		{
-			public static readonly GUIContent ElasticStrength = new GUIContent (text: "Elastic Strength");
-			public static readonly GUIContent ElasticDampening = new GUIContent (text: "Elastic Dampening");
-		}
-
 		private class Properties
 		{
-			public SerializedProperty ElasticStrength;
-			public SerializedProperty ElasticDampening;
+			public SerializedProperty MaskedDampingRatio;
+			public SerializedProperty MaskedAngularFrequency;
+			public SerializedProperty DampingRatio;
+			public SerializedProperty AngularFrequency;
+			public SerializedProperty Gravity;
+			public SerializedProperty Mask;
 
 			public Properties (SerializedObject obj)
 			{
-				ElasticStrength		= obj.FindProperty ("elasticStrength");
-				ElasticDampening	= obj.FindProperty ("elasticDampening");
+				MaskedDampingRatio		= obj.FindProperty ("maskedDampingRatio");
+				MaskedAngularFrequency	= obj.FindProperty ("maskedAngularFrequency");
+				DampingRatio			= obj.FindProperty ("dampingRatio");
+				AngularFrequency		= obj.FindProperty ("angularFrequency");
+				Gravity					= obj.FindProperty ("gravity");
+				Mask					= obj.FindProperty ("mask");
 			}
 		}
 
@@ -37,8 +39,16 @@ namespace DeformEditor
 		protected override void DrawMainSettings()
 		{
 			base.DrawMainSettings();
-			EditorGUILayout.PropertyField(properties.ElasticStrength, Content.ElasticStrength);
-			EditorGUILayout.PropertyField(properties.ElasticDampening, Content.ElasticDampening);
+			EditorGUILayout.PropertyField(properties.Mask);
+			EditorGUILayout.PropertyField(properties.DampingRatio);
+			EditorGUILayout.PropertyField(properties.AngularFrequency);
+			if (properties.Mask.enumValueIndex != 0)
+			{
+				EditorGUILayout.PropertyField(properties.MaskedDampingRatio);
+				EditorGUILayout.PropertyField(properties.MaskedAngularFrequency);
+			}
+
+			EditorGUILayout.PropertyField(properties.Gravity);
 		}
 
 		protected override void DrawHelpBoxes()

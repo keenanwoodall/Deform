@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
+using UnityEngine.SceneManagement;
 
 namespace Deform
 {
@@ -24,7 +25,8 @@ namespace Deform
 				switch (value)
 				{
 					case UpdateMode.Auto:
-						Manager = DeformableManager.GetDefaultManager(true);
+						if (Application.isPlaying)
+							Manager = DeformableManager.GetDefaultManager(true);
 						break;
 					case UpdateMode.Stop:
 						Complete();
@@ -88,6 +90,7 @@ namespace Deform
 		}
 
 		public DataFlags ModifiedDataFlags => lastModifiedDataFlags;
+		public virtual UpdateFrequency UpdateFrequency => UpdateFrequency.Default;
 
 		public bool assignOriginalMeshOnDisable = true;
 
@@ -112,7 +115,7 @@ namespace Deform
 		{
 			InitializeData();
 
-			if (Application.isPlaying)
+			if (Application.isPlaying && UpdateMode == UpdateMode.Auto)
 				Manager = DeformableManager.GetDefaultManager(true);
 
 #if UNITY_EDITOR
@@ -122,6 +125,8 @@ namespace Deform
 				Schedule().Complete();
 				ApplyData();
 			}
+			
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
 #endif
 		}
 
@@ -131,7 +136,19 @@ namespace Deform
 			data.Dispose(assignOriginalMeshOnDisable);
 			if (Manager != null)
 				Manager.RemoveDeformable(this);
+			
+#if UNITY_EDITOR
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving -= OnSceneSaving;
+#endif
 		}
+		
+#if UNITY_EDITOR
+		private void OnSceneSaving(Scene scene, string path)
+		{
+			if (data != null && data.Target != null)
+				data.Target.SetMesh(data.OriginalMesh);
+		}
+#endif
 
 		/// <summary>
 		/// Initializes mesh data.
@@ -341,8 +358,10 @@ namespace Deform
 			return data.OriginalMesh;
 		}
 
-		public ManagedMeshData GetOriginalManagedMeshData() => data.GetOriginalManagedData();
-		public ManagedMeshData GetDynamicManagedMeshData() => data.GetDynamicManagedData();
+		public Mesh GetCurrentMesh()
+		{
+			return data.Target.GetMesh();
+		}
 
 		/// <summary>
 		/// Returns the target's renderer.

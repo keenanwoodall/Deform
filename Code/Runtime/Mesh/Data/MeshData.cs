@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Beans.Unity.Collections;
 
 namespace Deform
 {
@@ -36,18 +35,19 @@ namespace Deform
 		/// Stores mesh data in NativeArrays for fast processing and multithreading.
 		/// </summary>
 		public NativeMeshData DynamicNative;
+		
+#if !UNITY_2019_3_OR_NEWER
+		// You cannot copy directly from native arrays to a mesh before 2019.3, so we need to store
+		// the mesh data in a managed form.
+		[NonSerialized]
+		public ManagedMeshData OriginalManaged;
+		[NonSerialized]
+		public ManagedMeshData DynamicManaged;
+#endif
 
 		// Must be serialized so that if the Deformable that encapsulates this class is duplicated the reference won't be broken.
 		[SerializeField, HideInInspector]
 		private bool initialized;
-
-		/// Stores the original state of the mesh before any changes were made.
-		[SerializeField, HideInInspector]
-		private ManagedMeshData originalManaged;
-
-		/// We can't directly transfer from a NativeArray to a mesh, so this is used as a middle-ground. 
-		/// The transfer goes like this: Native Data -> Managed Data (this) -> Mesh
-		private ManagedMeshData dynamicManaged;
 
 		/// <summary>
 		/// Convenient place to get the vertex count.
@@ -84,25 +84,9 @@ namespace Deform
 				DynamicMesh = GameObject.Instantiate (OriginalMesh);
 			else if (DynamicMesh != null)
 			{
-				Debug.Log ($"Original mesh is missing. Attempting to create one from dynamic mesh ({DynamicMesh.name}) and original managed mesh data.", targetObject);
+				Debug.Log ($"Original mesh is missing. Recreating one from dynamic mesh (\"{DynamicMesh.name}\"). This is not ideal, but prevents stuff from breaking when an original mesh is deleted. The best solution is to find and reassign the original mesh.", targetObject);
 				OriginalMesh = GameObject.Instantiate (DynamicMesh);
-				try
-				{
-					OriginalMesh.vertices = originalManaged.Vertices;
-					OriginalMesh.normals = originalManaged.Normals;
-					OriginalMesh.tangents = originalManaged.Tangents;
-					OriginalMesh.uv = originalManaged.UVs;
-					OriginalMesh.colors = originalManaged.Colors;
-					OriginalMesh.triangles = originalManaged.Triangles;
-					OriginalMesh.bounds = originalManaged.Bounds;
-				}
-				catch (NullReferenceException)
-				{
-					Debug.LogError ($"Attempted to recreate original mesh (from {DynamicMesh.name}), but the data was not valid. Please assign a new mesh.", targetObject);
-					return false;
-				}
-
-				Debug.Log ($"Original mesh was recreated from {DynamicMesh.name}. This is not ideal, but prevents stuff from breaking when an original mesh is deleted. The best solution is to find and reassign the original mesh.", targetObject);
+				return false;
 			}
 			else
 				return false;
@@ -115,20 +99,19 @@ namespace Deform
 
 			Length = DynamicMesh.vertexCount;
 
-			// Store mesh information in managed data.
-			originalManaged = new ManagedMeshData (DynamicMesh);
-			dynamicManaged = new ManagedMeshData (DynamicMesh);
-			// Copy the managed data into native data.
-			OriginalNative = new NativeMeshData (originalManaged);
-			DynamicNative = new NativeMeshData (dynamicManaged);
+			// Store the native data.
+			OriginalNative = new NativeMeshData (DynamicMesh);
+			DynamicNative = new NativeMeshData (DynamicMesh);
+			
+#if !UNITY_2019_3_OR_NEWER
+			OriginalManaged = new ManagedMeshData(DynamicMesh);
+			DynamicManaged = new ManagedMeshData(DynamicMesh);
+#endif
 
 			initialized = true;
 
 			return true;
 		}
-
-		public ManagedMeshData GetOriginalManagedData () => originalManaged;
-		public ManagedMeshData GetDynamicManagedData () => dynamicManaged;
 
 		/// <summary>
 		/// Disposes of current data and reinitializes with the targetObject's filter's shared mesh.
@@ -158,26 +141,15 @@ namespace Deform
 		/// </summary>
 		public void ApplyData(DataFlags dataFlags)
 		{
-			// Copy the native data into the managed data for efficient transfer into the actual mesh.
-			DataUtils.CopyNativeDataToManagedData(dynamicManaged, DynamicNative, dataFlags);
-
 			if (DynamicMesh == null)
 				return;
-			// Send managed data to mesh.
-			if ((dataFlags & DataFlags.Vertices) != 0)
-				DynamicMesh.vertices = dynamicManaged.Vertices;
-			if ((dataFlags & DataFlags.Normals) != 0)
-				DynamicMesh.normals = dynamicManaged.Normals;
-			if ((dataFlags & DataFlags.Tangents) != 0)
-				DynamicMesh.tangents = dynamicManaged.Tangents;
-			if ((dataFlags & DataFlags.UVs) != 0)
-				DynamicMesh.uv = dynamicManaged.UVs;
-			if ((dataFlags & DataFlags.Colors) != 0)
-				DynamicMesh.colors = dynamicManaged.Colors;
-			if ((dataFlags & DataFlags.Triangles) != 0)
-				DynamicMesh.triangles = dynamicManaged.Triangles;
-			if ((dataFlags & DataFlags.Bounds) != 0)
-				DynamicMesh.bounds = dynamicManaged.Bounds;
+			
+#if UNITY_2019_3_OR_NEWER
+			DataUtils.CopyNativeDataToMesh(DynamicNative, DynamicMesh, dataFlags);
+#else
+			DataUtils.CopyNativeDataToManagedData(DynamicManaged, DynamicNative, dataFlags);
+			DataUtils.CopyManagedDataToMesh(DynamicManaged, DynamicMesh, dataFlags);
+#endif
 		}
 
 		/// <summary>
@@ -185,12 +157,11 @@ namespace Deform
 		/// </summary>
 		public void ApplyOriginalData ()
 		{
-			DynamicMesh.vertices = originalManaged.Vertices;
-			DynamicMesh.normals = originalManaged.Normals;
-			DynamicMesh.tangents = originalManaged.Tangents;
-			DynamicMesh.uv = originalManaged.UVs;
-			DynamicMesh.colors = originalManaged.Colors;
-			DynamicMesh.bounds = originalManaged.Bounds;
+#if UNITY_2019_3_OR_NEWER
+			DataUtils.CopyNativeDataToMesh(OriginalNative, DynamicMesh, DataFlags.All);
+#else
+			DataUtils.CopyManagedDataToMesh(OriginalManaged, DynamicMesh, DataFlags.All);
+#endif
 		}
 
 		/// <summary>

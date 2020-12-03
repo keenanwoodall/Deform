@@ -2,6 +2,7 @@
 using UnityEditor;
 using Deform;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DeformEditor
 {
@@ -60,16 +61,38 @@ namespace DeformEditor
 			return false;
 		}
 
-		[MenuItem ("Tools/Deform/Actions/Make Children Deformable", priority = 10103)]
-		public static void MakeChildrenDeformables ()
+		[MenuItem ("Tools/Deform/Actions/Make Immediate Children Deformable", priority = 10103)]
+		public static void MakeImmediateChildrenDeformables ()
 		{
-			var newSelection = new List<GameObject> ();
+			var newSelection = new HashSet<GameObject> ();
 
 			var selections = Selection.gameObjects;
-			Undo.SetCurrentGroupName ("Made Children Deformable");
+			Undo.SetCurrentGroupName ("Made Immediate Children Deformable");
 			foreach (var selection in selections)
 			{
 				foreach (Transform child in selection.transform)
+				{
+					if (child.GetComponent<Deformable> ())
+						continue;
+					if (MeshTarget.IsValid (child.gameObject))
+						newSelection.Add (Undo.AddComponent<Deformable> (child.gameObject).gameObject);
+				}
+			}
+
+			Selection.objects = newSelection.ToArray ();
+		}
+		
+		[MenuItem ("Tools/Deform/Actions/Make All Children Deformable", priority = 10104)]
+		public static void MakeAllChildrenDeformables ()
+		{
+			var newSelection = new HashSet<GameObject> ();
+
+			var selections = Selection.gameObjects;
+			Undo.SetCurrentGroupName ("Made All Children Deformable");
+			foreach (var selection in selections)
+			{
+				var allChildren = selection.transform.GetComponentsInChildren<Transform>();
+				foreach (Transform child in allChildren)
 				{
 					if (child.GetComponent<Deformable> ())
 						continue;
