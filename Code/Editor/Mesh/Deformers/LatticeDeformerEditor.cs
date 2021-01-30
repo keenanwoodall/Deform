@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using Deform;
+using UnityEngine.Rendering;
 
 namespace DeformEditor
 {
@@ -48,7 +49,8 @@ namespace DeformEditor
             newResolution = EditorGUILayout.Vector3IntField(Content.Resolution, newResolution);
             // Make sure we have at least two control points per axis
             newResolution = Vector3Int.Max(newResolution, new Vector3Int(2, 2, 2));
-            if (GUILayout.Button("Update"))
+            
+            if (GUILayout.Button("Update Lattice"))
             {
                 Undo.RecordObject(target, "Update Lattice");
                 ((LatticeDeformer) target).GenerateCorners(newResolution);
@@ -66,8 +68,14 @@ namespace DeformEditor
             var lattice = target as LatticeDeformer;
 
             Handles.matrix = lattice.transform.localToWorldMatrix;
-            var corners = lattice.Corners;
 
+            var cachedZTest = Handles.zTest;
+            
+            // Change the depth testing to only show handles in front of solid objects (i.e. typical depth testing) 
+            Handles.zTest = CompareFunction.LessEqual;
+            
+            // Draw the lattice
+            var corners = lattice.Corners;
             var resolution = lattice.Resolution;
             for (int z = 0; z < resolution.z - 1; z++)
             {
@@ -99,12 +107,13 @@ namespace DeformEditor
                         DeformHandles.Line(corners[index100], corners[index101], lineMode);
                         DeformHandles.Line(corners[index010], corners[index011], lineMode);
                         DeformHandles.Line(corners[index110], corners[index111], lineMode);
-
-
-                        //Handles.SphereHandleCap(0, corners[index], Quaternion.identity, 0.1f, EventType.Repaint);
                     }
                 }
             }
+
+            // Restore the original z test value now we're done with our drawing
+            Handles.zTest = cachedZTest;
+
 
             EditorApplication.QueuePlayerLoopUpdate();
         }

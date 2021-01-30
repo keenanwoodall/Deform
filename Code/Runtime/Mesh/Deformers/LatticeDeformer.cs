@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -24,20 +25,14 @@ namespace Deform
             set => resolution = value;
         }
 
-        [SerializeField] private float3[] corners =
-        {
-            0.5f * new float3(-1, -1, -1),
-            0.5f * new float3(-1, 1, -1),
-            0.5f * new float3(1, -1, -1),
-            0.5f * new float3(1, 1, -1),
-
-            0.5f * new float3(-1, -1, 1),
-            0.5f * new float3(-1, 1, 1),
-            0.5f * new float3(1, -1, 1),
-            0.5f * new float3(1, 1, 1),
-        };
-
+        [SerializeField] private float3[] corners;
         [SerializeField] private Vector3Int resolution = new Vector3Int(2, 2, 2);
+
+
+        protected virtual void Reset()
+        {
+            GenerateCorners(resolution);
+        }
 
         public void GenerateCorners(Vector3Int newResolution)
         {
