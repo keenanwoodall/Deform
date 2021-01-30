@@ -90,6 +90,9 @@ namespace Deform
 		/// </summary>
 		public override JobHandle Schedule(JobHandle dependency = default)
 		{
+			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
+				return dependency;
+			
 			if (data.Target.GetGameObject() == null)
 				if (!data.Initialize(gameObject))
 					return dependency;
@@ -190,19 +193,13 @@ namespace Deform
 			if (NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
-				if (Application.isPlaying)
-					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
-				else
-					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
+				handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
 			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
-				if (Application.isPlaying)
-					handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
-				else
-					handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
+				handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
@@ -218,19 +215,22 @@ namespace Deform
 			if (!CanUpdate())
 				return;
 
-			// If in play-mode, always apply vertices since it's an elastic effect
-			if (Application.isPlaying)
+			if (IsVisible() || CullingMode == CullingMode.AlwaysUpdate)
 			{
-				currentModifiedDataFlags |= DataFlags.Vertices;
+				// If in play-mode, always apply vertices since it's an elastic effect
+				if (Application.isPlaying)
+				{
+					currentModifiedDataFlags |= DataFlags.Vertices;
+				}
+
+				data.ApplyData(currentModifiedDataFlags);
+
+				if (BoundsRecalculation == BoundsRecalculation.Custom)
+					data.DynamicMesh.bounds = CustomBounds;
+
+				if (ColliderRecalculation == ColliderRecalculation.Auto)
+					RecalculateMeshCollider();
 			}
-
-			data.ApplyData(currentModifiedDataFlags);
-
-			if (BoundsRecalculation == BoundsRecalculation.Custom)
-				data.DynamicMesh.bounds = CustomBounds;
-
-			if (ColliderRecalculation == ColliderRecalculation.Auto)
-				RecalculateMeshCollider();
 
 			ResetDynamicData();
 		}
