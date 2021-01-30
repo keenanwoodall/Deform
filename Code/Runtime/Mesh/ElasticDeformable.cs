@@ -193,19 +193,13 @@ namespace Deform
 			if (NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
-				if (Application.isPlaying)
-					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
-				else
-					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
+				handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
 			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
-				if (Application.isPlaying)
-					handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
-				else
-					handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
+				handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
