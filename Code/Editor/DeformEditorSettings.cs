@@ -73,6 +73,15 @@ namespace DeformEditor
 				EditorUtility.SetDirty (SettingsAsset);
 			}
 		}
+		public static float ScreenspaceLatticeHandleCapSize
+		{
+			get => SettingsAsset.screenspaceLatticeCapSize;
+			set
+			{
+				SettingsAsset.screenspaceLatticeCapSize = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
+		}
 
 		public static bool ModelsReadableByDefault
 		{
