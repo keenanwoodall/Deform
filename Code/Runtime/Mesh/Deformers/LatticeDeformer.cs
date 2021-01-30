@@ -21,13 +21,13 @@ namespace Deform
         {
             0.5f * new float3(-1, -1, -1),
             0.5f * new float3(-1, 1, -1),
-            0.5f * new float3(1, 1, -1),
             0.5f * new float3(1, -1, -1),
+            0.5f * new float3(1, 1, -1),
 
             0.5f * new float3(-1, -1, 1),
             0.5f * new float3(-1, 1, 1),
-            0.5f * new float3(1, 1, 1),
             0.5f * new float3(1, -1, 1),
+            0.5f * new float3(1, 1, 1),
         };
 
         public override DataFlags DataFlags => DataFlags.Vertices;
@@ -59,10 +59,10 @@ namespace Deform
                     int secondaryAxisIndex = 1;
                     int tertiaryAxisIndex = 2;
                     var min1 = lerp(corners[0][axisIndex], corners[1][axisIndex], sourcePosition[secondaryAxisIndex]);
-                    var max1 = lerp(corners[3][axisIndex], corners[2][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var max1 = lerp(corners[2][axisIndex], corners[3][axisIndex], sourcePosition[secondaryAxisIndex]);
 
                     var min2 = lerp(corners[0 + 4][axisIndex], corners[1 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
-                    var max2 = lerp(corners[3 + 4][axisIndex], corners[2 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var max2 = lerp(corners[2 + 4][axisIndex], corners[3 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
 
                     var min = lerp(min1, min2, sourcePosition[tertiaryAxisIndex]);
                     var max = lerp(max1, max2, sourcePosition[tertiaryAxisIndex]);
@@ -74,11 +74,11 @@ namespace Deform
                     int axisIndex = 1;
                     int secondaryAxisIndex = 0;
                     int tertiaryAxisIndex = 2;
-                    var min1 = lerp(corners[0][axisIndex], corners[3][axisIndex], sourcePosition[secondaryAxisIndex]);
-                    var max1 = lerp(corners[1][axisIndex], corners[2][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var min1 = lerp(corners[0][axisIndex], corners[2][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var max1 = lerp(corners[1][axisIndex], corners[3][axisIndex], sourcePosition[secondaryAxisIndex]);
 
-                    var min2 = lerp(corners[0 + 4][axisIndex], corners[3 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
-                    var max2 = lerp(corners[1 + 4][axisIndex], corners[2 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var min2 = lerp(corners[0 + 4][axisIndex], corners[2 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var max2 = lerp(corners[1 + 4][axisIndex], corners[3 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
 
                     var min = lerp(min1, min2, sourcePosition[tertiaryAxisIndex]);
                     var max = lerp(max1, max2, sourcePosition[tertiaryAxisIndex]);
@@ -90,11 +90,11 @@ namespace Deform
                     int axisIndex = 2;
                     int secondaryAxisIndex = 0;
                     int tertiaryAxisIndex = 1;
-                    var min1 = lerp(corners[0][axisIndex], corners[3][axisIndex], sourcePosition[secondaryAxisIndex]);
-                    var max1 = lerp(corners[0 + 4][axisIndex], corners[3 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var min1 = lerp(corners[0][axisIndex], corners[2][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var max1 = lerp(corners[0 + 4][axisIndex], corners[2 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
 
-                    var min2 = lerp(corners[1][axisIndex], corners[2][axisIndex], sourcePosition[secondaryAxisIndex]);
-                    var max2 = lerp(corners[1 + 4][axisIndex], corners[2 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var min2 = lerp(corners[1][axisIndex], corners[3][axisIndex], sourcePosition[secondaryAxisIndex]);
+                    var max2 = lerp(corners[1 + 4][axisIndex], corners[3 + 4][axisIndex], sourcePosition[secondaryAxisIndex]);
 
                     var min = lerp(min1, min2, sourcePosition[tertiaryAxisIndex]);
                     var max = lerp(max1, max2, sourcePosition[tertiaryAxisIndex]);

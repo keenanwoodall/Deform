@@ -55,14 +55,14 @@ namespace DeformEditor
             Handles.matrix = lattice.transform.localToWorldMatrix;
             var corners = lattice.Corners;
             DeformHandles.Line(corners[0], corners[1], DeformHandles.LineMode.SolidDotted);
-            DeformHandles.Line(corners[1], corners[2], DeformHandles.LineMode.SolidDotted);
+            DeformHandles.Line(corners[1], corners[3], DeformHandles.LineMode.SolidDotted);
             DeformHandles.Line(corners[2], corners[3], DeformHandles.LineMode.SolidDotted);
-            DeformHandles.Line(corners[3], corners[0], DeformHandles.LineMode.SolidDotted);
+            DeformHandles.Line(corners[2], corners[0], DeformHandles.LineMode.SolidDotted);
 
             DeformHandles.Line(corners[4], corners[5], DeformHandles.LineMode.SolidDotted);
-            DeformHandles.Line(corners[5], corners[6], DeformHandles.LineMode.SolidDotted);
+            DeformHandles.Line(corners[5], corners[7], DeformHandles.LineMode.SolidDotted);
             DeformHandles.Line(corners[6], corners[7], DeformHandles.LineMode.SolidDotted);
-            DeformHandles.Line(corners[7], corners[4], DeformHandles.LineMode.SolidDotted);
+            DeformHandles.Line(corners[6], corners[4], DeformHandles.LineMode.SolidDotted);
 
             DeformHandles.Line(corners[0], corners[4], DeformHandles.LineMode.SolidDotted);
             DeformHandles.Line(corners[1], corners[5], DeformHandles.LineMode.SolidDotted);
