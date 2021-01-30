@@ -22,6 +22,7 @@ namespace DeformEditor
 		private static class Content
 		{
 			public static readonly GUIContent UpdateMode = new GUIContent(text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
+			public static readonly GUIContent CullingMode = new GUIContent(text: "Culling Mode", tooltip: "Always Update: Update everything regardless of renderer visibility.\n\nDon't Update: Do not update unless renderer is visible. When the deformers aren't recalculated, bounds cannot be updated which may result in animated deformables not reappearing on screen.");
 			public static readonly GUIContent NormalsRecalculation = new GUIContent(text: "Normals", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");
 			public static readonly GUIContent BoundsRecalculation = new GUIContent(text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent(text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
@@ -42,6 +43,7 @@ namespace DeformEditor
 		private class Properties
 		{
 			public SerializedProperty UpdateMode;
+			public SerializedProperty CullingMode;
 			public SerializedProperty NormalsRecalculation;
 			public SerializedProperty BoundsRecalculation;
 			public SerializedProperty ColliderRecalculation;
@@ -51,6 +53,7 @@ namespace DeformEditor
 			public Properties(SerializedObject obj)
 			{
 				UpdateMode = obj.FindProperty("updateMode");
+				CullingMode = obj.FindProperty("cullingMode");
 				NormalsRecalculation = obj.FindProperty("normalsRecalculation");
 				BoundsRecalculation = obj.FindProperty("boundsRecalculation");
 				ColliderRecalculation = obj.FindProperty("colliderRecalculation");
@@ -107,6 +110,7 @@ namespace DeformEditor
 				}
 			}
 
+			EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
 			EditorGUILayout.PropertyField(properties.NormalsRecalculation, Content.NormalsRecalculation);
 			EditorGUILayout.PropertyField(properties.BoundsRecalculation, Content.BoundsRecalculation);
 

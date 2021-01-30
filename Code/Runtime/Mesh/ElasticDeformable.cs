@@ -90,6 +90,9 @@ namespace Deform
 		/// </summary>
 		public override JobHandle Schedule(JobHandle dependency = default)
 		{
+			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
+				return dependency;
+			
 			if (data.Target.GetGameObject() == null)
 				if (!data.Initialize(gameObject))
 					return dependency;
@@ -218,19 +221,22 @@ namespace Deform
 			if (!CanUpdate())
 				return;
 
-			// If in play-mode, always apply vertices since it's an elastic effect
-			if (Application.isPlaying)
+			if (IsVisible() || CullingMode == CullingMode.AlwaysUpdate)
 			{
-				currentModifiedDataFlags |= DataFlags.Vertices;
+				// If in play-mode, always apply vertices since it's an elastic effect
+				if (Application.isPlaying)
+				{
+					currentModifiedDataFlags |= DataFlags.Vertices;
+				}
+
+				data.ApplyData(currentModifiedDataFlags);
+
+				if (BoundsRecalculation == BoundsRecalculation.Custom)
+					data.DynamicMesh.bounds = CustomBounds;
+
+				if (ColliderRecalculation == ColliderRecalculation.Auto)
+					RecalculateMeshCollider();
 			}
-
-			data.ApplyData(currentModifiedDataFlags);
-
-			if (BoundsRecalculation == BoundsRecalculation.Custom)
-				data.DynamicMesh.bounds = CustomBounds;
-
-			if (ColliderRecalculation == ColliderRecalculation.Auto)
-				RecalculateMeshCollider();
 
 			ResetDynamicData();
 		}

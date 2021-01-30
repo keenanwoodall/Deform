@@ -41,6 +41,12 @@ namespace Deform
 				updateMode = value;
 			}
 		}
+
+		public CullingMode CullingMode
+		{
+			get => cullingMode;
+			set => cullingMode = value;
+		}
 		public NormalsRecalculation NormalsRecalculation
 		{
 			get => normalsRecalculation;
@@ -95,6 +101,7 @@ namespace Deform
 		public bool assignOriginalMeshOnDisable = true;
 
 		[SerializeField, HideInInspector] protected UpdateMode updateMode = UpdateMode.Auto;
+		[SerializeField, HideInInspector] protected CullingMode cullingMode = CullingMode.DontUpdate;
 		[SerializeField, HideInInspector] protected NormalsRecalculation normalsRecalculation = NormalsRecalculation.Auto;
 		[SerializeField, HideInInspector] protected BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
 		[SerializeField, HideInInspector] protected ColliderRecalculation colliderRecalculation = ColliderRecalculation.None;
@@ -172,6 +179,7 @@ namespace Deform
 			}
 		}
 #endif
+		protected bool IsVisible() => data.Target.GetRenderer().isVisible;
 
 		/// <summary>
 		/// Called before Schedule.
@@ -179,6 +187,8 @@ namespace Deform
 		public void PreSchedule()
 		{
 			if (!CanUpdate())
+				return;
+			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
 				return;
 			foreach (var element in DeformerElements)
 			{
@@ -193,6 +203,9 @@ namespace Deform
 		/// </summary>
 		public virtual JobHandle Schedule(JobHandle dependency = default)
 		{
+			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
+				return dependency;
+			
 			if (data.Target.GetGameObject() == null)
 				if (!data.Initialize(gameObject))
 					return dependency;
@@ -244,8 +257,30 @@ namespace Deform
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
-			// Return the new end of the dependency chain.
+			// Return the new end of the dependency chain.d
 			return handle;
+		}
+		
+		/// <summary>
+		/// Sends native mesh data to the mesh, updates the mesh collider if required and then resets the native mesh data.
+		/// </summary>
+		public virtual void ApplyData()
+		{
+			if (!CanUpdate())
+				return;
+
+			if (IsVisible() || CullingMode == CullingMode.AlwaysUpdate)
+			{
+				data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
+
+				if (BoundsRecalculation == BoundsRecalculation.Custom)
+					data.DynamicMesh.bounds = CustomBounds;
+
+				if (ColliderRecalculation == ColliderRecalculation.Auto)
+					RecalculateMeshCollider();
+			}
+			
+			ResetDynamicData();
 		}
 
 		/// <summary>
@@ -262,25 +297,6 @@ namespace Deform
 		public void Complete()
 		{
 			handle.Complete();
-		}
-
-		/// <summary>
-		/// Sends native mesh data to the mesh, updates the mesh collider if required and then resets the native mesh data.
-		/// </summary>
-		public virtual void ApplyData()
-		{
-			if (!CanUpdate())
-				return;
-
-			data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
-
-			if (BoundsRecalculation == BoundsRecalculation.Custom)
-				data.DynamicMesh.bounds = CustomBounds;
-
-			if (ColliderRecalculation == ColliderRecalculation.Auto)
-				RecalculateMeshCollider();
-
-			ResetDynamicData();
 		}
 
 		public void ForceImmediateUpdate()
