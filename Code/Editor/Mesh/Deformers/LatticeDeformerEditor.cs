@@ -12,17 +12,20 @@ namespace DeformEditor
 
         private static class Content
         {
+            public static readonly GUIContent Target = new GUIContent(text: "Target", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
             public static readonly GUIContent Corners = new GUIContent(text: "Corners", tooltip: "The lattice control points");
             public static readonly GUIContent Resolution = new GUIContent(text: "Resolution", tooltip: "Per axis control point counts, the higher the resolution the more splits");
         }
 
         private class Properties
         {
+            public SerializedProperty Target;
             public SerializedProperty Corners;
             public SerializedProperty Resolution;
 
             public Properties(SerializedObject obj)
             {
+                Target = obj.FindProperty("target");
                 Corners = obj.FindProperty("corners");
                 Resolution = obj.FindProperty("resolution");
             }
@@ -43,6 +46,8 @@ namespace DeformEditor
             base.OnInspectorGUI();
 
             serializedObject.UpdateIfRequiredOrScript();
+
+            EditorGUILayout.PropertyField (properties.Target, Content.Target);
 
             EditorGUILayout.PropertyField(properties.Corners, Content.Corners, true);
 

@@ -13,6 +13,19 @@ namespace Deform
     [HelpURL("https://github.com/keenanwoodall/Deform/wiki/LatticeDeformer")]
     public class LatticeDeformer : Deformer
     {
+        public Transform Target
+        {
+            get
+            {
+                if (target == null)
+                    target = transform;
+                return target;
+            }
+            set { target = value; }
+        }
+
+        [SerializeField, HideInInspector] private Transform target;
+        
         public float3[] Corners
         {
             get => corners;
@@ -64,10 +77,14 @@ namespace Deform
 
         public override JobHandle Process(MeshData data, JobHandle dependency = default)
         {
+            var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Target, data.Target.GetTransform ());
+
             return new LatticeJob
             {
                 corners = new NativeArray<float3>(corners, Allocator.TempJob),
                 resolution = new int3(resolution.x, resolution.y, resolution.z),
+                meshToTarget = meshToAxis,
+                targetToMesh = meshToAxis.inverse,
                 vertices = data.DynamicNative.VertexBuffer
             }.Schedule(data.Length, DEFAULT_BATCH_COUNT, dependency);
         }
@@ -77,14 +94,16 @@ namespace Deform
         {
             [DeallocateOnJobCompletion, ReadOnly] public NativeArray<float3> corners;
             [ReadOnly] public int3 resolution;
+            [ReadOnly] public float4x4 meshToTarget;
+            [ReadOnly] public float4x4 targetToMesh;
             public NativeArray<float3> vertices;
 
             // TODO -  Rewrite these calculations to be simpler now that the maths is figured out
             public void Execute(int index)
             {
                 // Convert from [-0.5,0.5] space to [0,1]
-                var sourcePosition = vertices[index] + float3(0.5f, 0.5f, 0.5f);
-
+                var sourcePosition = transform(meshToTarget, vertices[index]) + float3(0.5f, 0.5f, 0.5f);
+                
                 // Determine the negative corner of the lattice cell containing the source position
                 var negativeCorner = new int3((int) (sourcePosition.x * (resolution.x - 1)), (int) (sourcePosition.y * (resolution.y - 1)), (int) (sourcePosition.z * (resolution.z - 1)));
 
@@ -101,7 +120,7 @@ namespace Deform
                 int index6 = (negativeCorner.x + 0) + (negativeCorner.y + 1) * resolution.x + (negativeCorner.z + 1) * (resolution.x * resolution.y);
                 int index7 = (negativeCorner.x + 1) + (negativeCorner.y + 1) * resolution.x + (negativeCorner.z + 1) * (resolution.x * resolution.y);
 
-                var localizedSourcePosition = (sourcePosition) * (resolution - new int3(1,1,1))  - negativeCorner;
+                var localizedSourcePosition = (sourcePosition) * (resolution - new int3(1, 1, 1)) - negativeCorner;
 
                 var newPosition = float3.zero;
 
@@ -153,7 +172,7 @@ namespace Deform
                     newPosition[axisIndex] = lerp(min, max, localizedSourcePosition[axisIndex]);
                 }
 
-                vertices[index] = newPosition;
+                vertices[index] = transform(targetToMesh,newPosition);
             }
         }
     }
