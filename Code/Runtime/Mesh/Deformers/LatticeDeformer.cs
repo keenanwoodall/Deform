@@ -164,6 +164,9 @@ namespace Deform
 
                 var localizedSourcePosition = (sourcePosition) * (resolution - new int3(1, 1, 1)) - negativeCorner;
 
+                // Clamp the local position outside of the bounds so that our interpolation outside the lattice is clamped
+                localizedSourcePosition = clamp(localizedSourcePosition, float3.zero, new float3(1, 1, 1));
+
                 var newPosition = float3.zero;
 
                 // X-Axis
@@ -172,7 +175,6 @@ namespace Deform
                     int secondaryAxisIndex = 1;
                     int tertiaryAxisIndex = 2;
 
-                    // TODO - This doesn't seem to be quite right, particularly when two axes are involved
                     if (sourcePosition[axisIndex] < 0)
                     {
                         // Outside of lattice (negative in axis)
@@ -189,7 +191,7 @@ namespace Deform
                         var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
                         newPosition[axisIndex] = sourcePosition[axisIndex] + max - 1;
                     }
-                    else if (sourcePosition[axisIndex] >= 0 && sourcePosition[axisIndex] <= 1)
+                    else
                     {
                         // Inside lattice
                         var min1 = lerp(corners[index0][axisIndex], corners[index2][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
@@ -225,7 +227,7 @@ namespace Deform
                         var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
                         newPosition[axisIndex] = sourcePosition[axisIndex] + max - 1;
                     }
-                    else if (sourcePosition[axisIndex] >= 0 && sourcePosition[axisIndex] <= 1)
+                    else
                     {
                         var min1 = lerp(corners[index0][axisIndex], corners[index1][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
                         var max1 = lerp(corners[index2][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
@@ -261,7 +263,7 @@ namespace Deform
                         var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
                         newPosition[axisIndex] = sourcePosition[axisIndex] + max - 1;
                     }
-                    else if (sourcePosition[axisIndex] >= 0 && sourcePosition[axisIndex] <= 1)
+                    else
                     {
                         var min1 = lerp(corners[index0][axisIndex], corners[index1][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
                         var max1 = lerp(corners[index4][axisIndex], corners[index5][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
