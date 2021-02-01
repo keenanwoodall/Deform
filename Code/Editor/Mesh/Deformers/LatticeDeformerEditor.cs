@@ -18,20 +18,20 @@ namespace DeformEditor
         private static class Content
         {
             public static readonly GUIContent Target = new GUIContent(text: "Target", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
-            public static readonly GUIContent Corners = new GUIContent(text: "Corners", tooltip: "The lattice control points");
+            public static readonly GUIContent ControlPoints = new GUIContent(text: "Control Points", tooltip: "The lattice control points");
             public static readonly GUIContent Resolution = new GUIContent(text: "Resolution", tooltip: "Per axis control point counts, the higher the resolution the more splits");
         }
 
         private class Properties
         {
             public SerializedProperty Target;
-            public SerializedProperty Corners;
+            public SerializedProperty ControlPoints;
             public SerializedProperty Resolution;
 
             public Properties(SerializedObject obj)
             {
                 Target = obj.FindProperty("target");
-                Corners = obj.FindProperty("corners");
+                ControlPoints = obj.FindProperty("controlPoints");
                 Resolution = obj.FindProperty("resolution");
             }
         }
@@ -54,7 +54,7 @@ namespace DeformEditor
 
             EditorGUILayout.PropertyField(properties.Target, Content.Target);
 
-            EditorGUILayout.PropertyField(properties.Corners, Content.Corners, true);
+            EditorGUILayout.PropertyField(properties.ControlPoints, Content.ControlPoints, true);
 
             newResolution = EditorGUILayout.Vector3IntField(Content.Resolution, newResolution);
             // Make sure we have at least two control points per axis
@@ -86,7 +86,7 @@ namespace DeformEditor
             base.OnSceneGUI();
 
             var lattice = target as LatticeDeformer;
-            var corners = lattice.Corners;
+            var controlPoints = lattice.ControlPoints;
 
             using (new Handles.DrawingScope(lattice.transform.localToWorldMatrix))
             {
@@ -113,20 +113,20 @@ namespace DeformEditor
                             int index111 = lattice.GetIndex(x + 1, y + 1, z + 1);
 
                             var lineMode = DeformHandles.LineMode.Solid;
-                            DeformHandles.Line(corners[index000], corners[index100], lineMode);
-                            DeformHandles.Line(corners[index010], corners[index110], lineMode);
-                            DeformHandles.Line(corners[index001], corners[index101], lineMode);
-                            DeformHandles.Line(corners[index011], corners[index111], lineMode);
+                            DeformHandles.Line(controlPoints[index000], controlPoints[index100], lineMode);
+                            DeformHandles.Line(controlPoints[index010], controlPoints[index110], lineMode);
+                            DeformHandles.Line(controlPoints[index001], controlPoints[index101], lineMode);
+                            DeformHandles.Line(controlPoints[index011], controlPoints[index111], lineMode);
 
-                            DeformHandles.Line(corners[index000], corners[index010], lineMode);
-                            DeformHandles.Line(corners[index100], corners[index110], lineMode);
-                            DeformHandles.Line(corners[index001], corners[index011], lineMode);
-                            DeformHandles.Line(corners[index101], corners[index111], lineMode);
+                            DeformHandles.Line(controlPoints[index000], controlPoints[index010], lineMode);
+                            DeformHandles.Line(controlPoints[index100], controlPoints[index110], lineMode);
+                            DeformHandles.Line(controlPoints[index001], controlPoints[index011], lineMode);
+                            DeformHandles.Line(controlPoints[index101], controlPoints[index111], lineMode);
 
-                            DeformHandles.Line(corners[index000], corners[index001], lineMode);
-                            DeformHandles.Line(corners[index100], corners[index101], lineMode);
-                            DeformHandles.Line(corners[index010], corners[index011], lineMode);
-                            DeformHandles.Line(corners[index110], corners[index111], lineMode);
+                            DeformHandles.Line(controlPoints[index000], controlPoints[index001], lineMode);
+                            DeformHandles.Line(controlPoints[index100], controlPoints[index101], lineMode);
+                            DeformHandles.Line(controlPoints[index010], controlPoints[index011], lineMode);
+                            DeformHandles.Line(controlPoints[index110], controlPoints[index111], lineMode);
                         }
                     }
                 }
@@ -142,9 +142,9 @@ namespace DeformEditor
                         {
                             var controlPointHandleID = GUIUtility.GetControlID("LatticeDeformerControlPoint".GetHashCode(), FocusType.Passive);
                             var activeColor = DeformEditorSettings.SolidHandleColor;
-                            var cornerIndex = lattice.GetIndex(x, y, z);
+                            var controlPointIndex = lattice.GetIndex(x, y, z);
 
-                            if (GUIUtility.hotControl == controlPointHandleID || selectedIndices.Contains(cornerIndex))
+                            if (GUIUtility.hotControl == controlPointHandleID || selectedIndices.Contains(controlPointIndex))
                             {
                                 activeColor = Handles.selectedColor;
                             }
@@ -162,7 +162,7 @@ namespace DeformEditor
 
                                 if ((e.modifiers & EventModifiers.Control) != 0)
                                 {
-                                    selectedIndices.Remove(cornerIndex);
+                                    selectedIndices.Remove(controlPointIndex);
                                 }
                                 else
                                 {
@@ -171,13 +171,13 @@ namespace DeformEditor
                                         selectedIndices.Clear();
                                     }
 
-                                    selectedIndices.Add(cornerIndex);
+                                    selectedIndices.Add(controlPointIndex);
                                 }
                             }
 
                             using (new Handles.DrawingScope(activeColor))
                             {
-                                var position = corners[cornerIndex];
+                                var position = controlPoints[controlPointIndex];
                                 var size = HandleUtility.GetHandleSize(position) * DeformEditorSettings.ScreenspaceLatticeHandleCapSize;
 
                                 Handles.DotHandleCap(
@@ -204,14 +204,14 @@ namespace DeformEditor
                 {
                     foreach (var index in selectedIndices)
                     {
-                        position += corners[index];
+                        position += controlPoints[index];
                     }
 
                     position /= selectedIndices.Count;
                 }
                 else
                 {
-                    position = corners[selectedIndices.First()];
+                    position = controlPoints[selectedIndices.First()];
                 }
 
                 position = lattice.Target.TransformPoint(position);
@@ -232,7 +232,7 @@ namespace DeformEditor
                     delta = lattice.Target.InverseTransformVector(delta);
                     foreach (var selectedIndex in selectedIndices)
                     {
-                        corners[selectedIndex] += delta;
+                        controlPoints[selectedIndex] += delta;
                     }
                 }
             }
