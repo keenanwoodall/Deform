@@ -156,7 +156,6 @@ namespace DeformEditor
                             Event e = Event.current;
                             if (e.type == EventType.MouseDown && HandleUtility.nearestControl == controlPointHandleID && e.button == 0)
                             {
-                                // TODO: Add Undo support for lattice control point selection changes
                                 GUIUtility.hotControl = controlPointHandleID;
                                 GUIUtility.keyboardControl = controlPointHandleID;
                                 e.Use();

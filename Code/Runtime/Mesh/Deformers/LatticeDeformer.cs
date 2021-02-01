@@ -1,4 +1,3 @@
-using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -61,9 +60,8 @@ namespace Deform
                         {
                             int index = GetIndex(newResolution, x, y, z);
 
-                            // TODO - Clean up these calculations
-                            newCorners[index] = 0.5f * new float3(Mathf.Lerp(-1, 1, x / (float) (newResolution.x - 1)),
-                                Mathf.Lerp(-1, 1, y / (float) (newResolution.y - 1)), Mathf.Lerp(-1, 1, z / (float) (newResolution.z - 1)));
+                            newCorners[index] = new float3(x / (float) (newResolution.x - 1) - 0.5f,
+                                y / (float) (newResolution.y - 1) - 0.5f, z / (float) (newResolution.z - 1) - 0.5f);
                         }
                     }
                 }
@@ -78,7 +76,7 @@ namespace Deform
                 };
                 latticeJob.Run(newCorners.Length);
                 resolution = newResolution;
-                
+
                 corners = new float3[newCorners.Length];
                 newCorners.CopyTo(corners);
                 newCorners.Dispose();
@@ -95,10 +93,9 @@ namespace Deform
                         for (int x = 0; x < resolution.x; x++)
                         {
                             int index = GetIndex(x, y, z);
-
-                            // TODO - Clean up these calculations
-                            corners[index] = 0.5f * new float3(Mathf.Lerp(-1, 1, x / (float) (resolution.x - 1)),
-                                Mathf.Lerp(-1, 1, y / (float) (resolution.y - 1)), Mathf.Lerp(-1, 1, z / (float) (resolution.z - 1)));
+                            
+                            corners[index] = new float3(x / (float) (newResolution.x - 1) - 0.5f,
+                                y / (float) (newResolution.y - 1) - 0.5f, z / (float) (newResolution.z - 1) - 0.5f);
                         }
                     }
                 }
@@ -109,7 +106,7 @@ namespace Deform
         {
             return x + y * resolution.x + z * (resolution.x * resolution.y);
         }
-        
+
         public int GetIndex(Vector3Int resolution, int x, int y, int z)
         {
             return x + y * resolution.x + z * (resolution.x * resolution.y);
@@ -140,7 +137,6 @@ namespace Deform
             [ReadOnly] public float4x4 targetToMesh;
             public NativeArray<float3> vertices;
 
-            // TODO -  Rewrite these calculations to be simpler now that the maths is figured out
             public void Execute(int index)
             {
                 // Convert from [-0.5,0.5] space to [0,1]
@@ -170,112 +166,96 @@ namespace Deform
                 var newPosition = float3.zero;
 
                 // X-Axis
+                if (sourcePosition.x < 0)
                 {
-                    int axisIndex = 0;
-                    int secondaryAxisIndex = 1;
-                    int tertiaryAxisIndex = 2;
+                    // Outside of lattice (negative in axis)
+                    var min1 = lerp(corners[index0].x, corners[index2].x, localizedSourcePosition.y);
+                    var min2 = lerp(corners[index4].x, corners[index6].x, localizedSourcePosition.y);
+                    var min = lerp(min1, min2, localizedSourcePosition.z);
+                    newPosition.x = sourcePosition.x + min;
+                }
+                else if (sourcePosition.x > 1)
+                {
+                    // Outside of lattice (positive in axis)
+                    var max1 = lerp(corners[index1].x, corners[index3].x, localizedSourcePosition.y);
+                    var max2 = lerp(corners[index5].x, corners[index7].x, localizedSourcePosition.y);
+                    var max = lerp(max1, max2, localizedSourcePosition.z);
+                    newPosition.x = sourcePosition.x + max - 1;
+                }
+                else
+                {
+                    // Inside lattice
+                    var min1 = lerp(corners[index0].x, corners[index2].x, localizedSourcePosition.y);
+                    var max1 = lerp(corners[index1].x, corners[index3].x, localizedSourcePosition.y);
 
-                    if (sourcePosition[axisIndex] < 0)
-                    {
-                        // Outside of lattice (negative in axis)
-                        var min1 = lerp(corners[index0][axisIndex], corners[index2][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var min2 = lerp(corners[index4][axisIndex], corners[index6][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var min = lerp(min1, min2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = sourcePosition[axisIndex] + min;
-                    }
-                    else if (sourcePosition[axisIndex] > 1)
-                    {
-                        // Outside of lattice (positive in axis)
-                        var max1 = lerp(corners[index1][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max2 = lerp(corners[index5][axisIndex], corners[index7][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = sourcePosition[axisIndex] + max - 1;
-                    }
-                    else
-                    {
-                        // Inside lattice
-                        var min1 = lerp(corners[index0][axisIndex], corners[index2][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max1 = lerp(corners[index1][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
+                    var min2 = lerp(corners[index4].x, corners[index6].x, localizedSourcePosition.y);
+                    var max2 = lerp(corners[index5].x, corners[index7].x, localizedSourcePosition.y);
 
-                        var min2 = lerp(corners[index4][axisIndex], corners[index6][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max2 = lerp(corners[index5][axisIndex], corners[index7][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-
-                        var min = lerp(min1, min2, localizedSourcePosition[tertiaryAxisIndex]);
-                        var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = lerp(min, max, localizedSourcePosition[axisIndex]);
-                    }
+                    var min = lerp(min1, min2, localizedSourcePosition.z);
+                    var max = lerp(max1, max2, localizedSourcePosition.z);
+                    newPosition.x = lerp(min, max, localizedSourcePosition.x);
                 }
 
                 // Y-Axis
+                if (sourcePosition.y < 0)
                 {
-                    int axisIndex = 1;
-                    int secondaryAxisIndex = 0;
-                    int tertiaryAxisIndex = 2;
-                    if (sourcePosition[axisIndex] < 0)
-                    {
-                        // Outside of lattice (negative in axis)
-                        var min1 = lerp(corners[index0][axisIndex], corners[index1][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var min2 = lerp(corners[index4][axisIndex], corners[index5][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var min = lerp(min1, min2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = sourcePosition[axisIndex] + min;
-                    }
-                    else if (sourcePosition[axisIndex] > 1)
-                    {
-                        // Outside of lattice (positive in axis)
-                        var max1 = lerp(corners[index2][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max2 = lerp(corners[index6][axisIndex], corners[index7][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = sourcePosition[axisIndex] + max - 1;
-                    }
-                    else
-                    {
-                        var min1 = lerp(corners[index0][axisIndex], corners[index1][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max1 = lerp(corners[index2][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
+                    // Outside of lattice (negative in axis)
+                    var min1 = lerp(corners[index0].y, corners[index1].y, localizedSourcePosition.x);
+                    var min2 = lerp(corners[index4].y, corners[index5].y, localizedSourcePosition.x);
+                    var min = lerp(min1, min2, localizedSourcePosition.z);
+                    newPosition.y = sourcePosition.y + min;
+                }
+                else if (sourcePosition.y > 1)
+                {
+                    // Outside of lattice (positive in axis)
+                    var max1 = lerp(corners[index2].y, corners[index3].y, localizedSourcePosition.x);
+                    var max2 = lerp(corners[index6].y, corners[index7].y, localizedSourcePosition.x);
+                    var max = lerp(max1, max2, localizedSourcePosition.z);
+                    newPosition.y = sourcePosition.y + max - 1;
+                }
+                else
+                {
+                    var min1 = lerp(corners[index0].y, corners[index1].y, localizedSourcePosition.x);
+                    var max1 = lerp(corners[index2].y, corners[index3].y, localizedSourcePosition.x);
 
-                        var min2 = lerp(corners[index4][axisIndex], corners[index5][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max2 = lerp(corners[index6][axisIndex], corners[index7][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
+                    var min2 = lerp(corners[index4].y, corners[index5].y, localizedSourcePosition.x);
+                    var max2 = lerp(corners[index6].y, corners[index7].y, localizedSourcePosition.x);
 
-                        var min = lerp(min1, min2, localizedSourcePosition[tertiaryAxisIndex]);
-                        var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
+                    var min = lerp(min1, min2, localizedSourcePosition.z);
+                    var max = lerp(max1, max2, localizedSourcePosition.z);
 
-                        newPosition[axisIndex] = lerp(min, max, localizedSourcePosition[axisIndex]);
-                    }
+                    newPosition.y = lerp(min, max, localizedSourcePosition.y);
                 }
 
                 // Z-Axis
+                if (sourcePosition.z < 0)
                 {
-                    int axisIndex = 2;
-                    int secondaryAxisIndex = 0;
-                    int tertiaryAxisIndex = 1;
-                    if (sourcePosition[axisIndex] < 0)
-                    {
-                        // Outside of lattice (negative in axis)
-                        var min1 = lerp(corners[index0][axisIndex], corners[index1][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var min2 = lerp(corners[index2][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var min = lerp(min1, min2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = sourcePosition[axisIndex] + min;
-                    }
-                    else if (sourcePosition[axisIndex] > 1)
-                    {
-                        // Outside of lattice (positive in axis)
-                        var max1 = lerp(corners[index4][axisIndex], corners[index5][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max2 = lerp(corners[index6][axisIndex], corners[index7][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
-                        newPosition[axisIndex] = sourcePosition[axisIndex] + max - 1;
-                    }
-                    else
-                    {
-                        var min1 = lerp(corners[index0][axisIndex], corners[index1][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max1 = lerp(corners[index4][axisIndex], corners[index5][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
+                    // Outside of lattice (negative in axis)
+                    var min1 = lerp(corners[index0].z, corners[index1].z, localizedSourcePosition.x);
+                    var min2 = lerp(corners[index2].z, corners[index3].z, localizedSourcePosition.x);
+                    var min = lerp(min1, min2, localizedSourcePosition.y);
+                    newPosition.z = sourcePosition.z + min;
+                }
+                else if (sourcePosition.z > 1)
+                {
+                    // Outside of lattice (positive in axis)
+                    var max1 = lerp(corners[index4].z, corners[index5].z, localizedSourcePosition.x);
+                    var max2 = lerp(corners[index6].z, corners[index7].z, localizedSourcePosition.x);
+                    var max = lerp(max1, max2, localizedSourcePosition.y);
+                    newPosition.z = sourcePosition.z + max - 1;
+                }
+                else
+                {
+                    var min1 = lerp(corners[index0].z, corners[index1].z, localizedSourcePosition.x);
+                    var max1 = lerp(corners[index4].z, corners[index5].z, localizedSourcePosition.x);
 
-                        var min2 = lerp(corners[index2][axisIndex], corners[index3][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
-                        var max2 = lerp(corners[index6][axisIndex], corners[index7][axisIndex], localizedSourcePosition[secondaryAxisIndex]);
+                    var min2 = lerp(corners[index2].z, corners[index3].z, localizedSourcePosition.x);
+                    var max2 = lerp(corners[index6].z, corners[index7].z, localizedSourcePosition.x);
 
-                        var min = lerp(min1, min2, localizedSourcePosition[tertiaryAxisIndex]);
-                        var max = lerp(max1, max2, localizedSourcePosition[tertiaryAxisIndex]);
+                    var min = lerp(min1, min2, localizedSourcePosition.y);
+                    var max = lerp(max1, max2, localizedSourcePosition.y);
 
-                        newPosition[axisIndex] = lerp(min, max, localizedSourcePosition[axisIndex]);
-                    }
+                    newPosition.z = lerp(min, max, localizedSourcePosition.z);
                 }
 
                 vertices[index] = transform(targetToMesh, newPosition);
