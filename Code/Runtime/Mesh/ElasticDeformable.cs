@@ -223,7 +223,7 @@ namespace Deform
 					currentModifiedDataFlags |= DataFlags.Vertices;
 				}
 
-				data.ApplyData(currentModifiedDataFlags);
+				data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
 
 				if (BoundsRecalculation == BoundsRecalculation.Custom)
 					data.DynamicMesh.bounds = CustomBounds;
