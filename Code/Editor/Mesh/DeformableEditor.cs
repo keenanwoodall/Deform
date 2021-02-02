@@ -247,7 +247,7 @@ namespace DeformEditor
 			}
 		}
 
-		private void OnSceneGUI()
+		protected virtual void OnSceneGUI()
 		{
 			if (foldoutDebug)
 			{
