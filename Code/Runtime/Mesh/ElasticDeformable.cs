@@ -190,13 +190,16 @@ namespace Deform
 				}.Schedule(data.Length, 128, handle);
 			}
 
-			if (NormalsRecalculation == NormalsRecalculation.Auto)
+			// Store if the vertices have been modified. If not, we don't need to update normals/bounds
+			var dirtyVertices = currentModifiedDataFlags.HasFlag(DataFlags.Vertices);
+			
+			if (dirtyVertices && NormalsRecalculation == NormalsRecalculation.Auto)
 			{
 				// Add normal recalculation to the end of the deformation chain.
 				handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
 				currentModifiedDataFlags |= DataFlags.Normals;
 			}
-			if (BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
+			if (dirtyVertices && BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
 				handle = MeshUtils.RecalculateBounds(data.DynamicNative, handle);
