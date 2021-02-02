@@ -24,23 +24,13 @@ namespace Deform
             set { target = value; }
         }
 
+        public float3[] ControlPoints => controlPoints;
+
+        public Vector3Int Resolution => resolution;
+
         [SerializeField, HideInInspector] private Transform target;
-
-        public float3[] ControlPoints
-        {
-            get => controlPoints;
-            set => controlPoints = value;
-        }
-
-        public Vector3Int Resolution
-        {
-            get => resolution;
-            set => resolution = value;
-        }
-
         [SerializeField] private float3[] controlPoints;
         [SerializeField] private Vector3Int resolution = new Vector3Int(2, 2, 2);
-
 
         protected virtual void Reset()
         {
@@ -93,7 +83,7 @@ namespace Deform
                         for (int x = 0; x < resolution.x; x++)
                         {
                             int index = GetIndex(x, y, z);
-                            
+
                             controlPoints[index] = new float3(x / (float) (newResolution.x - 1) - 0.5f,
                                 y / (float) (newResolution.y - 1) - 0.5f, z / (float) (newResolution.z - 1) - 0.5f);
                         }
@@ -110,6 +100,18 @@ namespace Deform
         public int GetIndex(Vector3Int resolution, int x, int y, int z)
         {
             return x + y * resolution.x + z * (resolution.x * resolution.y);
+        }
+
+        public float3 GetControlPoint(int x, int y, int z)
+        {
+            var index = GetIndex(x, y, z);
+            return controlPoints[index];
+        }
+
+        public void SetControlPoint(int x, int y, int z, float3 controlPoint)
+        {
+            var index = GetIndex(x, y, z);
+            controlPoints[index] = controlPoint;
         }
 
         public override DataFlags DataFlags => DataFlags.Vertices;

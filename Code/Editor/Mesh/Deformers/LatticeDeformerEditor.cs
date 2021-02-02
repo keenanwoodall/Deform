@@ -18,20 +18,17 @@ namespace DeformEditor
         private static class Content
         {
             public static readonly GUIContent Target = new GUIContent(text: "Target", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
-            public static readonly GUIContent ControlPoints = new GUIContent(text: "Control Points", tooltip: "The lattice control points");
             public static readonly GUIContent Resolution = new GUIContent(text: "Resolution", tooltip: "Per axis control point counts, the higher the resolution the more splits");
         }
 
         private class Properties
         {
             public SerializedProperty Target;
-            public SerializedProperty ControlPoints;
             public SerializedProperty Resolution;
 
             public Properties(SerializedObject obj)
             {
                 Target = obj.FindProperty("target");
-                ControlPoints = obj.FindProperty("controlPoints");
                 Resolution = obj.FindProperty("resolution");
             }
         }
@@ -53,8 +50,6 @@ namespace DeformEditor
             serializedObject.UpdateIfRequiredOrScript();
 
             EditorGUILayout.PropertyField(properties.Target, Content.Target);
-
-            EditorGUILayout.PropertyField(properties.ControlPoints, Content.ControlPoints, true);
 
             newResolution = EditorGUILayout.Vector3IntField(Content.Resolution, newResolution);
             // Make sure we have at least two control points per axis
@@ -160,19 +155,33 @@ namespace DeformEditor
                                 GUIUtility.keyboardControl = controlPointHandleID;
                                 e.Use();
 
-                                if ((e.modifiers & EventModifiers.Control) != 0)
+                                bool modifierKeyPressed = (e.modifiers & EventModifiers.Control) != 0 || (e.modifiers & EventModifiers.Shift) != 0;
+                                
+                                if (modifierKeyPressed && selectedIndices.Contains(controlPointIndex))
                                 {
+                                    // Pressed a modifier key so toggle the selection
                                     selectedIndices.Remove(controlPointIndex);
                                 }
                                 else
                                 {
-                                    if ((e.modifiers & EventModifiers.Shift) == 0)
+                                    if (!modifierKeyPressed)
                                     {
                                         selectedIndices.Clear();
                                     }
 
                                     selectedIndices.Add(controlPointIndex);
+                                    if (selectedIndices.Count == 1) // Is this our first selection?
+                                    {
+                                        // Make sure when we start selecting control points we don't have a transform tool active as it'll be confusing having multiple ones
+                                        Tools.current = Tool.None;
+                                    }
                                 }
+                            }
+
+                            if (Tools.current != Tool.None && selectedIndices.Count != 0)
+                            {
+                                // The user has changed to a tool but we have control points selected, so clear the selection
+                                selectedIndices.Clear();
                             }
 
                             using (new Handles.DrawingScope(activeColor))
@@ -194,9 +203,6 @@ namespace DeformEditor
 
             if (selectedIndices.Count != 0)
             {
-                // Make sure when we start selecting control points we don't have a transform tool active as it'll be confusing having multiple ones
-                Tools.current = Tool.None;
-
                 // Get the average position
                 var position = float3.zero;
 
