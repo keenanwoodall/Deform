@@ -30,6 +30,7 @@ namespace DeformEditor
 			public static readonly GUIContent CustomBounds = new GUIContent(text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
 
 			public static readonly string ReadWriteNotEnableAlert = "Read/Write permissions must be enabled on the target mesh.";
+			public static readonly string FixReadWriteNotEnabled = "Fix It!";
 
 			public static readonly GUIContent[] UtilityToolbar =
 			{
@@ -243,7 +244,20 @@ namespace DeformEditor
 
 				var originalMesh = deformable.GetOriginalMesh();
 				if (originalMesh != null && !originalMesh.isReadable)
-					EditorGUILayout.HelpBox(Content.ReadWriteNotEnableAlert, MessageType.Error);
+				{
+					using (new EditorGUILayout.HorizontalScope())
+					{
+						EditorGUILayout.HelpBox(Content.ReadWriteNotEnableAlert, MessageType.Error);
+						if (GUILayout.Button(Content.FixReadWriteNotEnabled, GUILayout.Width(50f), GUILayout.Height(EditorGUIUtility.singleLineHeight * 2f + EditorGUIUtility.standardVerticalSpacing)))
+						{
+							if (AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(originalMesh)) is ModelImporter importer)
+							{
+								importer.isReadable = true;
+								importer.SaveAndReimport();
+							}
+						}
+					}
+				}
 			}
 		}
 
