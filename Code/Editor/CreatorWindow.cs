@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -61,7 +60,7 @@ namespace DeformEditor
 		[UnityEditor.Callbacks.DidReloadScripts]
 		private static void UpdateDeformerAttributes ()
 		{
-			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).OrderBy (x => (int)x.Category).ToList ();
+			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).ThenBy (x => (int)x.Category).ToList ();
 		}
 
 		private void OnEnable ()
@@ -316,30 +315,15 @@ namespace DeformEditor
 
 		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes()
 		{
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			foreach (var assembly in assemblies)
+			var types = TypeCache.GetTypesWithAttribute<DeformerAttribute>();
+			foreach (var type in types)
 			{
-				foreach (var type in GetLoadableTypes(assembly))
+				if (type.IsSubclassOf(typeof(Deformer)))
 				{
-					if (type.IsSubclassOf(typeof(Deformer)))
-					{
-						var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
-						if (attribute != null)
-							yield return attribute;
-					}
+					var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
+					if (attribute != null)
+						yield return attribute;
 				}
-			}
-		}
-
-		public static IEnumerable<Type> GetLoadableTypes(Assembly assembly)
-		{
-			try
-			{
-				return assembly.GetTypes();
-			}
-			catch (ReflectionTypeLoadException e)
-			{
-				return e.Types.Where(t => t != null);
 			}
 		}
 	}
