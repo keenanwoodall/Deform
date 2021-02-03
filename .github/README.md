@@ -59,9 +59,11 @@ Deform runs on the CPU. While it *is* incredibly fast, you should not expect to 
 
 ## Acknowledgments
 * Thanks to [Thomas Ingram](https://twitter.com/vertexxyz) for going the extra-mile to help with editor scripting.
-* Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for testing Deform and giving helpful feedback.
+* Thanks to [Alexander Ameye](https://twitter.com/alexanderameye), [William Besnard](https://twitter.com/BillSansky), [Raphael Herdlicka](https://www.herdlicka.net/) and [David Carney](https://twitter.com/thedavidcarney) for beta testing and giving crucial feedback.
 
-I love seeing creative and cool uses of this tool. If you make something you're proud of, lemme take a lookie!
+Additional massive thanks to the following contributors for helping develop Deform into the best tool it can be:</br>[sabresaurus](https://github.com/sabresaurus), [Brullworfel](https://github.com/Brullworfel), [favoyang](https://github.com/favoyang), and [HitCache](https://github.com/HitCache)
+
+I love seeing creative and cool uses of this tool. If you make something you're proud of I'd be honored if you showed it to me!
 
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
 
