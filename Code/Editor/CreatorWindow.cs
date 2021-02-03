@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+using UnityEditor.SceneManagement;
 using Deform;
 using Beans.Unity.Editor;
 
@@ -60,7 +61,21 @@ namespace DeformEditor
 		[UnityEditor.Callbacks.DidReloadScripts]
 		private static void UpdateDeformerAttributes ()
 		{
-			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).ThenBy (x => (int)x.Category).ToList ();
+			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).OrderBy (x => (int)x.Category).ToList ();
+			SceneHierarchyHooks.addItemsToGameObjectContextMenu += PopulateGameObjectMenu;
+		}
+
+		private static void PopulateGameObjectMenu(GenericMenu menu, GameObject selection)
+		{
+			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable)}"), false, () => CreateDeformable<Deformable>());
+			menu.AddItem(new GUIContent($"Deform/{nameof(ElasticDeformable)}"), false, () => CreateDeformable<ElasticDeformable>());
+			
+			for (int i = 0; i < DeformerAttributes.Count; i++)
+			{
+				var current = DeformerAttributes[i];
+
+				menu.AddItem(new GUIContent($"Deform/Deformers/{current.Category}/{current.Name}", current.Description), false, () => CreateDeformerFromAttribute (current, true));
+			}
 		}
 
 		private void OnEnable ()
