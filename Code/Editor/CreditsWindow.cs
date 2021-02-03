@@ -49,7 +49,7 @@ namespace DeformEditor
 			{
 				EditorGUILayout.LabelField
 				(
-					"Developed by Keenan Woodall.",
+					"Created by Keenan Woodall.",
 					Styles.CreditsText
 				);
 
@@ -62,13 +62,13 @@ namespace DeformEditor
 					Application.OpenURL ("https://github.com/keenanwoodall");
 
 				if (EditorGUILayoutx.LinkLabel (Content.Website))
-					Application.OpenURL ("http://keenanwoodall.com");
+					Application.OpenURL ("https://keenanwoodall.com");
 
 				EditorGUILayout.Space ();
 
 				EditorGUILayout.LabelField
 				(
-					"Thanks to Thomas Ingram for helping with development.",
+					"Thanks to Thomas Ingram for going the extra mile with editor scripting help.",
 					Styles.CreditsText
 				);
 
@@ -76,7 +76,15 @@ namespace DeformEditor
 
 				EditorGUILayout.LabelField
 				(
-					"Thanks to Alexander Ameye, William Besnard, Raphael Herdlicka and David Carney for testing and providing feedback.",
+					"Thanks to Alexander Ameye, William Besnard, Raphael Herdlicka and David Carney for beta testing and providing crucial feedback.",
+					Styles.CreditsText
+				);
+				
+				EditorGUILayout.Space ();
+				
+				EditorGUILayout.LabelField
+				(
+					"Additional massive thanks to the following contributors for helping develop Deform into the best tool it can be:\nsabresaurus, Brullworfel, favoyang, and HitCache",
 					Styles.CreditsText
 				);
 			}
