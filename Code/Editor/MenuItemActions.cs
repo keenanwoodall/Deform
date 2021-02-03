@@ -16,8 +16,14 @@ namespace DeformEditor
 			Undo.RecordObjects (deformables, "Cleaned All Deformables");
 			foreach (var deformable in deformables)
 				deformable.DeformerElements.RemoveAll (t => t.Component == null);
+			
+			var groupDeformers = GameObject.FindObjectsOfType<GroupDeformer> ();
 
-			EditorUtility.DisplayDialog ("Cleaned All Deformables", $"{deformables.Length} found and cleaned.", "OK");
+			Undo.RecordObjects (groupDeformers, "Cleaned All Deformables");
+			foreach (var groupDeformer in groupDeformers)
+				groupDeformer.DeformerElements.RemoveAll (t => t.Component == null);
+
+			EditorUtility.DisplayDialog ("Cleaned All Deformables", $"{deformables.Length + groupDeformers.Length} found and cleaned.", "OK");
 		}
 
 		[MenuItem ("Tools/Deform/Actions/Strip All Deformables", priority = 10101)]
