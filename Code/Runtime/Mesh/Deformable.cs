@@ -110,7 +110,7 @@ namespace Deform
 		[SerializeField, HideInInspector] protected MeshData data;
 		[SerializeField, HideInInspector] protected List<DeformerElement> deformerElements = new List<DeformerElement>();
 
-		[SerializeField, HideInInspector] protected Bounds customBounds;
+		[SerializeField, HideInInspector] protected Bounds customBounds = new Bounds(Vector3.zero, Vector3.one * 0.5f);
 
 		protected DeformableManager manager;
 		protected JobHandle handle;
