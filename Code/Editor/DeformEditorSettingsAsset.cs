@@ -10,6 +10,7 @@ namespace DeformEditor
 		public float dottedLineSize = 5f;
 		public float screenspaceHandleCapSize = 0.0275f;
 		public float screenspaceAngleHandleSize = 1.25f;
+		public float screenspaceLatticeCapSize = 0.035f;
 
 		[Header("Importer")]
 		public bool modelsReadableByDefault = false;

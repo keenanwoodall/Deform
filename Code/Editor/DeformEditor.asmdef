@@ -2,7 +2,8 @@
     "name": "DeformEditor",
     "references": [
         "Beans.Unity.Editor",
-        "Deform"
+        "Deform",
+        "Unity.Mathematics"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
