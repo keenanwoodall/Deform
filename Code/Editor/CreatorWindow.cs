@@ -1,10 +1,17 @@
-﻿using System.Linq;
+﻿#if UNITY_2019_2_OR_NEWER
+#define CAN_POPULATE_GAME_OBJECT_MENU
+#define CAN_USE_TYPE_CACHE
+#endif
+
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+#if CAN_POPULATE_GAME_OBJECT_MENU
 using UnityEditor.SceneManagement;
+#endif
 using Deform;
 using Beans.Unity.Editor;
 
@@ -62,9 +69,11 @@ namespace DeformEditor
 		private static void UpdateDeformerAttributes ()
 		{
 			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).OrderBy (x => (int)x.Category).ToList ();
+#if CAN_POPULATE_GAME_OBJECT_MENU
 			SceneHierarchyHooks.addItemsToGameObjectContextMenu += PopulateGameObjectMenu;
+#endif
 		}
-
+#if CAN_POPULATE_GAME_OBJECT_MENU
 		private static void PopulateGameObjectMenu(GenericMenu menu, GameObject selection)
 		{
 			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable)}"), false, () => CreateDeformable<Deformable>());
@@ -77,7 +86,8 @@ namespace DeformEditor
 				menu.AddItem(new GUIContent($"Deform/Deformers/{current.Category}/{current.Name}", current.Description), false, () => CreateDeformerFromAttribute (current, true));
 			}
 		}
-
+#endif
+		
 		private void OnEnable ()
 		{
 			searchField = new SearchField ();
@@ -327,19 +337,49 @@ namespace DeformEditor
 
 			return sum / gameObjects.Length;
 		}
-
+		
 		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes()
 		{
-			var types = TypeCache.GetTypesWithAttribute<DeformerAttribute>();
-			foreach (var type in types)
+#if CAN_USE_TYPE_CACHE
 			{
-				if (type.IsSubclassOf(typeof(Deformer)))
+				var types = TypeCache.GetTypesWithAttribute<DeformerAttribute>();
+				foreach (var type in types)
 				{
-					var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
-					if (attribute != null)
-						yield return attribute;
+					if (type.IsSubclassOf(typeof(Deformer)))
+					{
+						var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
+						if (attribute != null)
+							yield return attribute;
+					}
 				}
 			}
+#else
+			{
+				var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+				foreach (var assembly in assemblies)
+				{
+					IEnumerable<System.Type> types;
+					try
+					{
+						types = assembly.GetTypes();
+					}
+					catch (ReflectionTypeLoadException e)
+					{
+						types = e.Types.Where(t => t != null);
+					}
+					
+					foreach (var type in types)
+					{
+						if (type.IsSubclassOf(typeof(Deformer)))
+						{
+							var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
+							if (attribute != null)
+								yield return attribute;
+						}
+					}
+				}
+			}
+#endif
 		}
 	}
 }
