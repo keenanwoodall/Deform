@@ -1,10 +1,17 @@
-﻿using System.Linq;
+﻿#if UNITY_2019_2_OR_NEWER
+#define CAN_POPULATE_GAME_OBJECT_MENU
+#define CAN_USE_TYPE_CACHE
+#endif
+
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
+#if CAN_POPULATE_GAME_OBJECT_MENU
 using UnityEditor.SceneManagement;
+#endif
 using Deform;
 using Beans.Unity.Editor;
 
@@ -62,9 +69,11 @@ namespace DeformEditor
 		private static void UpdateDeformerAttributes ()
 		{
 			DeformerAttributes = GetAllDeformerAttributes ().OrderBy (x => x.Name).OrderBy (x => (int)x.Category).ToList ();
+#if CAN_POPULATE_GAME_OBJECT_MENU
 			SceneHierarchyHooks.addItemsToGameObjectContextMenu += PopulateGameObjectMenu;
+#endif
 		}
-
+#if CAN_POPULATE_GAME_OBJECT_MENU
 		private static void PopulateGameObjectMenu(GenericMenu menu, GameObject selection)
 		{
 			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable)}"), false, () => CreateDeformable<Deformable>());
@@ -77,7 +86,8 @@ namespace DeformEditor
 				menu.AddItem(new GUIContent($"Deform/Deformers/{current.Category}/{current.Name}", current.Description), false, () => CreateDeformerFromAttribute (current, true));
 			}
 		}
-
+#endif
+		
 		private void OnEnable ()
 		{
 			searchField = new SearchField ();
@@ -330,8 +340,7 @@ namespace DeformEditor
 		
 		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes()
 		{
-			// Type cache API introduced in 2019.2
-#if UNITY_2019_2_OR_NEWER
+#if CAN_USE_TYPE_CACHE
 			{
 				var types = TypeCache.GetTypesWithAttribute<DeformerAttribute>();
 				foreach (var type in types)
