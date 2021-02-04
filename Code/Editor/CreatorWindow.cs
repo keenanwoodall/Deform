@@ -327,19 +327,50 @@ namespace DeformEditor
 
 			return sum / gameObjects.Length;
 		}
-
+		
 		public static IEnumerable<DeformerAttribute> GetAllDeformerAttributes()
 		{
-			var types = TypeCache.GetTypesWithAttribute<DeformerAttribute>();
-			foreach (var type in types)
+			// Type cache API introduced in 2019.2
+#if UNITY_2019_2_OR_NEWER
 			{
-				if (type.IsSubclassOf(typeof(Deformer)))
+				var types = TypeCache.GetTypesWithAttribute<DeformerAttribute>();
+				foreach (var type in types)
 				{
-					var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
-					if (attribute != null)
-						yield return attribute;
+					if (type.IsSubclassOf(typeof(Deformer)))
+					{
+						var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
+						if (attribute != null)
+							yield return attribute;
+					}
 				}
 			}
+#else
+			{
+				var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+				foreach (var assembly in assemblies)
+				{
+					IEnumerable<System.Type> types;
+					try
+					{
+						types = assembly.GetTypes();
+					}
+					catch (ReflectionTypeLoadException e)
+					{
+						types = e.Types.Where(t => t != null);
+					}
+					
+					foreach (var type in types)
+					{
+						if (type.IsSubclassOf(typeof(Deformer)))
+						{
+							var attribute = type.GetCustomAttribute<DeformerAttribute>(false);
+							if (attribute != null)
+								yield return attribute;
+						}
+					}
+				}
+			}
+#endif
 		}
 	}
 }
