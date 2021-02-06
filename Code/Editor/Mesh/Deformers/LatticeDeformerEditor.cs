@@ -224,6 +224,26 @@ namespace DeformEditor
                     }
                 }
             }
+            
+            // If the lattice is visible, override Unity's built-in Select All so that it selects all control points 
+            if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "SelectAll")
+            {
+                selectedIndices.Clear();
+                var resolution = lattice.Resolution;
+                for (int z = 0; z < resolution.z; z++)
+                {
+                    for (int y = 0; y < resolution.y; y++)
+                    {
+                        for (int x = 0; x < resolution.x; x++)
+                        {
+                            var controlPointIndex = lattice.GetIndex(x, y, z);
+                            selectedIndices.Add(controlPointIndex);
+                        }
+                    }
+                }
+
+                Event.current.Use();
+            }
 
             EditorApplication.QueuePlayerLoopUpdate();
         }
