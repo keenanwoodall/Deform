@@ -12,7 +12,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a managed int array into a native int array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this int[] source, NativeArray<int> destination)
+		public static unsafe void MemCpy (this int[] source, NativeArray<int> destination)
 		{
 			fixed (void* managedArrayPointer = source)
 			{
@@ -27,7 +27,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a managed int array into a native int array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this float[] source, NativeArray<float> destination)
+		public static unsafe void MemCpy (this float[] source, NativeArray<float> destination)
 		{
 			fixed (void* managedArrayPointer = source)
 			{
@@ -42,7 +42,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a managed Vector2 array into a native float2 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this Vector2[] source, NativeArray<float2> destination)
+		public static unsafe void MemCpy (this Vector2[] source, NativeArray<float2> destination)
 		{
 			fixed (void* managedArrayPointer = source)
 			{
@@ -57,7 +57,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a managed Vector3 array into a native float3 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this Vector3[] source, NativeArray<float3> destination)
+		public static unsafe void MemCpy (this Vector3[] source, NativeArray<float3> destination)
 		{
 			fixed (void* managedArrayPointer = source)
 			{
@@ -72,7 +72,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a managed Vector4 array into a native float4 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this Vector4[] source, NativeArray<float4> destination)
+		public static unsafe void MemCpy (this Vector4[] source, NativeArray<float4> destination)
 		{
 			fixed (void* managedArrayPointer = source)
 			{
@@ -87,7 +87,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a managed Color array into a native float4 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this Color[] source, NativeArray<float4> destination)
+		public static unsafe void MemCpy (this Color[] source, NativeArray<float4> destination)
 		{
 			fixed (void* managedArrayPointer = source)
 			{
@@ -105,7 +105,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a native int array into a managed int array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this NativeArray<int> source, int[] destination)
+		public static unsafe void MemCpy (this NativeArray<int> source, int[] destination)
 		{
 			fixed (void* managedArrayPointer = destination)
 			{
@@ -120,7 +120,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a native int array into a managed int array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this NativeArray<float> source, float[] destination)
+		public static unsafe void MemCpy (this NativeArray<float> source, float[] destination)
 		{
 			fixed (void* managedArrayPointer = destination)
 			{
@@ -135,7 +135,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a native float2 array into a managed Vector2 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this NativeArray<float2> source, Vector2[] destination)
+		public static unsafe void MemCpy (this NativeArray<float2> source, Vector2[] destination)
 		{
 			fixed (void* managedArrayPointer = destination)
 			{
@@ -150,7 +150,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a native float3 array into a managed Vector3 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this NativeArray<float3> source, Vector3[] destination)
+		public static unsafe void MemCpy (this NativeArray<float3> source, Vector3[] destination)
 		{
 			fixed (void* managedArrayPointer = destination)
 			{
@@ -165,7 +165,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a native float4 array into a managed Vector4 array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this NativeArray<float4> source, Vector4[] destination)
+		public static unsafe void MemCpy (this NativeArray<float4> source, Vector4[] destination)
 		{
 			fixed (void* managedArrayPointer = destination)
 			{
@@ -180,7 +180,7 @@ namespace Beans.Unity.Collections
 		/// <summary>
 		/// Copies a native float4 array into a managed Color array. Array lengths MUST be the same.
 		/// </summary>
-		public unsafe static void MemCpy (this NativeArray<float4> source, Color[] destination)
+		public static unsafe void MemCpy (this NativeArray<float4> source, Color[] destination)
 		{
 			fixed (void* managedArrayPointer = destination)
 			{
