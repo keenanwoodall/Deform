@@ -86,49 +86,18 @@ namespace DeformEditor
             using (new Handles.DrawingScope(lattice.transform.localToWorldMatrix))
             {
                 var cachedZTest = Handles.zTest;
-
+                
                 // Change the depth testing to only show handles in front of solid objects (i.e. typical depth testing) 
                 Handles.zTest = CompareFunction.LessEqual;
-
-                // Draw the lattice
-                var resolution = lattice.Resolution;
-                for (int z = 0; z < resolution.z - 1; z++)
-                {
-                    for (int y = 0; y < resolution.y - 1; y++)
-                    {
-                        for (int x = 0; x < resolution.x - 1; x++)
-                        {
-                            int index000 = lattice.GetIndex(x, y, z);
-                            int index100 = lattice.GetIndex(x + 1, y, z);
-                            int index010 = lattice.GetIndex(x, y + 1, z);
-                            int index110 = lattice.GetIndex(x + 1, y + 1, z);
-                            int index001 = lattice.GetIndex(x, y, z + 1);
-                            int index101 = lattice.GetIndex(x + 1, y, z + 1);
-                            int index011 = lattice.GetIndex(x, y + 1, z + 1);
-                            int index111 = lattice.GetIndex(x + 1, y + 1, z + 1);
-
-                            var lineMode = DeformHandles.LineMode.Solid;
-                            DeformHandles.Line(controlPoints[index000], controlPoints[index100], lineMode);
-                            DeformHandles.Line(controlPoints[index010], controlPoints[index110], lineMode);
-                            DeformHandles.Line(controlPoints[index001], controlPoints[index101], lineMode);
-                            DeformHandles.Line(controlPoints[index011], controlPoints[index111], lineMode);
-
-                            DeformHandles.Line(controlPoints[index000], controlPoints[index010], lineMode);
-                            DeformHandles.Line(controlPoints[index100], controlPoints[index110], lineMode);
-                            DeformHandles.Line(controlPoints[index001], controlPoints[index011], lineMode);
-                            DeformHandles.Line(controlPoints[index101], controlPoints[index111], lineMode);
-
-                            DeformHandles.Line(controlPoints[index000], controlPoints[index001], lineMode);
-                            DeformHandles.Line(controlPoints[index100], controlPoints[index101], lineMode);
-                            DeformHandles.Line(controlPoints[index010], controlPoints[index011], lineMode);
-                            DeformHandles.Line(controlPoints[index110], controlPoints[index111], lineMode);
-                        }
-                    }
-                }
+                DrawLattice(lattice, DeformHandles.LineMode.Solid);
+                // Change the depth testing to only show handles *behind* solid objects 
+                Handles.zTest = CompareFunction.Greater;
+                DrawLattice(lattice, DeformHandles.LineMode.Light);
 
                 // Restore the original z test value now we're done with our drawing
                 Handles.zTest = cachedZTest;
 
+                var resolution = lattice.Resolution;
                 for (int z = 0; z < resolution.z; z++)
                 {
                     for (int y = 0; y < resolution.y; y++)
@@ -244,6 +213,44 @@ namespace DeformEditor
             }
 
             EditorApplication.QueuePlayerLoopUpdate();
+        }
+
+        private void DrawLattice(LatticeDeformer lattice, DeformHandles.LineMode lineMode)
+        {
+            var resolution = lattice.Resolution;
+            var controlPoints = lattice.ControlPoints;
+            for (int z = 0; z < resolution.z - 1; z++)
+            {
+                for (int y = 0; y < resolution.y - 1; y++)
+                {
+                    for (int x = 0; x < resolution.x - 1; x++)
+                    {
+                        int index000 = lattice.GetIndex(x, y, z);
+                        int index100 = lattice.GetIndex(x + 1, y, z);
+                        int index010 = lattice.GetIndex(x, y + 1, z);
+                        int index110 = lattice.GetIndex(x + 1, y + 1, z);
+                        int index001 = lattice.GetIndex(x, y, z + 1);
+                        int index101 = lattice.GetIndex(x + 1, y, z + 1);
+                        int index011 = lattice.GetIndex(x, y + 1, z + 1);
+                        int index111 = lattice.GetIndex(x + 1, y + 1, z + 1);
+
+                        DeformHandles.Line(controlPoints[index000], controlPoints[index100], lineMode);
+                        DeformHandles.Line(controlPoints[index010], controlPoints[index110], lineMode);
+                        DeformHandles.Line(controlPoints[index001], controlPoints[index101], lineMode);
+                        DeformHandles.Line(controlPoints[index011], controlPoints[index111], lineMode);
+
+                        DeformHandles.Line(controlPoints[index000], controlPoints[index010], lineMode);
+                        DeformHandles.Line(controlPoints[index100], controlPoints[index110], lineMode);
+                        DeformHandles.Line(controlPoints[index001], controlPoints[index011], lineMode);
+                        DeformHandles.Line(controlPoints[index101], controlPoints[index111], lineMode);
+
+                        DeformHandles.Line(controlPoints[index000], controlPoints[index001], lineMode);
+                        DeformHandles.Line(controlPoints[index100], controlPoints[index101], lineMode);
+                        DeformHandles.Line(controlPoints[index010], controlPoints[index011], lineMode);
+                        DeformHandles.Line(controlPoints[index110], controlPoints[index111], lineMode);
+                    }
+                }
+            }
         }
     }
 }
