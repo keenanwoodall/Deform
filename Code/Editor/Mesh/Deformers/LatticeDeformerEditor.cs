@@ -86,7 +86,7 @@ namespace DeformEditor
             using (new Handles.DrawingScope(lattice.transform.localToWorldMatrix))
             {
                 var cachedZTest = Handles.zTest;
-                
+
                 // Change the depth testing to only show handles in front of solid objects (i.e. typical depth testing) 
                 Handles.zTest = CompareFunction.LessEqual;
                 DrawLattice(lattice, DeformHandles.LineMode.Solid);
@@ -124,8 +124,10 @@ namespace DeformEditor
                                 GUIUtility.keyboardControl = controlPointHandleID;
                                 e.Use();
 
-                                bool modifierKeyPressed = (e.modifiers & EventModifiers.Control) != 0 || (e.modifiers & EventModifiers.Shift) != 0;
-                                
+                                bool modifierKeyPressed = (e.modifiers & EventModifiers.Control) != 0
+                                                          || (e.modifiers & EventModifiers.Shift) != 0
+                                                          || (e.modifiers & EventModifiers.Command) != 0;
+
                                 if (modifierKeyPressed && selectedIndices.Contains(controlPointIndex))
                                 {
                                     // Pressed a modifier key so toggle the selection
@@ -186,7 +188,7 @@ namespace DeformEditor
                 }
                 else
                 {
-                    position = controlPoints[selectedIndices.First()];
+                    position = controlPoints[selectedIndices.Last()];
                 }
 
                 position = lattice.Target.TransformPoint(position);
