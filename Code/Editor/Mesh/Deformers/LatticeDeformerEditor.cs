@@ -131,7 +131,6 @@ namespace DeformEditor
                             Event e = Event.current;
                             if (e.type == EventType.MouseDown && HandleUtility.nearestControl == controlPointHandleID && e.button == 0)
                             {
-                                Debug.Log(controlPointHandleID);
                                 GUIUtility.hotControl = controlPointHandleID;
                                 GUIUtility.keyboardControl = controlPointHandleID;
                                 e.Use();
