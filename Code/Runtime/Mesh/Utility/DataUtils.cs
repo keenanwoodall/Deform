@@ -12,7 +12,7 @@ namespace Deform
 		/// <summary>
 		/// Copies mesh data from managed arrays into native ones.
 		/// </summary>
-		public static void CopyManagedToNativeMeshData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
+		public static bool CopyManagedToNativeMeshData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
 		{
 			var dataIsValid = true;
 
@@ -28,7 +28,7 @@ namespace Deform
 			}
 
 			if (!dataIsValid)
-				return;
+				return false;
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
 				managed.Vertices.MemCpy (native.VertexBuffer);
@@ -46,12 +46,15 @@ namespace Deform
 				managed.Triangles.MemCpy (native.IndexBuffer);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				native.Bounds[0] = managed.Bounds;
+
+			return true;
 		}
+		public static bool CopyToNativeData(this ManagedMeshData from, NativeMeshData to, DataFlags dataFlags) => CopyManagedToNativeMeshData(from, to, dataFlags);
 
 		/// <summary>
 		/// Copies mesh data from native arrays into managed ones.
 		/// </summary>
-		public static void CopyNativeDataToManagedData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
+		public static bool CopyNativeDataToManagedData (ManagedMeshData managed, NativeMeshData native, DataFlags dataFlags)
 		{
 			var dataIsValid = true;
 
@@ -67,7 +70,7 @@ namespace Deform
 			}
 
 			if (!dataIsValid)
-				return;
+				return false;
 
 			if ((dataFlags & DataFlags.Vertices) != 0)
 				native.VertexBuffer.MemCpy (managed.Vertices);
@@ -83,7 +86,11 @@ namespace Deform
 				native.IndexBuffer.CopyTo (managed.Triangles);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				managed.Bounds = native.Bounds[0];
+
+			return true;
 		}
+		public static bool CopyToManagedData(this NativeMeshData from, ManagedMeshData to, DataFlags dataFlags) => CopyNativeDataToManagedData(to, from, dataFlags);
+		
 		/// <summary>
 		/// Copies mesh data from one native array to another
 		/// </summary>
@@ -114,6 +121,7 @@ namespace Deform
 
 			return true;
 		}
+		public static bool CopyToNativeData(this NativeMeshData from, NativeMeshData to, DataFlags dataFlags) => CopyNativeDataToNativeData(from, to, dataFlags);
 		
 		public static bool CopyManagedDataToMesh(ManagedMeshData from, Mesh to, DataFlags dataFlags)
 		{
@@ -146,6 +154,7 @@ namespace Deform
 
 			return true;
 		}
+		public static bool CopyToMesh(ManagedMeshData from, Mesh to, DataFlags dataFlags) => CopyManagedDataToMesh(from, to, dataFlags);
 		
 #if UNITY_2019_3_OR_NEWER
 		/// <summary>
@@ -198,6 +207,7 @@ namespace Deform
 
 			return true;
 		}
+		public static bool CopyToMesh(this NativeMeshData from, Mesh to, DataFlags dataFlags) => CopyNativeDataToMesh(from, to, dataFlags);
 #endif
 	}
 }
