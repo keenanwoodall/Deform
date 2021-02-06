@@ -46,6 +46,8 @@ namespace DeformEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+            
+            LatticeDeformer latticeDeformer = ((LatticeDeformer) target);
 
             serializedObject.UpdateIfRequiredOrScript();
 
@@ -60,15 +62,24 @@ namespace DeformEditor
             if (GUILayout.Button("Update Lattice"))
             {
                 Undo.RecordObject(target, "Update Lattice");
-                ((LatticeDeformer) target).GenerateControlPoints(newResolution, true);
+                latticeDeformer.GenerateControlPoints(newResolution, true);
                 selectedIndices.Clear();
             }
 
             if (GUILayout.Button("Reset Lattice Points"))
             {
                 Undo.RecordObject(target, "Reset Lattice Points");
-                ((LatticeDeformer) target).GenerateControlPoints(newResolution);
+                latticeDeformer.GenerateControlPoints(newResolution);
                 selectedIndices.Clear();
+            }
+
+            if(latticeDeformer.CanAutoFitBounds)
+            {
+                if (GUILayout.Button("Auto-Fit Bounds"))
+                {
+                    Undo.RecordObject(target, "Auto-Fit Bounds");
+                    latticeDeformer.FitBoundsToParentDeformable();
+                }
             }
 
             serializedObject.ApplyModifiedProperties();

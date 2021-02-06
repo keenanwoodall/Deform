@@ -24,6 +24,9 @@ namespace Deform
             set { target = value; }
         }
 
+
+        public bool CanAutoFitBounds => transform.GetComponentInParent<Deformable>() != null;
+
         public float3[] ControlPoints => controlPoints;
 
         public Vector3Int Resolution => resolution;
@@ -35,6 +38,20 @@ namespace Deform
         protected virtual void Reset()
         {
             GenerateControlPoints(resolution);
+
+            // Fit to parent deformable by default
+            FitBoundsToParentDeformable();
+        }
+
+        public void FitBoundsToParentDeformable()
+        {
+            Deformable deformable = transform.GetComponentInParent<Deformable>();
+            if (deformable != null)
+            {
+                var bounds = deformable.GetCurrentMesh().bounds;
+                transform.localPosition = bounds.center;
+                transform.localScale = bounds.size;
+            }
         }
 
         public void GenerateControlPoints(Vector3Int newResolution, bool resampleExistingPoints = false)
