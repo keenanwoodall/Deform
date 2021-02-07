@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 namespace DeformEditor
 {
-    [CustomEditor(typeof(LatticeDeformer)), CanEditMultipleObjects]
+    [CustomEditor(typeof(LatticeDeformer))]
     public class LatticeDeformerEditor : DeformerEditor
     {
         private Vector3Int newResolution;
@@ -46,6 +46,8 @@ namespace DeformEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+            
+            LatticeDeformer latticeDeformer = ((LatticeDeformer) target);
 
             serializedObject.UpdateIfRequiredOrScript();
 
@@ -60,15 +62,24 @@ namespace DeformEditor
             if (GUILayout.Button("Update Lattice"))
             {
                 Undo.RecordObject(target, "Update Lattice");
-                ((LatticeDeformer) target).GenerateControlPoints(newResolution, true);
+                latticeDeformer.GenerateControlPoints(newResolution, true);
                 selectedIndices.Clear();
             }
 
             if (GUILayout.Button("Reset Lattice Points"))
             {
                 Undo.RecordObject(target, "Reset Lattice Points");
-                ((LatticeDeformer) target).GenerateControlPoints(newResolution);
+                latticeDeformer.GenerateControlPoints(newResolution);
                 selectedIndices.Clear();
+            }
+
+            if(latticeDeformer.CanAutoFitBounds)
+            {
+                if (GUILayout.Button("Auto-Fit Bounds"))
+                {
+                    Undo.RecordObject(target, "Auto-Fit Bounds");
+                    latticeDeformer.FitBoundsToParentDeformable();
+                }
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -86,7 +97,7 @@ namespace DeformEditor
             using (new Handles.DrawingScope(lattice.transform.localToWorldMatrix))
             {
                 var cachedZTest = Handles.zTest;
-                
+
                 // Change the depth testing to only show handles in front of solid objects (i.e. typical depth testing) 
                 Handles.zTest = CompareFunction.LessEqual;
                 DrawLattice(lattice, DeformHandles.LineMode.Solid);
@@ -124,8 +135,10 @@ namespace DeformEditor
                                 GUIUtility.keyboardControl = controlPointHandleID;
                                 e.Use();
 
-                                bool modifierKeyPressed = (e.modifiers & EventModifiers.Control) != 0 || (e.modifiers & EventModifiers.Shift) != 0;
-                                
+                                bool modifierKeyPressed = (e.modifiers & EventModifiers.Control) != 0
+                                                          || (e.modifiers & EventModifiers.Shift) != 0
+                                                          || (e.modifiers & EventModifiers.Command) != 0;
+
                                 if (modifierKeyPressed && selectedIndices.Contains(controlPointIndex))
                                 {
                                     // Pressed a modifier key so toggle the selection
@@ -186,7 +199,7 @@ namespace DeformEditor
                 }
                 else
                 {
-                    position = controlPoints[selectedIndices.First()];
+                    position = controlPoints[selectedIndices.Last()];
                 }
 
                 position = lattice.Target.TransformPoint(position);
@@ -210,6 +223,26 @@ namespace DeformEditor
                         controlPoints[selectedIndex] += delta;
                     }
                 }
+            }
+            
+            // If the lattice is visible, override Unity's built-in Select All so that it selects all control points 
+            if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "SelectAll")
+            {
+                selectedIndices.Clear();
+                var resolution = lattice.Resolution;
+                for (int z = 0; z < resolution.z; z++)
+                {
+                    for (int y = 0; y < resolution.y; y++)
+                    {
+                        for (int x = 0; x < resolution.x; x++)
+                        {
+                            var controlPointIndex = lattice.GetIndex(x, y, z);
+                            selectedIndices.Add(controlPointIndex);
+                        }
+                    }
+                }
+
+                Event.current.Use();
             }
 
             EditorApplication.QueuePlayerLoopUpdate();

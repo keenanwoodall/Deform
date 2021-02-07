@@ -256,8 +256,6 @@ namespace DeformEditor
 
 				EditorGUIUtility.PingObject (newGameObject);
 
-				var newDeformer = newGameObject.AddComponent (attribute.Type) as Deformer;
-
 				if (autoAdd)
 				{
 					if (selectedGameObjects.Length == 1)
@@ -276,6 +274,8 @@ namespace DeformEditor
 						var rotation = Quaternion.Euler (attribute.XRotation, attribute.YRotation, attribute.ZRotation);
 						newGameObject.transform.SetPositionAndRotation (center, rotation);
 					}
+					
+					var newDeformer = newGameObject.AddComponent (attribute.Type) as Deformer;
 
 					var deformables = GetComponents<Deformable> (selectedGameObjects);
 					var groups = GetComponents<GroupDeformer> (selectedGameObjects);
@@ -307,10 +307,13 @@ namespace DeformEditor
 							repeater.DeformerElement.Component = newDeformer;
 						}
 					}
-
 				}
 				else
+				{
+					newGameObject.AddComponent (attribute.Type);
+
 					Selection.activeGameObject = newGameObject;
+				}
 
 				Undo.CollapseUndoOperations (Undo.GetCurrentGroup ());
 			}
