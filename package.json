@@ -14,7 +14,6 @@
     "deformers"
   ],
   "dependencies": {
-    "com.unity.burst": "1.4.2",
-    "com.unity.mathematics": "1.2.1"
+    "com.unity.burst": "1.4.4"
   }
 }
