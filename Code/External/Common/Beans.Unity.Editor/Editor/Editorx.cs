@@ -36,5 +36,10 @@ namespace Beans.Unity.Editor
 				}
 			}
 		}
+		
+		public static string Nicify(this string name)
+		{
+			return ObjectNames.NicifyVariableName(name);
+		}
 	}
 }

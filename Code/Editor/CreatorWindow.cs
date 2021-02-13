@@ -76,8 +76,8 @@ namespace DeformEditor
 #if CAN_POPULATE_GAME_OBJECT_MENU
 		private static void PopulateGameObjectMenu(GenericMenu menu, GameObject selection)
 		{
-			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable)}"), false, AddOrCreateDeformable<Deformable>);
-			menu.AddItem(new GUIContent($"Deform/{nameof(ElasticDeformable)}"), false, AddOrCreateDeformable<ElasticDeformable>);
+			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable).Nicify()}"), false, AddOrCreateDeformable<Deformable>);
+			menu.AddItem(new GUIContent($"Deform/{nameof(ElasticDeformable).Nicify()}"), false, AddOrCreateDeformable<ElasticDeformable>);
 			
 			for (int i = 0; i < DeformerAttributes.Count; i++)
 			{
@@ -87,7 +87,7 @@ namespace DeformEditor
 			}
 		}
 #endif
-		
+
 		private void OnEnable ()
 		{
 			searchField = new SearchField ();
