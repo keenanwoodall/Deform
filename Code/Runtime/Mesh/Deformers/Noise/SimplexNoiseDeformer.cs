@@ -13,12 +13,14 @@ namespace Deform
 	{
 		protected override JobHandle Create3DNoiseJob (MeshData data, JobHandle dependency = default)
 		{
+			var meshToAxis = DeformerUtils.GetMeshToAxisSpace(Axis, data.Target.GetTransform());
 			return new _3DNoiseJob
 			{
 				magnitude = GetActualMagnitude (),
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
-				meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
+				meshToAxis = meshToAxis,
+				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
@@ -31,8 +33,8 @@ namespace Deform
 				magnitude = MagnitudeScalar,
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
-				axisSpace = meshToAxis,
-				inverseAxisSpace = meshToAxis.inverse,
+				meshToAxis = meshToAxis,
+				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
@@ -40,12 +42,14 @@ namespace Deform
 
 		protected override JobHandle CreateNormalNoiseJob (MeshData data, JobHandle dependency = default)
 		{
+			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 			return new NormalNoiseJob
 			{
 				magnitude = MagnitudeScalar,
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
-				axisSpace = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ()),
+				meshToAxis = meshToAxis,
+				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				normals = data.DynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
@@ -59,10 +63,9 @@ namespace Deform
 				magnitude = MagnitudeScalar,
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
-				axisSpace = meshToAxis,
-				inverseAxisSpace = meshToAxis.inverse,
+				meshToAxis = meshToAxis,
+				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
-				normals = data.DynamicNative.NormalBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
@@ -74,8 +77,8 @@ namespace Deform
 				magnitude = MagnitudeScalar,
 				frequency = GetActualFrequency (),
 				offset = GetActualOffset (),
-				axisSpace = meshToAxis,
-				inverseAxisSpace = meshToAxis.inverse,
+				meshToAxis = meshToAxis,
+				axisToMesh = meshToAxis.inverse,
 				vertices = data.DynamicNative.VertexBuffer,
 				colors = data.DynamicNative.ColorBuffer
 			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
@@ -88,6 +91,7 @@ namespace Deform
 			public float3 frequency;
 			public float4 offset;
 			public float4x4 meshToAxis;
+			public float4x4 axisToMesh;
 			public NativeArray<float3> vertices;
 
 			public void Execute (int index)
@@ -97,7 +101,7 @@ namespace Deform
 				var scaledPoint = point * frequency;
 				var nabla = frequency * 0.5f;
 				
-				var noiseOffset = float3
+				point += float3
 				(
 					noise.snoise
 					(
@@ -130,8 +134,8 @@ namespace Deform
 						)
 					)
 				) * magnitude;
-
-				vertices[index] += noiseOffset;
+				
+				vertices[index] += mul (axisToMesh, float4 (point, 1f)).xyz;;
 			}
 		}
 
@@ -141,16 +145,16 @@ namespace Deform
 			public float magnitude;
 			public float3 frequency;
 			public float4 offset;
-			public float4x4 axisSpace;
-			public float4x4 inverseAxisSpace;
+			public float4x4 meshToAxis;
+			public float4x4 axisToMesh;
 			public NativeArray<float3> vertices;
 			public NativeArray<float3> normals;
 
 			public void Execute (int index)
 			{
-				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
+				var point = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = float3 (0f, 0f, 1f) * noise.snoise
+				point += float3 (0f, 0f, 1f) * noise.snoise
 				(
 					float4
 					(
@@ -161,9 +165,7 @@ namespace Deform
 					)
 				) * magnitude;
 
-				point += noiseOffset;
-
-				vertices[index] = mul (inverseAxisSpace, float4 (point, 1f)).xyz;
+				vertices[index] = mul (axisToMesh, float4 (point, 1f)).xyz;
 			}
 		}
 
@@ -173,15 +175,16 @@ namespace Deform
 			public float magnitude;
 			public float3 frequency;
 			public float4 offset;
-			public float4x4 axisSpace;
+			public float4x4 meshToAxis;
+			public float4x4 axisToMesh;
 			public NativeArray<float3> vertices;
 			public NativeArray<float3> normals;
 
 			public void Execute (int index)
 			{
-				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
+				var point = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = normals[index] * noise.snoise
+				point += normals[index] * noise.snoise
 				(
 					float4
 					(
@@ -192,7 +195,7 @@ namespace Deform
 					)
 				) * magnitude;
 
-				vertices[index] += noiseOffset;
+				vertices[index] = mul (meshToAxis, float4 (point, 1f)).xyz;;
 			}
 		}
 
@@ -202,16 +205,15 @@ namespace Deform
 			public float magnitude;
 			public float3 frequency;
 			public float4 offset;
-			public float4x4 axisSpace;
-			public float4x4 inverseAxisSpace;
+			public float4x4 meshToAxis;
+			public float4x4 axisToMesh;
 			public NativeArray<float3> vertices;
-			public NativeArray<float3> normals;
 
-			public void Execute (int index)
+			public void Execute(int index)
 			{
-				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
+				var point = mul(meshToAxis, float4(vertices[index], 1f)).xyz;
 
-				var noiseOffset = normalize (point) * noise.snoise
+				point += normalize(point) * noise.snoise
 				(
 					float4
 					(
@@ -222,9 +224,7 @@ namespace Deform
 					)
 				) * magnitude;
 
-				point += noiseOffset;
-
-				vertices[index] = mul (inverseAxisSpace, float4 (point, 1f)).xyz;
+				vertices[index] = mul(axisToMesh, float4(point, 1f)).xyz;
 			}
 		}
 
@@ -234,16 +234,16 @@ namespace Deform
 			public float magnitude;
 			public float3 frequency;
 			public float4 offset;
-			public float4x4 axisSpace;
-			public float4x4 inverseAxisSpace;
+			public float4x4 meshToAxis;
+			public float4x4 axisToMesh;
 			public NativeArray<float3> vertices;
 			public NativeArray<float4> colors;
 
 			public void Execute (int index)
 			{
-				var point = mul (axisSpace, float4 (vertices[index], 1f)).xyz;
+				var point = mul (meshToAxis, float4 (vertices[index], 1f)).xyz;
 
-				var noiseOffset = colors[index].xyz * noise.snoise
+				point += colors[index].xyz * noise.snoise
 				(
 					float4
 					(
@@ -254,9 +254,7 @@ namespace Deform
 					)
 				) * magnitude;
 
-				point += noiseOffset;
-
-				vertices[index] = mul (inverseAxisSpace, float4 (point, 1f)).xyz;
+				vertices[index] = mul (axisToMesh, float4 (point, 1f)).xyz;
 			}
 		}
 	}

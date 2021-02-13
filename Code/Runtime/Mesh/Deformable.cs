@@ -147,8 +147,7 @@ namespace Deform
 #if UNITY_EDITOR
 		private void OnSceneSaving(Scene scene, string path)
 		{
-			if (data != null && data.Target != null)
-				data.Target.SetMesh(data.OriginalMesh);
+			data?.Target?.SetMesh(data.OriginalMesh);
 		}
 #endif
 
@@ -292,7 +291,7 @@ namespace Deform
 				currentModifiedDataFlags |= DataFlags.Bounds;
 			}
 
-			// Return the new end of the dependency chain.d
+			// Return the new end of the dependency chain.
 			return handle;
 		}
 
