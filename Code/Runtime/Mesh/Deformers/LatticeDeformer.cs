@@ -46,6 +46,18 @@ namespace Deform
         public void FitBoundsToParentDeformable()
         {
             Deformable deformable = transform.GetComponentInParent<Deformable>();
+
+            if (deformable == null)
+            {
+                // No deformable above the lattice, so next see if there's a LODGroup with a deformable on the first LOD
+                LODGroup lodGroup = transform.GetComponentInParent<LODGroup>();
+                var lods = lodGroup.GetLODs();
+                if (lods.Length != 0 && lods[0].renderers.Length != 0 && lods[0].renderers[0] != null)
+                {
+                    deformable = lods[0].renderers[0].GetComponent<Deformable>();
+                }
+            }
+            
             if (deformable != null)
             {
                 var bounds = deformable.GetCurrentMesh().bounds;
