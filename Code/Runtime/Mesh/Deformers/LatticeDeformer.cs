@@ -25,7 +25,22 @@ namespace Deform
         }
 
 
-        public bool CanAutoFitBounds => transform.GetComponentInParent<Deformable>() != null;
+        public bool CanAutoFitBounds
+        {
+            get
+            {
+                if (transform.GetComponentInParent<Deformable>() != null) return true;
+                
+                LODGroup lodGroup = transform.GetComponentInParent<LODGroup>();
+                var lods = lodGroup.GetLODs();
+                if (lods.Length != 0 && lods[0].renderers.Length != 0 && lods[0].renderers[0] != null)
+                {
+                    if (lods[0].renderers[0].GetComponentInParent<Deformable>() != null) return true;
+                }
+
+                return false;
+            }
+        }
 
         public float3[] ControlPoints => controlPoints;
 
