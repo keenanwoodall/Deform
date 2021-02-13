@@ -120,27 +120,22 @@ namespace Deform
 
 		protected virtual void OnEnable()
 		{
-			InitializeData();
+			AllocateData();
 
 			if (Application.isPlaying && UpdateMode == UpdateMode.Auto)
 				Manager = DeformableManager.GetDefaultManager(true);
-
-#if UNITY_EDITOR
-			if (!Application.isPlaying && handle.IsCompleted)
-			{
-				PreSchedule(true);
-				Schedule(true).Complete();
-				ApplyData(true);
-			}
 			
+#if UNITY_EDITOR
 			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
 #endif
+			
+			InitializeData();
 		}
 
 		protected virtual void OnDisable()
 		{
 			Complete();
-			data.Dispose(assignOriginalMeshOnDisable);
+			DisposeData();
 			if (Manager != null)
 				Manager.RemoveDeformable(this);
 			
@@ -160,12 +155,32 @@ namespace Deform
 		/// <summary>
 		/// Initializes mesh data.
 		/// </summary>
-		public virtual void InitializeData()
+		public virtual void AllocateData()
 		{
 			// Don't create a new instance if one already exists because it'll will lose any serialized data from the previous instance.
 			if (data == null)
 				data = new MeshData();
 			data.Initialize(gameObject);
+		}
+		
+		public virtual void InitializeData()
+		{
+#if UNITY_EDITOR
+			if (!Application.isPlaying && handle.IsCompleted)
+			{
+				PreSchedule(true);
+				Schedule(true).Complete();
+				ApplyData(true);
+			}
+#endif
+		}
+
+		/// <summary>
+		/// Disposed mesh data.
+		/// </summary>
+		public virtual void DisposeData()
+		{
+			data.Dispose(assignOriginalMeshOnDisable);
 		}
 
 #if UNITY_EDITOR
@@ -309,9 +324,9 @@ namespace Deform
 
 		public void ForceImmediateUpdate()
 		{
-			PreSchedule();
-			Schedule().Complete();
-			ApplyData();
+			PreSchedule(true);
+			Schedule(true).Complete();
+			ApplyData(true);
 		}
 
 		/// <summary>

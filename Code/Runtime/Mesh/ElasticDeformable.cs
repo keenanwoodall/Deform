@@ -61,24 +61,18 @@ namespace Deform
 
 		public override UpdateFrequency UpdateFrequency => UpdateFrequency.Immediate;
 
-		public override void InitializeData()
+		public override void AllocateData()
 		{
-			base.InitializeData();
+			base.AllocateData();
 			velocityBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-			currentPointBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
-
-			data.OriginalNative.VertexBuffer.CopyTo(currentPointBuffer);
-			
-			new TransformPointsJob
-			{
-				points = currentPointBuffer,
-				matrix = transform.localToWorldMatrix
-			}.Schedule(currentPointBuffer.Length, 128).Complete();
+			// Initialize the velocity buffer, but don't initialize the current point buffer because the vertices haven't been
+			// deformed yet and we want them be initialized to their deformed positions so they don't elasticly snap when this
+			// gameobject is enabled
 		}
 
-		protected override void OnDisable()
+		public override void DisposeData()
 		{
-			base.OnDisable();
+			base.DisposeData();
 			if (velocityBuffer.IsCreated)
 				velocityBuffer.Dispose();
 			if (currentPointBuffer.IsCreated)
@@ -133,6 +127,25 @@ namespace Deform
 
 			if (Application.isPlaying)
 			{
+				// The current point buffer is lazily initialized since its the initial points should be deformed
+				// If it hasn't been created yet, allocate the buffer and schedule a job that copies the deformed
+				// points into it.
+				if (!currentPointBuffer.IsCreated)
+				{
+					currentPointBuffer = new NativeArray<float3>(data.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+					handle = new CopyFloat3sJob
+					{
+						from = data.DynamicNative.VertexBuffer,
+						to = currentPointBuffer,
+					}.Schedule(data.Length, Deformer.DEFAULT_BATCH_COUNT, handle);
+					
+					handle = new TransformPointsJob
+					{
+						points = currentPointBuffer,
+						matrix = transform.localToWorldMatrix
+					}.Schedule(currentPointBuffer.Length, 128, handle);
+				}
+
 				if (!Mathf.Approximately(gravity.sqrMagnitude, 0f))
 				{
 					handle = new AddFloat3ToFloat3sJob
