@@ -13,7 +13,19 @@ namespace DeformEditor
     {
         private Vector3Int newResolution;
 
-        HashSet<int> selectedIndices = new HashSet<int>();
+        private quaternion handleRotation = quaternion.identity;
+        private float3 handleScale = Vector3.one;
+        
+        private List<float3> originalPositions = new List<float3>();
+
+        private Tool activeTool = Tool.None;
+
+        private bool mouseDragEligible = false;
+        private Vector2 mouseDownPosition;
+        private int previousSelectionCount = 0;
+        
+        // Serialized so it can be picked up by Undo system
+        [SerializeField] private List<int> selectedIndices = new List<int>();
 
         private static class Content
         {
@@ -46,7 +58,7 @@ namespace DeformEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            
+
             LatticeDeformer latticeDeformer = ((LatticeDeformer) target);
 
             serializedObject.UpdateIfRequiredOrScript();
@@ -73,7 +85,7 @@ namespace DeformEditor
                 selectedIndices.Clear();
             }
 
-            if(latticeDeformer.CanAutoFitBounds)
+            if (latticeDeformer.CanAutoFitBounds)
             {
                 if (GUILayout.Button("Auto-Fit Bounds"))
                 {
@@ -81,6 +93,8 @@ namespace DeformEditor
                     latticeDeformer.FitBoundsToParentDeformable();
                 }
             }
+
+            //activeTool = (Tool) EditorGUILayout.EnumPopup("Active Tool", activeTool);
 
             serializedObject.ApplyModifiedProperties();
 
@@ -91,8 +105,9 @@ namespace DeformEditor
         {
             base.OnSceneGUI();
 
-            var lattice = target as LatticeDeformer;
-            var controlPoints = lattice.ControlPoints;
+            LatticeDeformer lattice = target as LatticeDeformer;
+            float3[] controlPoints = lattice.ControlPoints;
+            Event e = Event.current;
 
             using (new Handles.DrawingScope(lattice.transform.localToWorldMatrix))
             {
@@ -128,16 +143,14 @@ namespace DeformEditor
                                 activeColor = Handles.preselectionColor;
                             }
 
-                            Event e = Event.current;
-                            if (e.type == EventType.MouseDown && HandleUtility.nearestControl == controlPointHandleID && e.button == 0)
+                            if (e.type == EventType.MouseDown && HandleUtility.nearestControl == controlPointHandleID && e.button == 0 && Foo.MouseActionAllowed())
                             {
+                                BeginSelectionChangeRegion();
                                 GUIUtility.hotControl = controlPointHandleID;
                                 GUIUtility.keyboardControl = controlPointHandleID;
                                 e.Use();
 
-                                bool modifierKeyPressed = (e.modifiers & EventModifiers.Control) != 0
-                                                          || (e.modifiers & EventModifiers.Shift) != 0
-                                                          || (e.modifiers & EventModifiers.Command) != 0;
+                                bool modifierKeyPressed = e.control || e.shift || e.command;
 
                                 if (modifierKeyPressed && selectedIndices.Contains(controlPointIndex))
                                 {
@@ -151,19 +164,21 @@ namespace DeformEditor
                                         selectedIndices.Clear();
                                     }
 
-                                    selectedIndices.Add(controlPointIndex);
-                                    if (selectedIndices.Count == 1) // Is this our first selection?
+                                    if (!selectedIndices.Contains(controlPointIndex))
                                     {
-                                        // Make sure when we start selecting control points we don't have a transform tool active as it'll be confusing having multiple ones
-                                        Tools.current = Tool.None;
+                                        selectedIndices.Add(controlPointIndex);
                                     }
                                 }
+
+                                EndSelectionChangeRegion();
                             }
 
                             if (Tools.current != Tool.None && selectedIndices.Count != 0)
                             {
-                                // The user has changed to a tool but we have control points selected, so clear the selection
-                                selectedIndices.Clear();
+                                // If the user changes tool, change our internal mode to match but disable the corresponding Unity tool
+                                // (e.g. they hit W key or press on the Rotate Tool button on the top left toolbar) 
+                                activeTool = Tools.current;
+                                Tools.current = Tool.None;
                             }
 
                             using (new Handles.DrawingScope(activeColor))
@@ -176,58 +191,203 @@ namespace DeformEditor
                                     position,
                                     Quaternion.identity,
                                     size,
-                                    Event.current.type);
+                                    e.type);
                             }
                         }
                     }
                 }
             }
 
+            var defaultControl = Foo.DisableObjectSelection();
+
             if (selectedIndices.Count != 0)
             {
-                // Get the average position
-                var position = float3.zero;
+                var currentPivotPosition = float3.zero;
 
                 if (Tools.pivotMode == PivotMode.Center)
                 {
+                    // Get the average position
                     foreach (var index in selectedIndices)
                     {
-                        position += controlPoints[index];
+                        currentPivotPosition += controlPoints[index];
                     }
 
-                    position /= selectedIndices.Count;
+                    currentPivotPosition /= selectedIndices.Count;
                 }
                 else
                 {
-                    position = controlPoints[selectedIndices.Last()];
+                    // Match the scene view behaviour that Pivot mode uses the last selected object as pivot
+                    currentPivotPosition = controlPoints[selectedIndices.Last()];
                 }
 
-                position = lattice.Target.TransformPoint(position);
+                var originalPivotPosition = float3.zero;
 
-                EditorGUI.BeginChangeCheck();
-                var rotation = lattice.Target.rotation;
-                if (Tools.pivotRotation == PivotRotation.Global)
+                if (Tools.pivotMode == PivotMode.Center)
                 {
-                    rotation = Quaternion.identity;
-                }
-
-                float3 newPosition = Handles.PositionHandle(position, rotation);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    Undo.RecordObject(target, "Update Lattice");
-
-                    var delta = newPosition - position;
-                    delta = lattice.Target.InverseTransformVector(delta);
-                    foreach (var selectedIndex in selectedIndices)
+                    // Get the average position
+                    foreach (var originalPosition in originalPositions)
                     {
-                        controlPoints[selectedIndex] += delta;
+                        originalPivotPosition += originalPosition;
+                    }
+
+                    originalPivotPosition /= selectedIndices.Count;
+                }
+                else
+                {
+                    // Match the scene view behaviour that Pivot mode uses the last selected object as pivot
+                    originalPivotPosition = originalPositions.Last();
+                }
+
+
+                float3 handlePosition = lattice.Target.TransformPoint(currentPivotPosition);
+
+                if (e.type == EventType.MouseDown)
+                {
+                    // Potentially started interacting with a handle so reset everything
+                    handleScale = Vector3.one;
+                    handleRotation = Quaternion.identity;
+
+                    // Cache the selected control point positions before the interaction, so that all handle
+                    // transformations are done using the original values rather than compounding error each frame
+                    originalPositions.Clear();
+                    foreach (int selectedIndex in selectedIndices)
+                    {
+                        originalPositions.Add(controlPoints[selectedIndex]);
+                    }
+                }
+
+                if (activeTool == Tool.Move)
+                {
+                    var positionHandleRotation = lattice.Target.rotation;
+                    if (Tools.pivotRotation == PivotRotation.Global)
+                    {
+                        positionHandleRotation = Quaternion.identity;
+                    }
+
+                    EditorGUI.BeginChangeCheck();
+                    float3 newPosition = Handles.PositionHandle(handlePosition, positionHandleRotation);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        Undo.RecordObject(target, "Update Lattice");
+
+                        var delta = newPosition - handlePosition;
+                        delta = lattice.Target.InverseTransformVector(delta);
+                        foreach (var selectedIndex in selectedIndices)
+                        {
+                            controlPoints[selectedIndex] += delta;
+                        }
+                    }
+                }
+                else if (activeTool == Tool.Rotate)
+                {
+                    EditorGUI.BeginChangeCheck();
+                    quaternion newRotation = Handles.RotationHandle(handleRotation, handlePosition);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        Undo.RecordObject(target, "Update Lattice");
+
+                        // TODO: Add support for PivotRotation - i.e. local mode 
+                        for (var index = 0; index < selectedIndices.Count; index++)
+                        {
+                            controlPoints[selectedIndices[index]] = originalPivotPosition + math.mul(newRotation, (originalPositions[index] - originalPivotPosition));
+                        }
+                    }
+                }
+                else if (activeTool == Tool.Scale)
+                {
+                    var size = HandleUtility.GetHandleSize(handlePosition);
+                    EditorGUI.BeginChangeCheck();
+                    handleScale = Handles.ScaleHandle(handleScale, handlePosition, handleRotation, size);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        Undo.RecordObject(target, "Update Lattice");
+
+                        // TODO: Add support for PivotRotation - i.e. local mode
+                        for (var index = 0; index < selectedIndices.Count; index++)
+                        {
+                            controlPoints[selectedIndices[index]] = originalPivotPosition + handleScale * (originalPositions[index] - originalPivotPosition);
+                        }
                     }
                 }
             }
-            
-            // If the lattice is visible, override Unity's built-in Select All so that it selects all control points 
-            if (Event.current.type == EventType.ExecuteCommand && Event.current.commandName == "SelectAll")
+
+            if (e.button == 0) // Left Mouse Button
             {
+                if (e.type == EventType.MouseDown && HandleUtility.nearestControl == defaultControl && Foo.MouseActionAllowed())
+                {
+                    mouseDownPosition = e.mousePosition;
+                    mouseDragEligible = true;
+                    GUIUtility.hotControl = defaultControl;
+                }
+                else if (e.type == EventType.MouseDrag && mouseDragEligible)
+                {
+                    SceneView.currentDrawingSceneView.Repaint();
+                }
+                else if (e.type == EventType.MouseUp
+                         || (mouseDragEligible && e.rawType == EventType.MouseUp)) // Have they released the mouse outside the scene view while doing marquee select?
+                {
+                    if (mouseDragEligible)
+                    {
+                        var mouseUpPosition = e.mousePosition;
+
+                        Rect marqueeRect = Rect.MinMaxRect(Mathf.Min(mouseDownPosition.x, mouseUpPosition.x),
+                            Mathf.Min(mouseDownPosition.y, mouseUpPosition.y),
+                            Mathf.Max(mouseDownPosition.x, mouseUpPosition.x),
+                            Mathf.Max(mouseDownPosition.y, mouseUpPosition.y));
+
+                        BeginSelectionChangeRegion();
+
+                        if (!e.shift && !e.control && !e.command)
+                        {
+                            selectedIndices.Clear();
+                        }
+
+                        for (var index = 0; index < controlPoints.Length; index++)
+                        {
+                            Camera camera = SceneView.currentDrawingSceneView.camera;
+                            var screenPoint = Foo.WorldToGUIPoint(camera, lattice.transform.TransformPoint(controlPoints[index]));
+
+                            if (screenPoint.z < 0)
+                            {
+                                // Don't consider points that are behind the camera
+                            }
+
+                            if (marqueeRect.Contains(screenPoint))
+                            {
+                                if (e.control || e.command) // Remove selection
+                                {
+                                    selectedIndices.Remove(index);
+                                }
+                                else
+                                {
+                                    selectedIndices.Add(index);
+                                }
+                            }
+                        }
+
+                        EndSelectionChangeRegion();
+                    }
+
+                    mouseDragEligible = false;
+                }
+            }
+
+            if (e.type == EventType.Repaint && mouseDragEligible)
+            {
+                var mouseUpPosition = e.mousePosition;
+
+                Rect marqueeRect = Rect.MinMaxRect(Mathf.Min(mouseDownPosition.x, mouseUpPosition.x),
+                    Mathf.Min(mouseDownPosition.y, mouseUpPosition.y),
+                    Mathf.Max(mouseDownPosition.x, mouseUpPosition.x),
+                    Mathf.Max(mouseDownPosition.y, mouseUpPosition.y));
+                Foo.DrawMarquee(marqueeRect);
+                SceneView.RepaintAll();
+            }
+
+            // If the lattice is visible, override Unity's built-in Select All so that it selects all control points 
+            if (Foo.SelectAllPressed)
+            {
+                BeginSelectionChangeRegion();
                 selectedIndices.Clear();
                 var resolution = lattice.Resolution;
                 for (int z = 0; z < resolution.z; z++)
@@ -242,10 +402,36 @@ namespace DeformEditor
                     }
                 }
 
-                Event.current.Use();
+                EndSelectionChangeRegion();
+
+                e.Use();
+            }
+
+            if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
+            {
+                // Deselect All
+                BeginSelectionChangeRegion();
+                selectedIndices.Clear();
+                EndSelectionChangeRegion();
             }
 
             EditorApplication.QueuePlayerLoopUpdate();
+        }
+
+        private void BeginSelectionChangeRegion()
+        {
+            Undo.RecordObject(this, "Selection Change");
+            previousSelectionCount = selectedIndices.Count;
+        }
+
+        private void EndSelectionChangeRegion()
+        {
+            if (selectedIndices.Count != 0 && previousSelectionCount == 0 && Tools.current == Tool.None) // Is this our first selection?
+            {
+                // Make sure when we start selecting control points we actually have a useful tool equipped
+                activeTool = Tool.Move;
+                Repaint(); // Make sure the inspector shows our new active tool
+            }
         }
 
         private void DrawLattice(LatticeDeformer lattice, DeformHandles.LineMode lineMode)
