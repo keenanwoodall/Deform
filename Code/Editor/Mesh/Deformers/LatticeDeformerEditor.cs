@@ -94,6 +94,14 @@ namespace DeformEditor
                 }
             }
 
+            if (selectedIndices.Count != 0)
+            {
+                if (GUILayout.Button("Stop Editing Control Points"))
+                {
+                    DeselectAll();
+                }
+            }
+
             //activeTool = (Tool) EditorGUILayout.EnumPopup("Active Tool", activeTool);
 
             serializedObject.ApplyModifiedProperties();
@@ -409,13 +417,17 @@ namespace DeformEditor
 
             if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape)
             {
-                // Deselect All
-                BeginSelectionChangeRegion();
-                selectedIndices.Clear();
-                EndSelectionChangeRegion();
+                DeselectAll();
             }
 
             EditorApplication.QueuePlayerLoopUpdate();
+        }
+
+        private void DeselectAll()
+        {
+            BeginSelectionChangeRegion();
+            selectedIndices.Clear();
+            EndSelectionChangeRegion();
         }
 
         private void BeginSelectionChangeRegion()
