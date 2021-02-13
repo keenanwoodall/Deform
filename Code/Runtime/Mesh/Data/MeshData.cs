@@ -143,7 +143,7 @@ namespace Deform
 		{
 			if (DynamicMesh == null)
 				return;
-			
+
 #if UNITY_2019_3_OR_NEWER
 			DataUtils.CopyNativeDataToMesh(DynamicNative, DynamicMesh, dataFlags);
 #else

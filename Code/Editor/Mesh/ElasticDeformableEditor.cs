@@ -52,7 +52,7 @@ namespace DeformEditor
 		{
 			if (properties.CullingMode.enumValueIndex == 1)
 			{
-				EditorGUILayout.HelpBox ($"Culling Mode should be set to {nameof(CullingMode.AlwaysUpdate)}. Elastic effect is a continuous effect and pausing it when culled when may result in snapping when becoming visible again.", MessageType.Error, true);
+				EditorGUILayout.HelpBox ($"Culling Mode should be set to {nameof(CullingMode.AlwaysUpdate)}. The elasticity is a continuous effect and pausing it when culled when may result in snapping when becoming visible again.", MessageType.Error, true);
 			}
 			base.OnInspectorGUI();
 		}
