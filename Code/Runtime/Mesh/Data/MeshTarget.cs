@@ -21,6 +21,7 @@ namespace Deform
 					return false;
 			return true;
 		}
+		public static bool IsValid(Transform target) => IsValid(target.gameObject);
 
 		/// <summary>
 		/// Tries to find a MeshFilter or SkinnedMeshRenderer on the target game object.

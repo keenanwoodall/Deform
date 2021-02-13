@@ -76,8 +76,8 @@ namespace DeformEditor
 #if CAN_POPULATE_GAME_OBJECT_MENU
 		private static void PopulateGameObjectMenu(GenericMenu menu, GameObject selection)
 		{
-			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable)}"), false, () => CreateDeformable<Deformable>());
-			menu.AddItem(new GUIContent($"Deform/{nameof(ElasticDeformable)}"), false, () => CreateDeformable<ElasticDeformable>());
+			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable)}"), false, AddOrCreateDeformable<Deformable>);
+			menu.AddItem(new GUIContent($"Deform/{nameof(ElasticDeformable)}"), false, AddOrCreateDeformable<ElasticDeformable>);
 			
 			for (int i = 0; i < DeformerAttributes.Count; i++)
 			{
@@ -178,31 +178,87 @@ namespace DeformEditor
 			}
 		}
 
+		private static List<Deformable> justAddedDeformablesPool = new List<Deformable>();
 		public static void AddOrCreateDeformable<T> () where T : Deformable
 		{
 			var targets = Selection.gameObjects;
+
+			justAddedDeformablesPool.Clear();
 
 			// If we don't have any objects selected, create a new Deformable.
 			if (targets == null || targets.Length == 0)
 				CreateDeformable<T> ();
 			else
 			{
-				// Keep track of whether or not we've actually been able to add a Deformable component.
-				var addedComponent = false;
 				foreach (var target in Selection.gameObjects)
 				{
-					// Check if there's already a Deformable/
-					var deformable = target.GetComponent<T> ();
-					// If there isn't, we can add one
-					if (!PrefabUtility.IsPartOfPrefabAsset (target) && deformable == null && MeshTarget.IsValid (target))
+					// We can't add components to a gameobject that's part of a prefab asset
+					if (!PrefabUtility.IsPartOfPrefabAsset (target))
 					{
-						Undo.AddComponent<T> (target);
-						addedComponent = true;
+						T deformable = null;
+						
+						// Check if there's an LOD Group
+						var lodGroup = target.GetComponent<LODGroup>();
+
+						// If an LOD Group is selected, lets add Deformables to its children
+						if (lodGroup != null)
+						{
+							if (EditorUtility.DisplayDialog
+							(
+								title: "Deformable LOD Group",
+								message: $"You just tried to add a {typeof(T).Name} to an {nameof(LODGroup)}. Would you like to make its childen Deformable?",
+								ok: "Yes", 
+								cancel:"No"
+							))
+							{
+								foreach (Transform child in lodGroup.transform)
+								{
+									// Check if there's already a Deformable
+									deformable = child.GetComponent<T>();
+									// If there isn't, we can add one
+									if (deformable == null && MeshTarget.IsValid(child))
+									{
+										justAddedDeformablesPool.Add(Undo.AddComponent<T>(child.gameObject));
+									}
+								}
+
+								if (EditorUtility.DisplayDialog
+								(
+									title: "Deformable LOD Group",
+									message: $"A {nameof(GroupDeformer)} can help you keep deformers in sync across multiple LODs. Would you like one added automatically?",
+									ok: "Yes",
+									cancel:"No"
+								))
+								{
+									GroupDeformer group = new GameObject($"{target.name} {nameof(GroupDeformer)}").AddComponent<GroupDeformer>();
+									group.transform.SetParent(target.transform);
+									group.transform.localPosition = Vector3.zero;
+									group.transform.localEulerAngles = Vector3.zero;
+									Undo.RegisterCreatedObjectUndo(group.gameObject, $"Created {nameof(GroupDeformer)}");
+									
+									foreach (var d in justAddedDeformablesPool)
+									{
+										Undo.RecordObject(d, "Added deformer");
+										d.AddDeformer(group);
+									}
+								}
+							}
+							
+							return;
+						}
+						
+						// Since there wasn't an LOD group, check if there's already a Deformable
+						deformable = target.GetComponent<T>();
+						// If there isn't, we can add one
+						if (deformable == null && MeshTarget.IsValid(target))
+						{
+							justAddedDeformablesPool.Add(Undo.AddComponent<T>(target));
+						}
 					}
 				}
 
 				// If we never ended up adding a Deformable component, we should create new one.
-				if (!addedComponent)
+				if (justAddedDeformablesPool.Count == 0)
 					CreateDeformable<T> ();
 			}
 		}

@@ -167,11 +167,7 @@ namespace Deform
 		{
 #if UNITY_EDITOR
 			if (!Application.isPlaying && handle.IsCompleted)
-			{
-				PreSchedule(true);
-				Schedule(true).Complete();
-				ApplyData(true);
-			}
+				ForceImmediateUpdate();
 #endif
 		}
 
