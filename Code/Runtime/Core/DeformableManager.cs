@@ -93,7 +93,7 @@ namespace Deform
 		}
 
 		/// <summary>
-		/// Finishes the schedules work chain.
+		/// Finishes the scheduled work chain.
 		/// </summary>
 		public void CompleteDeformables (HashSet<IDeformable> deformables)
 		{

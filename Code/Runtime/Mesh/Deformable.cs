@@ -152,6 +152,26 @@ namespace Deform
 		}
 #endif
 
+		private void OnBecameVisible()
+		{
+			#if UNITY_EDITOR
+			if (!Application.isPlaying)
+				ForceImmediateUpdate();
+			#endif
+			
+			// GROSS ALERT! It's hard to force a deformable to update immediately in play mode
+			// because the DeformableManager controls the update cycle.
+			// The DeformableManager updates newly registered deformables immediately, so 
+			// the best way to update a deformable immediately, without fighting the manager,
+			// is to unregister and reregister the deformable.
+			if (manager)
+			{
+				var m = manager;
+				Manager = null;
+				Manager = m;
+			}
+		}
+
 		/// <summary>
 		/// Initializes mesh data.
 		/// </summary>
