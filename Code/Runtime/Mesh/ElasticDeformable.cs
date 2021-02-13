@@ -79,18 +79,18 @@ namespace Deform
 		protected override void OnDisable()
 		{
 			base.OnDisable();
-			if (velocityBuffer != null)
+			if (velocityBuffer.IsCreated)
 				velocityBuffer.Dispose();
-			if (currentPointBuffer != null)
+			if (currentPointBuffer.IsCreated)
 				currentPointBuffer.Dispose();
 		}
 
 		/// <summary>
 		/// Creates a chain of work to deform the native mesh data.
 		/// </summary>
-		public override JobHandle Schedule(JobHandle dependency = default)
+		public override JobHandle Schedule(bool ignoreCullingMode, JobHandle dependency = default)
 		{
-			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
+			if (!ignoreCullingMode && cullingMode == CullingMode.DontUpdate && !IsVisible())
 				return dependency;
 			
 			if (data.Target.GetGameObject() == null)
@@ -213,12 +213,12 @@ namespace Deform
 		/// <summary>
 		/// Sends native mesh data to the mesh, updates the mesh collider if required and then resets the native mesh data.
 		/// </summary>
-		public override void ApplyData()
+		public override void ApplyData(bool ignoreCullingMode)
 		{
 			if (!CanUpdate())
 				return;
 
-			if (IsVisible() || CullingMode == CullingMode.AlwaysUpdate)
+			if (ignoreCullingMode || CullingMode == CullingMode.AlwaysUpdate || IsVisible())
 			{
 				// If in play-mode, always apply vertices since it's an elastic effect
 				if (Application.isPlaying)

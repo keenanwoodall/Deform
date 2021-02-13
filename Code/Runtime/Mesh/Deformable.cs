@@ -118,7 +118,7 @@ namespace Deform
 		protected DataFlags currentModifiedDataFlags = DataFlags.None;
 		protected DataFlags lastModifiedDataFlags = DataFlags.None;
 
-		private void OnEnable()
+		protected virtual void OnEnable()
 		{
 			InitializeData();
 
@@ -128,9 +128,9 @@ namespace Deform
 #if UNITY_EDITOR
 			if (!Application.isPlaying && handle.IsCompleted)
 			{
-				PreSchedule();
-				Schedule().Complete();
-				ApplyData();
+				PreSchedule(true);
+				Schedule(true).Complete();
+				ApplyData(true);
 			}
 			
 			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
@@ -184,11 +184,11 @@ namespace Deform
 		/// <summary>
 		/// Called before Schedule.
 		/// </summary>
-		public void PreSchedule()
+		public virtual void PreSchedule(bool ignoreCullingMode)
 		{
 			if (!CanUpdate())
 				return;
-			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
+			if (!ignoreCullingMode && cullingMode == CullingMode.DontUpdate && !IsVisible())
 				return;
 			foreach (var element in DeformerElements)
 			{
@@ -197,13 +197,14 @@ namespace Deform
 					deformer.PreProcess();
 			}
 		}
+		public void PreSchedule() => PreSchedule(false);
 
 		/// <summary>
 		/// Creates a chain of work to deform the native mesh data.
 		/// </summary>
-		public virtual JobHandle Schedule(JobHandle dependency = default)
+		public virtual JobHandle Schedule(bool ignoreCullingMode, JobHandle dependency = default)
 		{
-			if (cullingMode == CullingMode.DontUpdate && !IsVisible())
+			if (!ignoreCullingMode && cullingMode == CullingMode.DontUpdate && !IsVisible())
 				return dependency;
 			
 			if (data.Target.GetGameObject() == null)
@@ -263,16 +264,18 @@ namespace Deform
 			// Return the new end of the dependency chain.d
 			return handle;
 		}
+
+		public JobHandle Schedule(JobHandle dependency = default) => Schedule(false, dependency);
 		
 		/// <summary>
 		/// Sends native mesh data to the mesh, updates the mesh collider if required and then resets the native mesh data.
 		/// </summary>
-		public virtual void ApplyData()
+		public virtual void ApplyData(bool ignoreCullingMode)
 		{
 			if (!CanUpdate())
 				return;
 
-			if (IsVisible() || CullingMode == CullingMode.AlwaysUpdate)
+			if (ignoreCullingMode || CullingMode == CullingMode.AlwaysUpdate || IsVisible())
 			{
 				data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
 
@@ -285,6 +288,8 @@ namespace Deform
 			
 			ResetDynamicData();
 		}
+
+		public void ApplyData() => ApplyData(false);
 
 		/// <summary>
 		/// Copies the original mesh data to the mesh.
