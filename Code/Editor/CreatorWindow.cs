@@ -78,12 +78,15 @@ namespace DeformEditor
 		{
 			menu.AddItem(new GUIContent($"Deform/{nameof(Deformable).Nicify()}"), false, AddOrCreateDeformable<Deformable>);
 			menu.AddItem(new GUIContent($"Deform/{nameof(ElasticDeformable).Nicify()}"), false, AddOrCreateDeformable<ElasticDeformable>);
-			
 			for (int i = 0; i < DeformerAttributes.Count; i++)
 			{
 				var current = DeformerAttributes[i];
-
-				menu.AddItem(new GUIContent($"Deform/Deformers/{current.Category}/{current.Name}", current.Description), false, () => CreateDeformerFromAttribute (current, true));
+				var path = string.Empty;
+				if (current.Category == Category.Normal)
+					path = $"Deform/Deformers/{current.Name}";
+				else
+					path = $"Deform/Deformers/{current.Category}/{current.Name}";
+				menu.AddItem(new GUIContent(path, current.Description), false, () => CreateDeformerFromAttribute (current, true));
 			}
 		}
 #endif
