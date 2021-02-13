@@ -231,22 +231,19 @@ namespace Deform
 			if (!CanUpdate())
 				return;
 
-			if (ignoreCullingMode || CullingMode == CullingMode.AlwaysUpdate || IsVisible())
+			// If in play-mode, always apply vertices since it's an elastic effect
+			if (Application.isPlaying)
 			{
-				// If in play-mode, always apply vertices since it's an elastic effect
-				if (Application.isPlaying)
-				{
-					currentModifiedDataFlags |= DataFlags.Vertices;
-				}
-
-				data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
-
-				if (BoundsRecalculation == BoundsRecalculation.Custom)
-					data.DynamicMesh.bounds = CustomBounds;
-
-				if (ColliderRecalculation == ColliderRecalculation.Auto)
-					RecalculateMeshCollider();
+				currentModifiedDataFlags |= DataFlags.Vertices;
 			}
+
+			data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
+
+			if (BoundsRecalculation == BoundsRecalculation.Custom)
+				data.DynamicMesh.bounds = CustomBounds;
+
+			if (ColliderRecalculation == ColliderRecalculation.Auto)
+				RecalculateMeshCollider();
 
 			ResetDynamicData();
 		}

@@ -305,16 +305,13 @@ namespace Deform
 			if (!CanUpdate())
 				return;
 
-			if (ignoreCullingMode || CullingMode == CullingMode.AlwaysUpdate || IsVisible())
-			{
-				data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
+			data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
 
-				if (BoundsRecalculation == BoundsRecalculation.Custom)
-					data.DynamicMesh.bounds = CustomBounds;
+			if (BoundsRecalculation == BoundsRecalculation.Custom)
+				data.DynamicMesh.bounds = CustomBounds;
 
-				if (ColliderRecalculation == ColliderRecalculation.Auto)
-					RecalculateMeshCollider();
-			}
+			if (ColliderRecalculation == ColliderRecalculation.Auto)
+				RecalculateMeshCollider();
 			
 			ResetDynamicData();
 		}
