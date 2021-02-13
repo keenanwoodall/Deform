@@ -8,8 +8,13 @@ namespace DeformEditor
 	[CustomEditor (typeof (ElasticDeformable)), CanEditMultipleObjects]
 	public class ElasticDeformableEditor : DeformableEditor
 	{
+		private static class Content
+		{
+			public static readonly GUIContent CullingMode = new GUIContent("Culling Mode", $"{nameof(ElasticDeformable)} is a continuos simulation and should never be culled.");
+		}
 		private class Properties
 		{
+			public SerializedProperty CullingMode;
 			public SerializedProperty MaskedDampingRatio;
 			public SerializedProperty MaskedAngularFrequency;
 			public SerializedProperty DampingRatio;
@@ -19,6 +24,7 @@ namespace DeformEditor
 
 			public Properties (SerializedObject obj)
 			{
+				CullingMode				= obj.FindProperty ("cullingMode");
 				MaskedDampingRatio		= obj.FindProperty ("maskedDampingRatio");
 				MaskedAngularFrequency	= obj.FindProperty ("maskedAngularFrequency");
 				DampingRatio			= obj.FindProperty ("dampingRatio");
@@ -34,6 +40,21 @@ namespace DeformEditor
 		{
 			base.OnEnable();
 			properties = new Properties (serializedObject);
+
+			overrideCullingModeGUI = () =>
+			{
+				using (new EditorGUI.DisabledScope(properties.CullingMode.enumValueIndex != 1))
+					EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
+			};
+		}
+
+		public override void OnInspectorGUI()
+		{
+			if (properties.CullingMode.enumValueIndex == 1)
+			{
+				EditorGUILayout.HelpBox ($"Culling Mode should be set to {nameof(CullingMode.AlwaysUpdate)}. Elastic effect is a continuous effect and pausing it when culled when may result in snapping when becoming visible again.", MessageType.Error, true);
+			}
+			base.OnInspectorGUI();
 		}
 
 		protected override void DrawMainSettings()

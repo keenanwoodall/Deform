@@ -250,5 +250,10 @@ namespace Deform
 
 			ResetDynamicData();
 		}
+
+		private void Reset()
+		{
+			CullingMode = CullingMode.AlwaysUpdate;
+		}
 	}
 }

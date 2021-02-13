@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using Beans.Unity.Editor;
 using Deform;
@@ -63,6 +64,7 @@ namespace DeformEditor
 			}
 		}
 
+		protected Action overrideCullingModeGUI;
 
 		private Properties properties;
 		private ReorderableComponentElementList<Deformer> deformerList;
@@ -111,7 +113,10 @@ namespace DeformEditor
 				}
 			}
 
-			EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
+			if (overrideCullingModeGUI != null)
+				overrideCullingModeGUI.Invoke();
+			else
+				EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
 			EditorGUILayout.PropertyField(properties.NormalsRecalculation, Content.NormalsRecalculation);
 			EditorGUILayout.PropertyField(properties.BoundsRecalculation, Content.BoundsRecalculation);
 
