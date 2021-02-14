@@ -99,8 +99,6 @@ namespace DeformEditor
                 }
             }
 
-            //activeTool = (Tool) EditorGUILayout.EnumPopup("Active Tool", activeTool);
-
             serializedObject.ApplyModifiedProperties();
 
             EditorApplication.QueuePlayerLoopUpdate();
