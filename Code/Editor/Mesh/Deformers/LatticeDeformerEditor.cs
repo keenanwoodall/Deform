@@ -13,9 +13,8 @@ namespace DeformEditor
     {
         private Vector3Int newResolution;
 
-        private quaternion handleRotation = quaternion.identity;
         private float3 handleScale = Vector3.one;
-        
+
         private List<float3> originalPositions = new List<float3>();
 
         private Tool activeTool = Tool.None;
@@ -23,7 +22,7 @@ namespace DeformEditor
         private bool mouseDragEligible = false;
         private Vector2 mouseDownPosition;
         private int previousSelectionCount = 0;
-        
+
         // Serialized so it can be picked up by Undo system
         [SerializeField] private List<int> selectedIndices = new List<int>();
 
@@ -71,11 +70,14 @@ namespace DeformEditor
             // Don't let the lattice resolution get ridiculously high
             newResolution = Vector3Int.Min(newResolution, new Vector3Int(32, 32, 32));
 
-            if (GUILayout.Button("Update Lattice"))
+            using (new EditorGUI.DisabledScope(newResolution == latticeDeformer.Resolution))
             {
-                Undo.RecordObject(target, "Update Lattice");
-                latticeDeformer.GenerateControlPoints(newResolution, true);
-                selectedIndices.Clear();
+                if (GUILayout.Button("Update Lattice"))
+                {
+                    Undo.RecordObject(target, "Update Lattice");
+                    latticeDeformer.GenerateControlPoints(newResolution, true);
+                    selectedIndices.Clear();
+                }
             }
 
             if (GUILayout.Button("Reset Lattice Points"))
@@ -89,7 +91,7 @@ namespace DeformEditor
             {
                 if (GUILayout.Button("Auto-Fit Bounds"))
                 {
-                    Undo.RecordObject(target, "Auto-Fit Bounds");
+                    Undo.RecordObject(latticeDeformer.transform, "Auto-Fit Bounds");
                     latticeDeformer.FitBoundsToParentDeformable();
                 }
             }
@@ -253,7 +255,6 @@ namespace DeformEditor
                 {
                     // Potentially started interacting with a handle so reset everything
                     handleScale = Vector3.one;
-                    handleRotation = Quaternion.identity;
 
                     // Cache the selected control point positions before the interaction, so that all handle
                     // transformations are done using the original values rather than compounding error each frame
@@ -289,7 +290,7 @@ namespace DeformEditor
                 else if (activeTool == Tool.Rotate)
                 {
                     EditorGUI.BeginChangeCheck();
-                    quaternion newRotation = Handles.RotationHandle(handleRotation, handlePosition);
+                    quaternion newRotation = Handles.RotationHandle(quaternion.identity, handlePosition);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(target, "Update Lattice");
@@ -305,7 +306,7 @@ namespace DeformEditor
                 {
                     var size = HandleUtility.GetHandleSize(handlePosition);
                     EditorGUI.BeginChangeCheck();
-                    handleScale = Handles.ScaleHandle(handleScale, handlePosition, handleRotation, size);
+                    handleScale = Handles.ScaleHandle(handleScale, handlePosition, quaternion.identity, size);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(target, "Update Lattice");
@@ -317,6 +318,14 @@ namespace DeformEditor
                         }
                     }
                 }
+
+                Handles.BeginGUI();
+                if (GUI.Button(new Rect((EditorGUIUtility.currentViewWidth - 200) / 2, SceneView.currentDrawingSceneView.position.height - 60, 200, 30), new GUIContent("Stop Editing Control Points")))
+                {
+                    DeselectAll();
+                }
+
+                Handles.EndGUI();
             }
 
             if (e.button == 0) // Left Mouse Button
@@ -358,6 +367,7 @@ namespace DeformEditor
                             if (screenPoint.z < 0)
                             {
                                 // Don't consider points that are behind the camera
+                                continue;
                             }
 
                             if (marqueeRect.Contains(screenPoint))
@@ -442,7 +452,12 @@ namespace DeformEditor
             {
                 // Make sure when we start selecting control points we actually have a useful tool equipped
                 activeTool = Tool.Move;
-                Repaint(); // Make sure the inspector shows our new active tool
+            }
+
+            if (selectedIndices.Count != previousSelectionCount)
+            {
+                // Different UI elements may be visible depending on selection count, so redraw when it changes
+                Repaint();
             }
         }
 
