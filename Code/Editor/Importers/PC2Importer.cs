@@ -1,7 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor.AssetImporters;
 using Deform;
+using NUnit.Framework;
 
 namespace DeformEditor
 {
@@ -15,34 +18,39 @@ namespace DeformEditor
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
 			PointCache pointCache = ScriptableObject.CreateInstance<PointCache>();
-			
-			using (FileStream fs = new FileStream(ctx.assetPath, FileMode.Open, FileAccess.Read))
+
+			try
 			{
-				using (BinaryReader br = new BinaryReader(fs))
+				using (FileStream fs = new FileStream(ctx.assetPath, FileMode.Open, FileAccess.Read))
 				{
-					string signature = new string(br.ReadChars(12));
-					int fileVersion = br.ReadInt32();
-					int perFramePointCount = br.ReadInt32();
-					float startFrame = br.ReadSingle();
-					float frameRate = br.ReadSingle();
-					int frameCount = br.ReadInt32();
-
-					Vector3[] points = new Vector3[frameCount * perFramePointCount];
-
-					for (int i = 0; i < perFramePointCount; i++)
+					using (BinaryReader br = new BinaryReader(fs))
 					{
-						points[i] = new Vector3
-						(
-							br.ReadSingle(),
-							br.ReadSingle(),
-							br.ReadSingle()
-						);
+						string signature = new string(br.ReadChars(12));
+						int fileVersion = br.ReadInt32();
+						int frameSize = br.ReadInt32();
+						float startFrame = br.ReadSingle();
+						float frameRate = br.ReadSingle();
+						int frameCount = br.ReadInt32();
+
+						var points = new Vector3[frameSize * frameCount];
+
+						for (int i = 0; i < points.Length; i++)
+							points[i] = new Vector3
+							(
+								br.ReadSingle(),
+								br.ReadSingle(),
+								br.ReadSingle()
+							);
+
+						pointCache.Initialize(signature, fileVersion, startFrame, frameRate, frameCount, frameSize, points);
 					}
-					
-					pointCache.Initialize(signature, fileVersion, startFrame, frameRate, frameCount, perFramePointCount, points);
 				}
 			}
-			
+			catch (Exception e)
+			{
+				Debug.Log(e);
+			}
+
 			ctx.AddObjectToAsset(PointCacheID, pointCache);
 			ctx.SetMainObject(pointCache);
 		}

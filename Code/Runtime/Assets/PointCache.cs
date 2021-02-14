@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Deform
 {
@@ -8,7 +9,7 @@ namespace Deform
 		[SerializeField] private int fileVersion;
 		[SerializeField] private float startFrame;
 		[SerializeField] private int frameCount;
-		[SerializeField] private int framePointCount;
+		[SerializeField] private int frameSize;
 		[SerializeField] private float frameRate;
 		[SerializeField] private Vector3[] points;
 
@@ -16,7 +17,7 @@ namespace Deform
 		public int FileVersion => fileVersion;
 		public float StartFrame => startFrame;
 		public int FrameCount => frameCount;
-		public int FramePointCount => framePointCount;
+		public int FrameSize => frameSize;
 		public float FrameRate => frameRate;
 		public Vector3[] Points => points;
 
@@ -27,7 +28,7 @@ namespace Deform
 			this.startFrame = startFrame;
 			this.frameCount = frameCount;
 			this.frameRate = frameRate;
-			this.framePointCount = framePointCount;
+			this.frameSize = framePointCount;
 			this.points = points;
 		}
 	}
