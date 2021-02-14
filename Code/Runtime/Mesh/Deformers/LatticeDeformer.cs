@@ -13,18 +13,6 @@ namespace Deform
     [HelpURL("https://github.com/keenanwoodall/Deform/wiki/LatticeDeformer")]
     public class LatticeDeformer : Deformer
     {
-        public Transform Target
-        {
-            get
-            {
-                if (target == null)
-                    target = transform;
-                return target;
-            }
-            set { target = value; }
-        }
-
-
         public bool CanAutoFitBounds
         {
             get
@@ -164,7 +152,7 @@ namespace Deform
 
         public override JobHandle Process(MeshData data, JobHandle dependency = default)
         {
-            var meshToAxis = DeformerUtils.GetMeshToAxisSpace(Target, data.Target.GetTransform());
+            var meshToAxis = DeformerUtils.GetMeshToAxisSpace(transform, data.Target.GetTransform());
 
             return new LatticeJob
             {

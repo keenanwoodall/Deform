@@ -35,19 +35,16 @@ namespace DeformEditor
 
         private static class Content
         {
-            public static readonly GUIContent Target = new GUIContent(text: "Target", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
             public static readonly GUIContent Resolution = new GUIContent(text: "Resolution", tooltip: "Per axis control point counts, the higher the resolution the more splits");
             public static readonly GUIContent StopEditing = new GUIContent(text: "Stop Editing Control Points", tooltip: "Restore normal transform tools\n\nShortcut: Escape");
         }
 
         private class Properties
         {
-            public SerializedProperty Target;
             public SerializedProperty Resolution;
 
             public Properties(SerializedObject obj)
             {
-                Target = obj.FindProperty("target");
                 Resolution = obj.FindProperty("resolution");
             }
         }
@@ -69,8 +66,6 @@ namespace DeformEditor
             LatticeDeformer latticeDeformer = ((LatticeDeformer) target);
 
             serializedObject.UpdateIfRequiredOrScript();
-
-            EditorGUILayout.PropertyField(properties.Target, Content.Target);
 
             newResolution = EditorGUILayout.Vector3IntField(Content.Resolution, newResolution);
             // Make sure we have at least two control points per axis
@@ -250,7 +245,7 @@ namespace DeformEditor
                 }
 
 
-                float3 handlePosition = lattice.Target.TransformPoint(currentPivotPosition);
+                float3 handlePosition = transform.TransformPoint(currentPivotPosition);
 
                 if (e.type == EventType.MouseDown)
                 {
@@ -266,7 +261,7 @@ namespace DeformEditor
                     }
                 }
                 
-                var handleRotation = lattice.Target.rotation;
+                var handleRotation = transform.rotation;
                 if (Tools.pivotRotation == PivotRotation.Global)
                 {
                     handleRotation = Quaternion.identity;
@@ -281,7 +276,7 @@ namespace DeformEditor
                         Undo.RecordObject(target, "Update Lattice");
 
                         var delta = newPosition - handlePosition;
-                        delta = lattice.Target.InverseTransformVector(delta);
+                        delta = transform.InverseTransformVector(delta);
                         foreach (var selectedIndex in selectedIndices)
                         {
                             controlPoints[selectedIndex] += delta;
