@@ -30,6 +30,7 @@ namespace DeformEditor
         {
             public static readonly GUIContent Target = new GUIContent(text: "Target", tooltip: DeformEditorGUIUtility.Strings.AxisTooltip);
             public static readonly GUIContent Resolution = new GUIContent(text: "Resolution", tooltip: "Per axis control point counts, the higher the resolution the more splits");
+            public static readonly GUIContent StopEditing = new GUIContent(text: "Stop Editing Control Points", tooltip: "Restore normal transform tools\n\nShortcut: Escape");
         }
 
         private class Properties
@@ -93,14 +94,6 @@ namespace DeformEditor
                 {
                     Undo.RecordObject(latticeDeformer.transform, "Auto-Fit Bounds");
                     latticeDeformer.FitBoundsToParentDeformable();
-                }
-            }
-
-            if (selectedIndices.Count != 0)
-            {
-                if (GUILayout.Button("Stop Editing Control Points"))
-                {
-                    DeselectAll();
                 }
             }
 
@@ -320,7 +313,7 @@ namespace DeformEditor
                 }
 
                 Handles.BeginGUI();
-                if (GUI.Button(new Rect((EditorGUIUtility.currentViewWidth - 200) / 2, SceneView.currentDrawingSceneView.position.height - 60, 200, 30), new GUIContent("Stop Editing Control Points")))
+                if (GUI.Button(new Rect((EditorGUIUtility.currentViewWidth - 200) / 2, SceneView.currentDrawingSceneView.position.height - 60, 200, 30), Content.StopEditing))
                 {
                     DeselectAll();
                 }
