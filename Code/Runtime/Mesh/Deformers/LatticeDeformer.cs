@@ -78,6 +78,8 @@ namespace Deform
                 var bounds = deformable.GetCurrentMesh().bounds;
                 transform.localPosition = bounds.center;
                 transform.localScale = bounds.size;
+                // Make sure the rotation is zeroed so that we're not applying the size is the wrong axis
+                transform.localRotation = Quaternion.identity;
             }
         }
 

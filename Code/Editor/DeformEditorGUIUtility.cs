@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace DeformEditor
 {
@@ -46,6 +47,21 @@ namespace DeformEditor
 				text: "Smooth",
 				tooltip: Strings.SmoothTooltip
 			);
+		}
+		
+		/// <summary>
+		/// Convert a world position to a screen position to be used with GUI
+		/// </summary>
+		public static Vector3 WorldToGUIPoint(Camera sceneViewCamera, Vector3 worldPosition)
+		{
+			Vector3 screenPoint = sceneViewCamera.WorldToScreenPoint(worldPosition);
+                            
+			// Flip the y position so it matches the rect coordinate space
+			screenPoint.y = sceneViewCamera.pixelHeight - screenPoint.y;
+			// Convert from pixels to points (e.g. on retina screens)
+			screenPoint /= EditorGUIUtility.pixelsPerPoint;
+            
+			return screenPoint;
 		}
 	}
 }

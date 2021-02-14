@@ -5,6 +5,8 @@ using UnityEditor;
 using Deform;
 using Unity.Mathematics;
 using UnityEngine.Rendering;
+using static Unity.Mathematics.math;
+using float3 = Unity.Mathematics.float3;
 
 namespace DeformEditor
 {
@@ -14,16 +16,21 @@ namespace DeformEditor
         private Vector3Int newResolution;
 
         private float3 handleScale = Vector3.one;
-
-        private List<float3> originalPositions = new List<float3>();
-
         private Tool activeTool = Tool.None;
 
-        private bool mouseDragEligible = false;
+        enum MouseDragState
+        {
+            NotActive,
+            Eligible,
+            InProgress
+        };
+
+        private MouseDragState mouseDragState = MouseDragState.NotActive;
         private Vector2 mouseDownPosition;
         private int previousSelectionCount = 0;
 
         // Serialized so it can be picked up by Undo system
+        [SerializeField] private List<float3> originalPositions = new List<float3>();
         [SerializeField] private List<int> selectedIndices = new List<int>();
 
         private static class Content
@@ -109,10 +116,11 @@ namespace DeformEditor
             base.OnSceneGUI();
 
             LatticeDeformer lattice = target as LatticeDeformer;
+            Transform transform = lattice.transform;
             float3[] controlPoints = lattice.ControlPoints;
             Event e = Event.current;
 
-            using (new Handles.DrawingScope(lattice.transform.localToWorldMatrix))
+            using (new Handles.DrawingScope(transform.localToWorldMatrix))
             {
                 var cachedZTest = Handles.zTest;
 
@@ -146,7 +154,7 @@ namespace DeformEditor
                                 activeColor = Handles.preselectionColor;
                             }
 
-                            if (e.type == EventType.MouseDown && HandleUtility.nearestControl == controlPointHandleID && e.button == 0 && Foo.MouseActionAllowed())
+                            if (e.type == EventType.MouseDown && HandleUtility.nearestControl == controlPointHandleID && e.button == 0 && MouseActionAllowed)
                             {
                                 BeginSelectionChangeRegion();
                                 GUIUtility.hotControl = controlPointHandleID;
@@ -201,7 +209,7 @@ namespace DeformEditor
                 }
             }
 
-            var defaultControl = Foo.DisableObjectSelection();
+            var defaultControl = DeformUnityObjectSelection.DisableSceneViewObjectSelection();
 
             if (selectedIndices.Count != 0)
             {
@@ -257,17 +265,17 @@ namespace DeformEditor
                         originalPositions.Add(controlPoints[selectedIndex]);
                     }
                 }
+                
+                var handleRotation = lattice.Target.rotation;
+                if (Tools.pivotRotation == PivotRotation.Global)
+                {
+                    handleRotation = Quaternion.identity;
+                }
 
                 if (activeTool == Tool.Move)
                 {
-                    var positionHandleRotation = lattice.Target.rotation;
-                    if (Tools.pivotRotation == PivotRotation.Global)
-                    {
-                        positionHandleRotation = Quaternion.identity;
-                    }
-
                     EditorGUI.BeginChangeCheck();
-                    float3 newPosition = Handles.PositionHandle(handlePosition, positionHandleRotation);
+                    float3 newPosition = Handles.PositionHandle(handlePosition, handleRotation);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(target, "Update Lattice");
@@ -283,15 +291,21 @@ namespace DeformEditor
                 else if (activeTool == Tool.Rotate)
                 {
                     EditorGUI.BeginChangeCheck();
-                    quaternion newRotation = Handles.RotationHandle(quaternion.identity, handlePosition);
+                    quaternion newRotation = Handles.RotationHandle(handleRotation, handlePosition);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(target, "Update Lattice");
 
-                        // TODO: Add support for PivotRotation - i.e. local mode 
                         for (var index = 0; index < selectedIndices.Count; index++)
                         {
-                            controlPoints[selectedIndices[index]] = originalPivotPosition + math.mul(newRotation, (originalPositions[index] - originalPivotPosition));
+                            if (Tools.pivotRotation == PivotRotation.Global)
+                            {
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3)transform.InverseTransformDirection(mul(newRotation, transform.TransformDirection(originalPositions[index] - originalPivotPosition)));
+                            }
+                            else
+                            {
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + mul(mul(inverse(handleRotation),newRotation), (originalPositions[index] - originalPivotPosition));
+                            }
                         }
                     }
                 }
@@ -299,15 +313,21 @@ namespace DeformEditor
                 {
                     var size = HandleUtility.GetHandleSize(handlePosition);
                     EditorGUI.BeginChangeCheck();
-                    handleScale = Handles.ScaleHandle(handleScale, handlePosition, quaternion.identity, size);
+                    handleScale = Handles.ScaleHandle(handleScale, handlePosition, handleRotation, size);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(target, "Update Lattice");
 
-                        // TODO: Add support for PivotRotation - i.e. local mode
                         for (var index = 0; index < selectedIndices.Count; index++)
                         {
-                            controlPoints[selectedIndices[index]] = originalPivotPosition + handleScale * (originalPositions[index] - originalPivotPosition);
+                            if (Tools.pivotRotation == PivotRotation.Global)
+                            {
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3)transform.InverseTransformDirection(handleScale * transform.TransformDirection(originalPositions[index] - originalPivotPosition));
+                            }
+                            else
+                            {
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + handleScale * (originalPositions[index] - originalPivotPosition);
+                            }
                         }
                     }
                 }
@@ -317,26 +337,26 @@ namespace DeformEditor
                 {
                     DeselectAll();
                 }
-
                 Handles.EndGUI();
             }
 
             if (e.button == 0) // Left Mouse Button
             {
-                if (e.type == EventType.MouseDown && HandleUtility.nearestControl == defaultControl && Foo.MouseActionAllowed())
+                if (e.type == EventType.MouseDown && HandleUtility.nearestControl == defaultControl && MouseActionAllowed)
                 {
                     mouseDownPosition = e.mousePosition;
-                    mouseDragEligible = true;
-                    GUIUtility.hotControl = defaultControl;
+                    mouseDragState = MouseDragState.Eligible;
                 }
-                else if (e.type == EventType.MouseDrag && mouseDragEligible)
+                else if (e.type == EventType.MouseDrag && mouseDragState == MouseDragState.Eligible)
                 {
+                    mouseDragState = MouseDragState.InProgress;
                     SceneView.currentDrawingSceneView.Repaint();
                 }
-                else if (e.type == EventType.MouseUp
-                         || (mouseDragEligible && e.rawType == EventType.MouseUp)) // Have they released the mouse outside the scene view while doing marquee select?
+                else if (GUIUtility.hotControl == 0 && 
+                         (e.type == EventType.MouseUp
+                         || (mouseDragState == MouseDragState.InProgress && e.rawType == EventType.MouseUp))) // Have they released the mouse outside the scene view while doing marquee select?
                 {
-                    if (mouseDragEligible)
+                    if (mouseDragState == MouseDragState.InProgress)
                     {
                         var mouseUpPosition = e.mousePosition;
 
@@ -355,7 +375,7 @@ namespace DeformEditor
                         for (var index = 0; index < controlPoints.Length; index++)
                         {
                             Camera camera = SceneView.currentDrawingSceneView.camera;
-                            var screenPoint = Foo.WorldToGUIPoint(camera, lattice.transform.TransformPoint(controlPoints[index]));
+                            var screenPoint = DeformEditorGUIUtility.WorldToGUIPoint(camera, transform.TransformPoint(controlPoints[index]));
 
                             if (screenPoint.z < 0)
                             {
@@ -378,12 +398,23 @@ namespace DeformEditor
 
                         EndSelectionChangeRegion();
                     }
+                    else
+                    {
+                        if (selectedIndices.Count == 0) // This shouldn't be called if you have any points selected (we want to allow you to deselect the points)
+                        {
+                            DeformUnityObjectSelection.AttemptMouseUpObjectSelection();
+                        }
+                        else
+                        {
+                            DeselectAll();
+                        }
+                    }
 
-                    mouseDragEligible = false;
+                    mouseDragState = MouseDragState.NotActive;
                 }
             }
 
-            if (e.type == EventType.Repaint && mouseDragEligible)
+            if (e.type == EventType.Repaint && mouseDragState == MouseDragState.InProgress)
             {
                 var mouseUpPosition = e.mousePosition;
 
@@ -391,12 +422,12 @@ namespace DeformEditor
                     Mathf.Min(mouseDownPosition.y, mouseUpPosition.y),
                     Mathf.Max(mouseDownPosition.x, mouseUpPosition.x),
                     Mathf.Max(mouseDownPosition.y, mouseUpPosition.y));
-                Foo.DrawMarquee(marqueeRect);
+                DeformUnityObjectSelection.DrawUnityStyleMarquee(marqueeRect);
                 SceneView.RepaintAll();
             }
 
             // If the lattice is visible, override Unity's built-in Select All so that it selects all control points 
-            if (Foo.SelectAllPressed)
+            if (DeformUnityObjectSelection.SelectAllPressed)
             {
                 BeginSelectionChangeRegion();
                 selectedIndices.Clear();
@@ -441,16 +472,31 @@ namespace DeformEditor
 
         private void EndSelectionChangeRegion()
         {
-            if (selectedIndices.Count != 0 && previousSelectionCount == 0 && Tools.current == Tool.None) // Is this our first selection?
-            {
-                // Make sure when we start selecting control points we actually have a useful tool equipped
-                activeTool = Tool.Move;
-            }
-
             if (selectedIndices.Count != previousSelectionCount)
             {
+                if (selectedIndices.Count != 0 && previousSelectionCount == 0 && Tools.current == Tool.None) // Is this our first selection?
+                {
+                    // Make sure when we start selecting control points we actually have a useful tool equipped
+                    activeTool = Tool.Move;
+                }
+                else if (selectedIndices.Count == 0 && previousSelectionCount != 0)
+                {
+                    // If we have deselected we should probably restore the active tool from before
+                    Tools.current = activeTool;
+                }
+
                 // Different UI elements may be visible depending on selection count, so redraw when it changes
                 Repaint();
+            }
+        }
+
+        private static bool MouseActionAllowed
+        {
+            get
+            {
+                if (Event.current.alt) return false;
+
+                return true;
             }
         }
 
