@@ -13,19 +13,22 @@ namespace Deform
     [HelpURL("https://github.com/keenanwoodall/Deform/wiki/LatticeDeformer")]
     public class LatticeDeformer : Deformer
     {
-        public Transform Target
+        public bool CanAutoFitBounds
         {
             get
             {
-                if (target == null)
-                    target = transform;
-                return target;
+                if (transform.GetComponentInParent<Deformable>() != null) return true;
+                
+                LODGroup lodGroup = transform.GetComponentInParent<LODGroup>();
+                var lods = lodGroup.GetLODs();
+                if (lods.Length != 0 && lods[0].renderers.Length != 0 && lods[0].renderers[0] != null)
+                {
+                    if (lods[0].renderers[0].GetComponentInParent<Deformable>() != null) return true;
+                }
+
+                return false;
             }
-            set { target = value; }
         }
-
-
-        public bool CanAutoFitBounds => transform.GetComponentInParent<Deformable>() != null;
 
         public float3[] ControlPoints => controlPoints;
 
@@ -46,11 +49,25 @@ namespace Deform
         public void FitBoundsToParentDeformable()
         {
             Deformable deformable = transform.GetComponentInParent<Deformable>();
+
+            if (deformable == null)
+            {
+                // No deformable above the lattice, so next see if there's a LODGroup with a deformable on the first LOD
+                LODGroup lodGroup = transform.GetComponentInParent<LODGroup>();
+                var lods = lodGroup.GetLODs();
+                if (lods.Length != 0 && lods[0].renderers.Length != 0 && lods[0].renderers[0] != null)
+                {
+                    deformable = lods[0].renderers[0].GetComponent<Deformable>();
+                }
+            }
+            
             if (deformable != null)
             {
                 var bounds = deformable.GetCurrentMesh().bounds;
                 transform.localPosition = bounds.center;
                 transform.localScale = bounds.size;
+                // Make sure the rotation is zeroed so that we're not applying the size is the wrong axis
+                transform.localRotation = Quaternion.identity;
             }
         }
 
@@ -135,7 +152,7 @@ namespace Deform
 
         public override JobHandle Process(MeshData data, JobHandle dependency = default)
         {
-            var meshToAxis = DeformerUtils.GetMeshToAxisSpace(Target, data.Target.GetTransform());
+            var meshToAxis = DeformerUtils.GetMeshToAxisSpace(transform, data.Target.GetTransform());
 
             return new LatticeJob
             {
