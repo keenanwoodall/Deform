@@ -30,7 +30,7 @@ namespace DeformEditor
         private int previousSelectionCount = 0;
 
         // Serialized so it can be picked up by Undo system
-        [SerializeField] private List<float3> originalPositions = new List<float3>();
+        private List<float3> originalPositions = new List<float3>();
         [SerializeField] private List<int> selectedIndices = new List<int>();
 
         private static class Content
@@ -224,6 +224,14 @@ namespace DeformEditor
                     currentPivotPosition = controlPoints[selectedIndices.Last()];
                 }
 
+                float3 handlePosition = transform.TransformPoint(currentPivotPosition);
+
+                if (e.type == EventType.MouseDown)
+                {
+                    // Potentially started interacting with a handle so reset everything
+                    handleScale = Vector3.one;
+                }
+
                 var originalPivotPosition = float3.zero;
 
                 if (Tools.pivotMode == PivotMode.Center)
@@ -242,23 +250,6 @@ namespace DeformEditor
                     originalPivotPosition = originalPositions.Last();
                 }
 
-
-                float3 handlePosition = transform.TransformPoint(currentPivotPosition);
-
-                if (e.type == EventType.MouseDown)
-                {
-                    // Potentially started interacting with a handle so reset everything
-                    handleScale = Vector3.one;
-
-                    // Cache the selected control point positions before the interaction, so that all handle
-                    // transformations are done using the original values rather than compounding error each frame
-                    originalPositions.Clear();
-                    foreach (int selectedIndex in selectedIndices)
-                    {
-                        originalPositions.Add(controlPoints[selectedIndex]);
-                    }
-                }
-                
                 var handleRotation = transform.rotation;
                 if (Tools.pivotRotation == PivotRotation.Global)
                 {
@@ -293,11 +284,11 @@ namespace DeformEditor
                         {
                             if (Tools.pivotRotation == PivotRotation.Global)
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3)transform.InverseTransformDirection(mul(newRotation, transform.TransformDirection(originalPositions[index] - originalPivotPosition)));
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3) transform.InverseTransformDirection(mul(newRotation, transform.TransformDirection(originalPositions[index] - originalPivotPosition)));
                             }
                             else
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + mul(mul(inverse(handleRotation),newRotation), (originalPositions[index] - originalPivotPosition));
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + mul(mul(inverse(handleRotation), newRotation), (originalPositions[index] - originalPivotPosition));
                             }
                         }
                     }
@@ -315,7 +306,7 @@ namespace DeformEditor
                         {
                             if (Tools.pivotRotation == PivotRotation.Global)
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3)transform.InverseTransformDirection(handleScale * transform.TransformDirection(originalPositions[index] - originalPivotPosition));
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3) transform.InverseTransformDirection(handleScale * transform.TransformDirection(originalPositions[index] - originalPivotPosition));
                             }
                             else
                             {
@@ -330,6 +321,7 @@ namespace DeformEditor
                 {
                     DeselectAll();
                 }
+
                 Handles.EndGUI();
             }
 
@@ -345,9 +337,9 @@ namespace DeformEditor
                     mouseDragState = MouseDragState.InProgress;
                     SceneView.currentDrawingSceneView.Repaint();
                 }
-                else if (GUIUtility.hotControl == 0 && 
+                else if (GUIUtility.hotControl == 0 &&
                          (e.type == EventType.MouseUp
-                         || (mouseDragState == MouseDragState.InProgress && e.rawType == EventType.MouseUp))) // Have they released the mouse outside the scene view while doing marquee select?
+                          || (mouseDragState == MouseDragState.InProgress && e.rawType == EventType.MouseUp))) // Have they released the mouse outside the scene view while doing marquee select?
                 {
                     if (mouseDragState == MouseDragState.InProgress)
                     {
@@ -476,6 +468,15 @@ namespace DeformEditor
                 {
                     // If we have deselected we should probably restore the active tool from before
                     Tools.current = activeTool;
+                }
+                
+                // Cache the selected control point positions before the interaction, so that all handle
+                // transformations are done using the original values rather than compounding error each frame
+                float3[] controlPoints = (target as LatticeDeformer).ControlPoints;
+                originalPositions.Clear();
+                foreach (int selectedIndex in selectedIndices)
+                {
+                    originalPositions.Add(controlPoints[selectedIndex]);
                 }
 
                 // Different UI elements may be visible depending on selection count, so redraw when it changes

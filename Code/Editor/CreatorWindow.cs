@@ -230,11 +230,7 @@ namespace DeformEditor
 									cancel:"No"
 								))
 								{
-									GroupDeformer group = new GameObject($"{target.name} {nameof(GroupDeformer)}").AddComponent<GroupDeformer>();
-									group.transform.SetParent(target.transform);
-									group.transform.localPosition = Vector3.zero;
-									group.transform.localEulerAngles = Vector3.zero;
-									Undo.RegisterCreatedObjectUndo(group.gameObject, $"Created {nameof(GroupDeformer)}");
+									GroupDeformer group = Undo.AddComponent<GroupDeformer>(target.gameObject);
 									
 									foreach (var d in justAddedDeformablesPool)
 									{
