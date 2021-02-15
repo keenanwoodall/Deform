@@ -135,7 +135,7 @@ namespace Deform
 					)
 				) * magnitude;
 				
-				vertices[index] += mul (axisToMesh, float4 (point, 1f)).xyz;;
+				vertices[index] = mul (axisToMesh, float4 (point, 1f)).xyz;;
 			}
 		}
 
@@ -195,7 +195,7 @@ namespace Deform
 					)
 				) * magnitude;
 
-				vertices[index] = mul (meshToAxis, float4 (point, 1f)).xyz;;
+				vertices[index] = mul (axisToMesh, float4 (point, 1f)).xyz;;
 			}
 		}
 
