@@ -276,7 +276,7 @@ namespace Deform
 			}
 
 			// Store if the vertices have been modified. If not, we don't need to update normals/bounds
-			var dirtyVertices = currentModifiedDataFlags.HasFlag(DataFlags.Vertices);
+			var dirtyVertices = (currentModifiedDataFlags | DataFlags.Vertices) > 0;
 			
 			if (dirtyVertices && NormalsRecalculation == NormalsRecalculation.Auto)
 			{
