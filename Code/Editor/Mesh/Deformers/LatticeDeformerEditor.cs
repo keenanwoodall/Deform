@@ -29,8 +29,13 @@ namespace DeformEditor
         private Vector2 mouseDownPosition;
         private int previousSelectionCount = 0;
 
-        // Serialized so it can be picked up by Undo system
-        private List<float3> originalPositions = new List<float3>();
+        // Positions of selected points before a rotate or scale begins
+        private List<float3> selectedOriginalPositions = new List<float3>();
+        
+        // Positions and resolution before a resize
+        private float3[] cachedResizePositions = new float3[0];
+        private Vector3Int cachedResizeResolution;
+        
         [SerializeField] private List<int> selectedIndices = new List<int>();
 
         private static class Content
@@ -56,7 +61,19 @@ namespace DeformEditor
             base.OnEnable();
 
             properties = new Properties(serializedObject);
-            newResolution = properties.Resolution.vector3IntValue;
+            
+            LatticeDeformer latticeDeformer = ((LatticeDeformer) target);
+            newResolution = latticeDeformer.Resolution;
+            CacheResizePositionsFromChange();
+            
+            Undo.undoRedoPerformed += UndoRedoPerformed;
+        }
+
+        private void UndoRedoPerformed()
+        {
+            LatticeDeformer latticeDeformer = ((LatticeDeformer) target);
+            newResolution = latticeDeformer.Resolution;
+            CacheResizePositionsFromChange();
         }
 
         public override void OnInspectorGUI()
@@ -67,20 +84,19 @@ namespace DeformEditor
 
             serializedObject.UpdateIfRequiredOrScript();
 
+            EditorGUI.BeginChangeCheck();
+            
             newResolution = EditorGUILayout.Vector3IntField(Content.Resolution, newResolution);
             // Make sure we have at least two control points per axis
             newResolution = Vector3Int.Max(newResolution, new Vector3Int(2, 2, 2));
             // Don't let the lattice resolution get ridiculously high
             newResolution = Vector3Int.Min(newResolution, new Vector3Int(32, 32, 32));
 
-            using (new EditorGUI.DisabledScope(newResolution == latticeDeformer.Resolution))
+            if (EditorGUI.EndChangeCheck())
             {
-                if (GUILayout.Button("Update Lattice"))
-                {
-                    Undo.RecordObject(target, "Update Lattice");
-                    latticeDeformer.GenerateControlPoints(newResolution, true);
-                    selectedIndices.Clear();
-                }
+                Undo.RecordObject(target, "Update Lattice");
+                latticeDeformer.GenerateControlPoints(newResolution, cachedResizePositions, cachedResizeResolution);
+                selectedIndices.Clear();
             }
 
             if (GUILayout.Button("Reset Lattice Points"))
@@ -88,6 +104,8 @@ namespace DeformEditor
                 Undo.RecordObject(target, "Reset Lattice Points");
                 latticeDeformer.GenerateControlPoints(newResolution);
                 selectedIndices.Clear();
+                
+                CacheResizePositionsFromChange();
             }
 
             if (latticeDeformer.CanAutoFitBounds)
@@ -239,7 +257,7 @@ namespace DeformEditor
                 if (Tools.pivotMode == PivotMode.Center)
                 {
                     // Get the average position
-                    foreach (var originalPosition in originalPositions)
+                    foreach (var originalPosition in selectedOriginalPositions)
                     {
                         originalPivotPosition += originalPosition;
                     }
@@ -249,7 +267,7 @@ namespace DeformEditor
                 else
                 {
                     // Match the scene view behaviour that Pivot mode uses the last selected object as pivot
-                    originalPivotPosition = originalPositions.Last();
+                    originalPivotPosition = selectedOriginalPositions.Last();
                 }
 
                 var handleRotation = transform.rotation;
@@ -272,6 +290,8 @@ namespace DeformEditor
                         {
                             controlPoints[selectedIndex] += delta;
                         }
+                        
+                        CacheResizePositionsFromChange();
                     }
                 }
                 else if (activeTool == Tool.Rotate)
@@ -286,13 +306,15 @@ namespace DeformEditor
                         {
                             if (Tools.pivotRotation == PivotRotation.Global)
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3) transform.InverseTransformDirection(mul(newRotation, transform.TransformDirection(originalPositions[index] - originalPivotPosition)));
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3) transform.InverseTransformDirection(mul(newRotation, transform.TransformDirection(selectedOriginalPositions[index] - originalPivotPosition)));
                             }
                             else
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + mul(mul(inverse(handleRotation), newRotation), (originalPositions[index] - originalPivotPosition));
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + mul(mul(inverse(handleRotation), newRotation), (selectedOriginalPositions[index] - originalPivotPosition));
                             }
                         }
+                        
+                        CacheResizePositionsFromChange();
                     }
                 }
                 else if (activeTool == Tool.Scale)
@@ -308,13 +330,15 @@ namespace DeformEditor
                         {
                             if (Tools.pivotRotation == PivotRotation.Global)
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3) transform.InverseTransformDirection(handleScale * transform.TransformDirection(originalPositions[index] - originalPivotPosition));
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + (float3) transform.InverseTransformDirection(handleScale * transform.TransformDirection(selectedOriginalPositions[index] - originalPivotPosition));
                             }
                             else
                             {
-                                controlPoints[selectedIndices[index]] = originalPivotPosition + handleScale * (originalPositions[index] - originalPivotPosition);
+                                controlPoints[selectedIndices[index]] = originalPivotPosition + handleScale * (selectedOriginalPositions[index] - originalPivotPosition);
                             }
                         }
+                        
+                        CacheResizePositionsFromChange();
                     }
                 }
 
@@ -484,12 +508,23 @@ namespace DeformEditor
         {
             // Cache the selected control point positions before the interaction, so that all handle
             // transformations are done using the original values rather than compounding error each frame
-            float3[] controlPoints = (target as LatticeDeformer).ControlPoints;
-            originalPositions.Clear();
+            var latticeDeformer = (target as LatticeDeformer);
+            float3[] controlPoints = latticeDeformer.ControlPoints;
+            selectedOriginalPositions.Clear();
             foreach (int selectedIndex in selectedIndices)
             {
-                originalPositions.Add(controlPoints[selectedIndex]);
+                selectedOriginalPositions.Add(controlPoints[selectedIndex]);
             }
+        }
+
+        private void CacheResizePositionsFromChange()
+        {
+            var latticeDeformer = (target as LatticeDeformer);
+            float3[] controlPoints = latticeDeformer.ControlPoints;
+            cachedResizePositions = new float3[controlPoints.Length];
+            controlPoints.CopyTo(cachedResizePositions, 0);
+
+            cachedResizeResolution = latticeDeformer.Resolution;
         }
 
         private static bool MouseActionAllowed

@@ -18,7 +18,7 @@ namespace Deform
             get
             {
                 if (transform.GetComponentInParent<Deformable>() != null) return true;
-                
+
                 LODGroup lodGroup = transform.GetComponentInParent<LODGroup>();
                 var lods = lodGroup.GetLODs();
                 if (lods.Length != 0 && lods[0].renderers.Length != 0 && lods[0].renderers[0] != null)
@@ -60,7 +60,7 @@ namespace Deform
                     deformable = lods[0].renderers[0].GetComponent<Deformable>();
                 }
             }
-            
+
             if (deformable != null)
             {
                 var bounds = deformable.GetCurrentMesh().bounds;
@@ -71,58 +71,46 @@ namespace Deform
             }
         }
 
-        public void GenerateControlPoints(Vector3Int newResolution, bool resampleExistingPoints = false)
+        public void GenerateControlPoints(Vector3Int newResolution)
         {
-            if (resampleExistingPoints)
-            {
-                NativeArray<float3> newControlPoints = new NativeArray<float3>(newResolution.x * newResolution.y * newResolution.z, Allocator.TempJob, NativeArrayOptions.ClearMemory);
-                for (int z = 0; z < newResolution.z; z++)
-                {
-                    for (int y = 0; y < newResolution.y; y++)
-                    {
-                        for (int x = 0; x < newResolution.x; x++)
-                        {
-                            int index = GetIndex(newResolution, x, y, z);
+            GenerateControlPoints(newResolution, null, Vector3Int.zero);
+        }
 
-                            newControlPoints[index] = new float3(x / (float) (newResolution.x - 1) - 0.5f,
-                                y / (float) (newResolution.y - 1) - 0.5f, z / (float) (newResolution.z - 1) - 0.5f);
-                        }
+        public void GenerateControlPoints(Vector3Int newResolution, float3[] resampleOriginalPoints, Vector3Int resampleOriginalResolution)
+        {
+            resolution = newResolution;
+
+            controlPoints = new float3[resolution.x * resolution.y * resolution.z];
+            for (int z = 0; z < resolution.z; z++)
+            {
+                for (int y = 0; y < resolution.y; y++)
+                {
+                    for (int x = 0; x < resolution.x; x++)
+                    {
+                        int index = GetIndex(x, y, z);
+
+                        controlPoints[index] = new float3(x / (float) (newResolution.x - 1) - 0.5f,
+                            y / (float) (newResolution.y - 1) - 0.5f, z / (float) (newResolution.z - 1) - 0.5f);
                     }
                 }
+            }
 
+            if (resampleOriginalPoints != null)
+            {
+                var nativeArray = new NativeArray<float3>(controlPoints, Allocator.TempJob);
                 var latticeJob = new LatticeJob
                 {
-                    controlPoints = new NativeArray<float3>(controlPoints, Allocator.TempJob),
-                    resolution = new int3(resolution.x, resolution.y, resolution.z),
+                    controlPoints = new NativeArray<float3>(resampleOriginalPoints, Allocator.TempJob),
+                    resolution = new int3(resampleOriginalResolution.x, resampleOriginalResolution.y, resampleOriginalResolution.z),
                     meshToTarget = float4x4.identity,
                     targetToMesh = float4x4.identity,
-                    vertices = newControlPoints
+                    vertices = nativeArray
                 };
-                latticeJob.Run(newControlPoints.Length);
+                latticeJob.Run(controlPoints.Length);
                 resolution = newResolution;
 
-                controlPoints = new float3[newControlPoints.Length];
-                newControlPoints.CopyTo(controlPoints);
-                newControlPoints.Dispose();
-            }
-            else
-            {
-                resolution = newResolution;
-
-                controlPoints = new float3[resolution.x * resolution.y * resolution.z];
-                for (int z = 0; z < resolution.z; z++)
-                {
-                    for (int y = 0; y < resolution.y; y++)
-                    {
-                        for (int x = 0; x < resolution.x; x++)
-                        {
-                            int index = GetIndex(x, y, z);
-
-                            controlPoints[index] = new float3(x / (float) (newResolution.x - 1) - 0.5f,
-                                y / (float) (newResolution.y - 1) - 0.5f, z / (float) (newResolution.z - 1) - 0.5f);
-                        }
-                    }
-                }
+                nativeArray.CopyTo(controlPoints);
+                nativeArray.Dispose();
             }
         }
 
