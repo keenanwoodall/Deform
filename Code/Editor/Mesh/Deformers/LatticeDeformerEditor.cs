@@ -230,6 +230,8 @@ namespace DeformEditor
                 {
                     // Potentially started interacting with a handle so reset everything
                     handleScale = Vector3.one;
+                    // Make sure we cache the positions just before the interaction changes them
+                    CacheOriginalPositions();
                 }
 
                 var originalPivotPosition = float3.zero;
@@ -470,17 +472,23 @@ namespace DeformEditor
                     Tools.current = activeTool;
                 }
                 
-                // Cache the selected control point positions before the interaction, so that all handle
-                // transformations are done using the original values rather than compounding error each frame
-                float3[] controlPoints = (target as LatticeDeformer).ControlPoints;
-                originalPositions.Clear();
-                foreach (int selectedIndex in selectedIndices)
-                {
-                    originalPositions.Add(controlPoints[selectedIndex]);
-                }
+                // Selected positions have changed so make sure we're up to date
+                CacheOriginalPositions();
 
                 // Different UI elements may be visible depending on selection count, so redraw when it changes
                 Repaint();
+            }
+        }
+
+        private void CacheOriginalPositions()
+        {
+            // Cache the selected control point positions before the interaction, so that all handle
+            // transformations are done using the original values rather than compounding error each frame
+            float3[] controlPoints = (target as LatticeDeformer).ControlPoints;
+            originalPositions.Clear();
+            foreach (int selectedIndex in selectedIndices)
+            {
+                originalPositions.Add(controlPoints[selectedIndex]);
             }
         }
 
