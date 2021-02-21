@@ -107,5 +107,13 @@ namespace DeformEditor
 		{
 			Selection.activeObject = SettingsAsset;
 		}
+		
+		[MenuItem ("Window/Deform/Settings", priority = 10000)]
+		[MenuItem ("Tools/Deform/Settings", priority = 10000)]
+		public static void ShowWindow ()
+		{
+			SelectSettingsAsset();
+			EditorApplication.ExecuteMenuItem("Window/General/Inspector");
+		}
 	}
 }

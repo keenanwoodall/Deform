@@ -1,21 +1,25 @@
-﻿using UnityEngine;
+﻿using Deform;
+using UnityEditor;
+using UnityEngine;
 
 namespace DeformEditor
 {
 	public class DeformEditorSettingsAsset : ScriptableObject
 	{
-		[Header ("Scene")]
-		public Color solidHandleColor = new Color (1f, 0.4f, 0f, 1f);
-		public Color lightHandleColor = new Color (1f, 0.4f, 0f, 0.25f);
+		
+		
+		[CollapsibleSection("Scene")]
+		[DisplayName("Solid Color")] public Color solidHandleColor = new Color (1f, 0.4f, 0f, 1f);
+		[DisplayName("Light Color")] public Color lightHandleColor = new Color (1f, 0.4f, 0f, 0.25f);
 		public float dottedLineSize = 5f;
-		public float screenspaceHandleCapSize = 0.0275f;
-		public float screenspaceAngleHandleSize = 1.25f;
-		public float screenspaceLatticeCapSize = 0.035f;
+		[DisplayName("Handle Size")] public float screenspaceHandleCapSize = 0.0275f;
+		[DisplayName("Angle Handle Size")] public float screenspaceAngleHandleSize = 1.25f;
+		[DisplayName("Lattice Handle Size")] public float screenspaceLatticeCapSize = 0.035f;
 
-		[Header("Importer")]
+		[CollapsibleSection("Importer")]
 		public bool modelsReadableByDefault = false;
 		
-		[Header("Builds")]
+		[CollapsibleSection("Builds")]
 		public BuildStrippingMode buildStripping = BuildStrippingMode.NoStripping;
 	}
 }
