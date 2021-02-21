@@ -14,5 +14,8 @@ namespace DeformEditor
 
 		[Header("Importer")]
 		public bool modelsReadableByDefault = false;
+		
+		[Header("Builds")]
+		public BuildStrippingMode buildStripping = BuildStrippingMode.NoStripping;
 	}
 }
