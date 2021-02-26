@@ -92,10 +92,28 @@ namespace DeformEditor
 				EditorUtility.SetDirty (SettingsAsset);
 			}
 		}
+		
+		public static BuildStrippingMode BuildStrippingMode
+		{
+			get => SettingsAsset.buildStripping;
+			set
+			{
+				SettingsAsset.buildStripping = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
+		}
 
 		public static void SelectSettingsAsset ()
 		{
 			Selection.activeObject = SettingsAsset;
+		}
+		
+		[MenuItem ("Window/Deform/Settings", priority = 10000)]
+		[MenuItem ("Tools/Deform/Settings", priority = 10000)]
+		public static void ShowWindow ()
+		{
+			SelectSettingsAsset();
+			EditorApplication.ExecuteMenuItem("Window/General/Inspector");
 		}
 	}
 }

@@ -26,6 +26,15 @@ namespace DeformEditor
 			EditorUtility.DisplayDialog ("Cleaned All Deformables", $"{deformables.Length + groupDeformers.Length} found and cleaned.", "OK");
 		}
 
+		private static void StripDeformable(Deformable deformable)
+		{
+			Undo.RecordObject (deformable, "Changed Assign Original Mesh On Disable");
+			// Make sure the meshes are up to date before stripping (we don't want it being culled when stripped stopping preventing the correct mesh being baked out)
+			deformable.ForceImmediateUpdate();
+			deformable.assignOriginalMeshOnDisable = false;
+			Undo.DestroyObjectImmediate (deformable);
+		}
+
 		[MenuItem ("Tools/Deform/Actions/Strip All Deformables", priority = 10101)]
 		public static void StripAllDeformablesFromMeshes ()
 		{
@@ -33,9 +42,7 @@ namespace DeformEditor
 			Undo.SetCurrentGroupName ("Stripped All Deformables");
 			foreach (var deformable in deformables)
 			{
-				Undo.RecordObject (deformable, "Changed Assign Original Mesh On Disable");
-				deformable.assignOriginalMeshOnDisable = false;
-				Undo.DestroyObjectImmediate (deformable);
+				StripDeformable(deformable);
 			}
 
 			EditorUtility.DisplayDialog ("Stripped All Deformables", $"{deformables.Length} found and stripped.", "OK");
@@ -51,9 +58,7 @@ namespace DeformEditor
 				var deformable = selection.GetComponent<Deformable> ();
 				if (deformable != null)
 				{
-					Undo.RecordObject (deformable, "Changed Assign Original Mesh On Disable");
-					deformable.assignOriginalMeshOnDisable = false;
-					Undo.DestroyObjectImmediate (deformable);
+					StripDeformable(deformable);
 				}
 			}
 		}
