@@ -336,6 +336,7 @@ namespace Deform
 
 		public void ForceImmediateUpdate()
 		{
+			Complete();
 			PreSchedule(true);
 			Schedule(true).Complete();
 			ApplyData(true);
