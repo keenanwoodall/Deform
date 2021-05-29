@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Unity.Jobs;
 using UnityEngine.SceneManagement;
+using Unity.Jobs;
 
 namespace Deform
 {
@@ -153,10 +153,13 @@ namespace Deform
 
 		private void OnBecameVisible()
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (!Application.isPlaying)
+			{
 				ForceImmediateUpdate();
-			#endif
+				return;
+			}
+#endif
 			
 			// GROSS ALERT! It's hard to force a deformable to update immediately in play mode
 			// because the DeformableManager controls the update cycle.
@@ -209,16 +212,23 @@ namespace Deform
 			}
 		}
 #endif
-		protected bool IsVisible() => data.Target.GetRenderer().isVisible;
+		protected bool IsVisible()
+		{
+			bool isVisible = data.Target.GetRenderer().isVisible;
+			return isVisible;
+		}
+
+		protected bool ShouldCull(bool ignoreCullingMode)
+		{
+			return !IsVisible() && !ignoreCullingMode && cullingMode == CullingMode.DontUpdate;
+		}
 
 		/// <summary>
 		/// Called before Schedule.
 		/// </summary>
 		public virtual void PreSchedule(bool ignoreCullingMode)
 		{
-			if (!CanUpdate())
-				return;
-			if (!ignoreCullingMode && cullingMode == CullingMode.DontUpdate && !IsVisible())
+			if (!CanUpdate() || ShouldCull(ignoreCullingMode))
 				return;
 			foreach (var element in DeformerElements)
 			{
@@ -234,7 +244,7 @@ namespace Deform
 		/// </summary>
 		public virtual JobHandle Schedule(bool ignoreCullingMode, JobHandle dependency = default)
 		{
-			if (!ignoreCullingMode && cullingMode == CullingMode.DontUpdate && !IsVisible())
+			if (ShouldCull(ignoreCullingMode))
 				return dependency;
 			
 			if (data.Target.GetGameObject() == null)
@@ -251,6 +261,10 @@ namespace Deform
 			// That will let us force this objects portion of the work to complete
 			// which will let us dispose of its data and avoid a leak.
 			handle = dependency;
+			
+			// If the mesh data has been modified, reset it so we don't deform it twice
+			if (currentModifiedDataFlags != DataFlags.None)
+				ResetDynamicData();
 
 			// Create a chain of job handles to process the data.
 			for (int i = 0; i < deformerElements.Count; i++)
@@ -302,7 +316,7 @@ namespace Deform
 		/// </summary>
 		public virtual void ApplyData(bool ignoreCullingMode)
 		{
-			if (!CanUpdate())
+			if (ShouldCull(ignoreCullingMode) || !CanUpdate())
 				return;
 
 			data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
@@ -312,7 +326,7 @@ namespace Deform
 
 			if (ColliderRecalculation == ColliderRecalculation.Auto)
 				RecalculateMeshCollider();
-			
+
 			ResetDynamicData();
 		}
 
@@ -348,7 +362,7 @@ namespace Deform
 		protected void ResetDynamicData()
 		{
 			data.ResetData(currentModifiedDataFlags);
-
+			
 			lastModifiedDataFlags = currentModifiedDataFlags;
 			currentModifiedDataFlags = DataFlags.None;
 		}

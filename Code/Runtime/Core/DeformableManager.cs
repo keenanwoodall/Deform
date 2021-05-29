@@ -116,9 +116,6 @@ namespace Deform
 			// when the next frame arrives the reset data from the immediate update isn't applied.
 			deformable.PreSchedule ();
 			deformable.Schedule ();
-			
-			if (deformable.UpdateFrequency == UpdateFrequency.Immediate)
-				deformable.Complete();
 		}
 
 		/// <summary>
