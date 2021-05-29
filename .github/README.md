@@ -34,11 +34,11 @@ Yes. Deform works seamlessly with nested prefabs and prefab variants.
 
 > Are skinned mesh renderers supported?
 
-Yes. However because of how Unity handles skinned mesh renderers; the mesh cannot be modified after its bones are animated. This means that animations to the skinned mesh renderer are applied *after* Deform modifies the mesh; which is often not the desired effect.
+Yes. However because of how Unity handles skinned mesh renderers; the mesh cannot be modified after its bones are animated. This means that animations to the skinned mesh renderer are applied *after* Deform modifies the mesh; which is often not the desired effect. Read more [here](https://github.com/keenanwoodall/Deform/wiki/WTF-Is-Up-Skinned-Mesh-Renderers).
 
 > I'm getting an error about read/write permissions. How do I fix it?
 
-This means you have a Deformable component on a mesh that doesn't have read/write permissions enabled. Select the offending mesh in your Project window and enable Read/Write permissions in its import settings.
+This means you have a Deformable component on a mesh that doesn't have read/write permissions enabled. The offending Deformable component should have a "Fix It" button in the inspector that will change the import settings, but on older versions of Deform you'll have to select the offending mesh in your Project window and enable Read/Write permissions in its import settings manually.
 
 > Do deformers have to be on the object they are deforming?
 
@@ -65,7 +65,9 @@ Additional massive thanks to the following contributors for helping develop Defo
 
 I love seeing creative and cool uses of this tool. If you make something you're proud of I'd be honored if you showed it to me!
 
+You can find me on the interwebs at these addresses:<br>
 [email](mailto:keenanwoodall@gmail.com) | [twitter](https://twitter.com/keenanwoodall) | [website](http://keenanwoodall.com)
+<br>Feel free to reach out about anything!
 
 #### If you like Deform, please consider donating!
 
