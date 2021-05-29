@@ -161,16 +161,26 @@ namespace Deform
 			}
 #endif
 			
-			// GROSS ALERT! It's hard to force a deformable to update immediately in play mode
-			// because the DeformableManager controls the update cycle.
-			// The DeformableManager updates newly registered deformables immediately, so 
-			// the best way to update a deformable immediately, without fighting the manager,
-			// is to unregister and reregister the deformable.
-			if (manager)
+			// If the update mode is set to auto and the frequency is not immediate
+			// the deformable needs to be updated immediately so there isn't a single
+			// frame where the mesh is not deformed
+			// Unfortunately, if the Deformable Manager is updating the deformable, we'll
+			// mess stuff up by calling ForceImmediateUpdate();
+			// The easiest way to force an immediate update in as DeformableManager-friendly way
+			// is to just unregister and re-register this deformable with the manager
+			if (UpdateMode == UpdateMode.Auto && UpdateFrequency != UpdateFrequency.Immediate)
 			{
+				// Store the current manager
 				var m = manager;
-				Manager = null;
-				Manager = m;
+				// If a manager is currently being used, re-register this
+				if (m)
+				{
+					Manager = null;
+					Manager = m;
+				}
+				// Otherwise register with the default manager
+				else
+					Manager = DeformableManager.GetDefaultManager(true);
 			}
 		}
 
