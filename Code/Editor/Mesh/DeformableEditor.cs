@@ -96,8 +96,8 @@ namespace DeformEditor
 			DrawDebugInfo();
 			DrawHelpBoxes();
 
-			serializedObject.ApplyModifiedProperties();
-			EditorApplication.QueuePlayerLoopUpdate();
+			if (serializedObject.ApplyModifiedProperties())
+				EditorApplication.QueuePlayerLoopUpdate();
 		}
 
 		protected virtual void DrawMainSettings()
