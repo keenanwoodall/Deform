@@ -13,7 +13,6 @@ namespace DeformEditor
 		{
 			public static readonly GUIContent Angle = new GUIContent (text: "Angle", tooltip: "How many degrees the mesh should be bent by the time it reaches the top bounds.");
 			public static readonly GUIContent Factor = DeformEditorGUIUtility.DefaultContent.Factor;
-			public static readonly GUIContent Mode = new GUIContent (text: "Mode", tooltip: "Unlimited: Entire mesh is bent.\nLimited: Mesh is only bent between bounds.");
 			public static readonly GUIContent Top = new GUIContent (text: "Top", tooltip: "Any vertices above this will have been fully bent.");
 			public static readonly GUIContent Bottom = new GUIContent (text: "Bottom", tooltip: "Any vertices below this will be fully unbent.");
 			public static readonly GUIContent Axis = DeformEditorGUIUtility.DefaultContent.Axis;
@@ -25,16 +24,19 @@ namespace DeformEditor
 			public SerializedProperty Factor;
 			public SerializedProperty Mode;
 			public SerializedProperty Top;
+			public SerializedProperty TopMode;
 			public SerializedProperty Bottom;
+			public SerializedProperty BottomMode;
 			public SerializedProperty Axis;
 
 			public Properties (SerializedObject obj)
 			{
 				Angle	= obj.FindProperty ("angle");
 				Factor	= obj.FindProperty ("factor");
-				Mode	= obj.FindProperty ("mode");
 				Top		= obj.FindProperty ("top");
+				TopMode	= obj.FindProperty ("topMode");
 				Bottom	= obj.FindProperty ("bottom");
+				BottomMode	= obj.FindProperty ("bottomMode");
 				Axis	= obj.FindProperty ("axis");
 			}
 		}
@@ -62,12 +64,16 @@ namespace DeformEditor
 
 			EditorGUILayout.PropertyField (properties.Angle, Content.Angle);
 			EditorGUILayout.PropertyField (properties.Factor, Content.Factor);
-			EditorGUILayout.PropertyField (properties.Mode, Content.Mode);
 
-			using (new EditorGUI.IndentLevelScope ())
+			using (new EditorGUILayout.HorizontalScope())
 			{
-				EditorGUILayoutx.MinField (properties.Top, properties.Bottom.floatValue, Content.Top);
-				EditorGUILayoutx.MaxField (properties.Bottom, properties.Top.floatValue, Content.Bottom);
+				EditorGUILayoutx.MinField(properties.Top, properties.Bottom.floatValue, Content.Top);
+				EditorGUILayout.PropertyField(properties.TopMode, GUIContent.none, GUILayout.Width(75));
+			}
+			using (new EditorGUILayout.HorizontalScope())
+			{
+				EditorGUILayoutx.MaxField(properties.Bottom, properties.Top.floatValue, Content.Bottom);
+				EditorGUILayout.PropertyField(properties.BottomMode, GUIContent.none, GUILayout.Width(75));
 			}
 
 			EditorGUILayout.PropertyField (properties.Axis, Content.Axis);
@@ -99,8 +105,7 @@ namespace DeformEditor
 
 		private void DrawAngleHandle (BendDeformer bend)
         {
-
-			var handleRotation = bend.Axis.rotation * Quaternion.Euler (-90, 0f, 0f);
+	        var handleRotation = bend.Axis.rotation * Quaternion.Euler (-90, 0f, 0f);
 			// There's some weird issue where if you pass the normal lossyScale, the handle's scale on the y axis is changed when the transform's z axis is changed.
 			// My simple solution is to swap the y and z.
 			var handleScale = new Vector3

@@ -3,6 +3,7 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
+using UnityEngine.Serialization;
 using static Unity.Mathematics.math;
 
 namespace Deform
@@ -21,15 +22,20 @@ namespace Deform
 			get => factor;
 			set => factor = value;
 		}
-		public BoundsMode Mode
+		public BoundsMode BottomMode
 		{
-			get => mode;
-			set => mode = value;
+			get => bottomMode;
+			set => bottomMode = value;
 		}
 		public float Top
 		{
 			get => top;
 			set => top = Mathf.Max (value, bottom);
+		}
+		public BoundsMode TopMode
+		{
+			get => topMode;
+			set => topMode = value;
 		}
 		public float Bottom
 		{
@@ -49,9 +55,12 @@ namespace Deform
 
 		[SerializeField, HideInInspector] private float angle;
 		[SerializeField, HideInInspector] private float factor = 1f;
-		[SerializeField, HideInInspector] private BoundsMode mode = BoundsMode.Limited;
 		[SerializeField, HideInInspector] private float top = 1f;
+		[FormerlySerializedAs("mode")]
+		[SerializeField, HideInInspector] private BoundsMode topMode = BoundsMode.Limited;
 		[SerializeField, HideInInspector] private float bottom = 0f;
+		[FormerlySerializedAs("mode")]
+		[SerializeField, HideInInspector] private BoundsMode bottomMode = BoundsMode.Limited;
 		[SerializeField, HideInInspector] private Transform axis;
 
 		public override DataFlags DataFlags => DataFlags.Vertices;
@@ -64,30 +73,17 @@ namespace Deform
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
-			switch (mode)
+			return new BendJob
 			{
-				default:
-				case BoundsMode.Unlimited:
-					return new UnlimitedBendJob
-					{
-						angle = totalAngle,
-						top = Top,
-						bottom = Bottom,
-						meshToAxis = meshToAxis,
-						axisToMesh = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
-				case BoundsMode.Limited:
-					return new LimitedBendJob
-					{
-						angle = totalAngle,
-						top = Top,
-						bottom = Bottom,
-						meshToAxis = meshToAxis,
-						axisToMesh = meshToAxis.inverse,
-						vertices = data.DynamicNative.VertexBuffer
-					}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
-			}
+				angle = totalAngle,
+				top = Top,
+				limitTop = TopMode == BoundsMode.Limited,
+				bottom = Bottom,
+				limitBottom = BottomMode == BoundsMode.Limited,
+				meshToAxis = meshToAxis,
+				axisToMesh = meshToAxis.inverse,
+				vertices = data.DynamicNative.VertexBuffer
+			}.Schedule (data.Length, DEFAULT_BATCH_COUNT, dependency);
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
@@ -108,12 +104,12 @@ namespace Deform
 				var scale = 1f / angleRadians;
 				var rotation = point.y * angleRadians;
 
-				var c = cos ((float)PI - rotation);
-				var s = sin ((float)PI - rotation);
+				var c = cos (PI - rotation);
+				var s = sin (PI - rotation);
 				point.xy = float2
 				(
-					(scale * c) + scale - (point.x * c),
-					(scale * s) - (point.x * s)
+					scale * c + scale - point.x * c,
+					scale * s - point.x * s
 				);
 
 				vertices[index] = mul (axisToMesh, point).xyz;
@@ -121,11 +117,13 @@ namespace Deform
 		}
 
 		[BurstCompile (CompileSynchronously = COMPILE_SYNCHRONOUSLY)]
-		public struct LimitedBendJob : IJobParallelFor
+		public struct BendJob : IJobParallelFor
 		{
 			public float angle;
 			public float top;
 			public float bottom;
+			public bool limitTop;
+			public bool limitBottom;
 			public float4x4 meshToAxis;
 			public float4x4 axisToMesh;
 			public NativeArray<float3> vertices;
@@ -138,22 +136,28 @@ namespace Deform
 
 				var angleRadians = radians (angle);
 				var scale = 1f / (angleRadians * (1f / (top - bottom)));
-				var rotation = (clamp (point.y, bottom, top) - bottom) / (top - bottom) * angleRadians;
+				var limitedY = point.y;
+				if (limitTop)
+					limitedY = min(top, limitedY);
+				if (limitBottom)
+					limitedY = max(bottom, limitedY);
+				var rotation = (limitedY - bottom) / (top - bottom) * angleRadians;
 
-				var c = cos ((float)PI - rotation);
-				var s = sin ((float)PI - rotation);
+				var c = cos (PI - rotation);
+				var s = sin (PI - rotation);
 				point.xy = float2 
 				(
-					(scale * c) + scale - (point.x * c),
-					(scale * s) - (point.x * s)
+					scale * c + scale - point.x * c,
+					scale * s - point.x * s
 				);
 
-				if (unbentPoint.y > top)
+				if (limitTop && unbentPoint.y > top)
 				{
 					point.y += -c * (unbentPoint.y - top);
 					point.x += s * (unbentPoint.y - top);
 				}
-				else if (unbentPoint.y < bottom)
+				
+				else if (limitBottom && unbentPoint.y < bottom)
 				{
 					point.y += -c * (unbentPoint.y - bottom);
 					point.x += s * (unbentPoint.y - bottom);
