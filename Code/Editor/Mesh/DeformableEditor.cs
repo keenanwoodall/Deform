@@ -28,8 +28,8 @@ namespace DeformEditor
 			public static readonly GUIContent BoundsRecalculation = new GUIContent(text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent(text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent(text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
-			public static readonly GUIContent CustomBounds = new GUIContent(text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
-			public static readonly GUIContent ApplyBounds = new GUIContent(text: "Apply", tooltip: "Applies the currently recorded bounds.");
+			public static readonly GUIContent CustomBounds = new GUIContent(text: "Custom Bounds");
+			public static readonly GUIContent ApplyBounds = new GUIContent(text: "Apply Bounds", tooltip: "Applies the currently recorded bounds.");
 
 			public static readonly string ReadWriteNotEnableAlert = "Read/Write permissions must be enabled on the target mesh.";
 			public static readonly string FixReadWriteNotEnabled = "Fix It!";
@@ -72,6 +72,7 @@ namespace DeformEditor
 
 		private static bool foldoutDebug;
 		private GUIContent record;
+		private GUIStyle redBox;
 		private bool recording;
 
 		protected virtual void OnEnable()
@@ -128,40 +129,43 @@ namespace DeformEditor
 			{
 				if (target is Deformable deformable)
 				{
+					var originalBackgroundColor = GUI.backgroundColor;
+
 					var mesh = deformable.GetMesh();
 					using (new EditorGUI.IndentLevelScope())
 					using (new EditorGUILayout.HorizontalScope())
 					{
-						var c = GUI.backgroundColor;
-						 
 						if (recording)
 						{
 							GUI.backgroundColor = Color.red;
 							mesh.RecalculateBounds();
 							var bounds = deformable.GetMesh().bounds;
 							EditorGUILayout.BoundsField(properties.CustomBounds.displayName, bounds);
+							GUI.backgroundColor = originalBackgroundColor;
 						}
 						else
 						{
 							EditorGUILayout.PropertyField(properties.CustomBounds, Content.CustomBounds);
 						}
-						
+
+						var buttonStyle = ((GUIStyle) "button");
+
 						var boundsLabelSize = EditorStyles.label.CalcSize(Content.CustomBounds);
 						var recordRect = GUILayoutUtility.GetLastRect();
 						recordRect.xMin += boundsLabelSize.x + 6;
 						recordRect = EditorGUI.IndentedRect(recordRect);
-						var recordSize = EditorStyles.iconButton.CalcSize(GUIContent.none);
+						var recordSize = buttonStyle.CalcSize(record);
 						recordRect.width = recordSize.x;
 						recordRect.height = recordSize.y;
 
 						var wasRecording = recording;
-						if (recording = GUI.Toggle(recordRect, recording, record, EditorStyles.iconButton))
+						if (recording = GUI.Toggle(recordRect, recording, record, buttonStyle))
 						{
 							var applyRect = recordRect;
-							applyRect.position += Vector2.right * (recordRect.width + 6);
-							var applySize = ((GUIStyle) "button").CalcSize(Content.ApplyBounds);
+							var applySize = buttonStyle.CalcSize(Content.ApplyBounds);
 							applyRect.width = applySize.x;
 							applyRect.height = applySize.y;
+							applyRect.position += Vector2.right * (recordRect.width + 6);
 
 							if (GUI.Button(applyRect, Content.ApplyBounds))
 							{
@@ -176,10 +180,11 @@ namespace DeformEditor
 								}
 							}
 						}
+
+						GUI.backgroundColor = originalBackgroundColor;
+						
 						if (wasRecording != recording)
 							SceneView.RepaintAll();
-						
-						GUI.backgroundColor = c;
 					}
 				}
 			}
