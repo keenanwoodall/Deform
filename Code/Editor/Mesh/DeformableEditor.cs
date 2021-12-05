@@ -169,7 +169,7 @@ namespace DeformEditor
 								recording = false;
 								foreach (var t in targets)
 								{
-									if (t is not Deformable d) continue;
+									if (!(t is Deformable d)) continue;
 									var m = d.GetMesh();
 									m.RecalculateBounds();
 									d.CustomBounds = m.bounds;
