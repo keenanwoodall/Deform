@@ -336,7 +336,7 @@ namespace DeformEditor
 				deformable.GetCurrentMesh().RecalculateBounds();
 				DeformHandles.Bounds(deformable.GetCurrentMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.SolidDotted, DeformEditorSettings.RecordingHandleColor);
 			}
-			else if (foldoutDebug)
+			else if (foldoutDebug || deformable.BoundsRecalculation == BoundsRecalculation.Custom)
 			{
 				DeformHandles.Bounds(deformable.GetCurrentMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.LightDotted);
 			}
