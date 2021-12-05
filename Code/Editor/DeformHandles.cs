@@ -52,6 +52,11 @@ namespace DeformEditor
 			using (new Handles.DrawingScope (GetLineColor (mode)))
 				GetLineMethod (mode) (a, b);
 		}
+		public static void Line (Vector3 a, Vector3 b, LineMode mode, Color color)
+		{
+			using (new Handles.DrawingScope (color))
+				GetLineMethod (mode) (a, b);
+		}
 
 		/// <summary>
 		/// Draws an arc.
@@ -135,7 +140,8 @@ namespace DeformEditor
 			Curve (curve, axis.position, axis.rotation, axis.lossyScale, magnitude, xOffset, yOffset, segments);
 		}
 
-		public static void Bounds (Bounds bounds, Matrix4x4 matrix, LineMode mode)
+		public static void Bounds(Bounds bounds, Matrix4x4 matrix, LineMode mode) => Bounds(bounds, matrix, mode, GetLineColor(mode));
+		public static void Bounds (Bounds bounds, Matrix4x4 matrix, LineMode mode, Color color)
 		{
 			var leftTopFront		= matrix.MultiplyPoint3x4 (bounds.center + new Vector3 (-bounds.extents.x,  bounds.extents.y,  bounds.extents.z));
 			var rightTopFront		= matrix.MultiplyPoint3x4 (bounds.center + new Vector3 ( bounds.extents.x,  bounds.extents.y,  bounds.extents.z));
@@ -147,20 +153,20 @@ namespace DeformEditor
 			var rightBottomBack		= matrix.MultiplyPoint3x4 (bounds.center + new Vector3 ( bounds.extents.x, -bounds.extents.y, -bounds.extents.z));
 
 			// Front
-			Line (leftTopFront,		rightTopFront,		mode);
-			Line (rightTopFront,	rightBottomFront,	mode);
-			Line (rightBottomFront, leftBottomFront,	mode);
-			Line (leftBottomFront,	leftTopFront,		mode);
+			Line (leftTopFront,		rightTopFront,		mode, color);
+			Line (rightTopFront,	rightBottomFront,	mode, color);
+			Line (rightBottomFront, leftBottomFront,	mode, color);
+			Line (leftBottomFront,	leftTopFront,		mode, color);
 			// Back
-			Line (leftTopBack,		rightTopBack,		mode);
-			Line (rightTopBack,		rightBottomBack,	mode);
-			Line (rightBottomBack,	leftBottomBack,		mode);
-			Line (leftBottomBack,	leftTopBack,		mode);
+			Line (leftTopBack,		rightTopBack,		mode, color);
+			Line (rightTopBack,		rightBottomBack,	mode, color);
+			Line (rightBottomBack,	leftBottomBack,		mode, color);
+			Line (leftBottomBack,	leftTopBack,		mode, color);
 			// Side
-			Line (leftTopBack,		leftTopFront,		mode);
-			Line (rightTopBack,		rightTopFront,		mode);
-			Line (rightBottomBack,	rightBottomFront,	mode);
-			Line (leftBottomBack,	leftBottomFront,	mode);
+			Line (leftTopBack,		leftTopFront,		mode, color);
+			Line (rightTopBack,		rightTopFront,		mode, color);
+			Line (rightBottomBack,	rightBottomFront,	mode, color);
+			Line (leftBottomBack,	leftBottomFront,	mode, color);
 		}
 
 		public static void TransformToolHandle (Transform target, float scale = 1f)

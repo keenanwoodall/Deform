@@ -29,6 +29,7 @@ namespace DeformEditor
 			public static readonly GUIContent ColliderRecalculation = new GUIContent(text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent(text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
 			public static readonly GUIContent CustomBounds = new GUIContent(text: "Custom Bounds", tooltip: "The bounds used by the mesh when bounds recalculation is set to 'Custom.'");
+			public static readonly GUIContent ApplyBounds = new GUIContent(text: "Apply", tooltip: "Applies the currently recorded bounds.");
 
 			public static readonly string ReadWriteNotEnableAlert = "Read/Write permissions must be enabled on the target mesh.";
 			public static readonly string FixReadWriteNotEnabled = "Fix It!";
@@ -69,10 +70,13 @@ namespace DeformEditor
 		private Properties properties;
 		private ReorderableComponentElementList<Deformer> deformerList;
 
-		private bool foldoutDebug;
+		private static bool foldoutDebug;
+		private GUIContent record;
+		private bool recording;
 
 		protected virtual void OnEnable()
 		{
+			record = new GUIContent(DeformEditorResources.GetTexture("Record", false), "Record current bounds");
 			properties = new Properties(serializedObject);
 
 			deformerList = new ReorderableComponentElementList<Deformer>(serializedObject, serializedObject.FindProperty("deformerElements"));
@@ -122,9 +126,61 @@ namespace DeformEditor
 
 			if (properties.BoundsRecalculation.hasMultipleDifferentValues || (BoundsRecalculation)properties.BoundsRecalculation.enumValueIndex == BoundsRecalculation.Custom)
 			{
-				using (new EditorGUI.IndentLevelScope())
+				if (target is Deformable deformable)
 				{
-					EditorGUILayout.PropertyField(properties.CustomBounds, Content.CustomBounds);
+					var mesh = deformable.GetMesh();
+					using (new EditorGUI.IndentLevelScope())
+					using (new EditorGUILayout.HorizontalScope())
+					{
+						var c = GUI.backgroundColor;
+						 
+						if (recording)
+						{
+							GUI.backgroundColor = Color.red;
+							mesh.RecalculateBounds();
+							var bounds = deformable.GetMesh().bounds;
+							EditorGUILayout.BoundsField(properties.CustomBounds.displayName, bounds);
+						}
+						else
+						{
+							EditorGUILayout.PropertyField(properties.CustomBounds, Content.CustomBounds);
+						}
+						
+						var boundsLabelSize = EditorStyles.label.CalcSize(Content.CustomBounds);
+						var recordRect = GUILayoutUtility.GetLastRect();
+						recordRect.xMin += boundsLabelSize.x + 6;
+						recordRect = EditorGUI.IndentedRect(recordRect);
+						var recordSize = EditorStyles.iconButton.CalcSize(GUIContent.none);
+						recordRect.width = recordSize.x;
+						recordRect.height = recordSize.y;
+
+						var wasRecording = recording;
+						if (recording = GUI.Toggle(recordRect, recording, record, EditorStyles.iconButton))
+						{
+							var applyRect = recordRect;
+							applyRect.position += Vector2.right * (recordRect.width + 6);
+							var applySize = ((GUIStyle) "button").CalcSize(Content.ApplyBounds);
+							applyRect.width = applySize.x;
+							applyRect.height = applySize.y;
+
+							if (GUI.Button(applyRect, Content.ApplyBounds))
+							{
+								Undo.RecordObjects(targets, "Apply Recorded Bounds");
+								recording = false;
+								foreach (var t in targets)
+								{
+									if (t is not Deformable d) continue;
+									var m = d.GetMesh();
+									m.RecalculateBounds();
+									d.CustomBounds = m.bounds;
+								}
+							}
+						}
+						if (wasRecording != recording)
+							SceneView.RepaintAll();
+						
+						GUI.backgroundColor = c;
+					}
 				}
 			}
 
@@ -268,11 +324,16 @@ namespace DeformEditor
 
 		protected virtual void OnSceneGUI()
 		{
-			if (foldoutDebug)
+			if (!(target is Deformable deformable))
+				return;
+			if (recording)
 			{
-				var deformable = target as Deformable;
-				if (deformable != null)
-					DeformHandles.Bounds(deformable.GetCurrentMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.LightDotted);
+				deformable.GetCurrentMesh().RecalculateBounds();
+				DeformHandles.Bounds(deformable.GetCurrentMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.SolidDotted, DeformEditorSettings.RecordingHandleColor);
+			}
+			else if (foldoutDebug)
+			{
+				DeformHandles.Bounds(deformable.GetCurrentMesh().bounds, deformable.transform.localToWorldMatrix, DeformHandles.LineMode.LightDotted);
 			}
 		}
 

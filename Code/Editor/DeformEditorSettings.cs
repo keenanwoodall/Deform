@@ -45,6 +45,15 @@ namespace DeformEditor
 				EditorUtility.SetDirty (SettingsAsset);
 			}
 		}
+		public static Color RecordingHandleColor
+		{
+			get => SettingsAsset.recordingHandleColor;
+			set
+			{
+				SettingsAsset.recordingHandleColor = value;
+				EditorUtility.SetDirty (SettingsAsset);
+			}
+		}
 
 		public static float DottedLineSize
 		{
