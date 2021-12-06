@@ -10,11 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84838e1060cbc4f45a2f463816b2d2fe, type: 3}
-  m_Name: DeformSettings
+  m_Name: 
   m_EditorClassIdentifier: 
-  sceneFoldoutOpen: 1
   solidHandleColor: {r: 1, g: 0.4, b: 0, a: 1}
-  lightHandleColor: {r: 1, g: 0.4, b: 0, a: 0.5}
+  lightHandleColor: {r: 1, g: 0.4, b: 0, a: 0.75}
+  recordingHandleColor: {r: 1, g: 0, b: 0, a: 0.9}
   dottedLineSize: 5
   screenspaceHandleCapSize: 0.0275
   screenspaceAngleHandleSize: 1.25
+  screenspaceLatticeCapSize: 0.035
+  modelsReadableByDefault: 0
+  buildStripping: 1
