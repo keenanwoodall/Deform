@@ -206,12 +206,21 @@ namespace Deform
 			// Store if the vertices have been modified. If not, we don't need to update normals/bounds
 			var dirtyVertices = currentModifiedDataFlags.HasFlag(DataFlags.Vertices);
 			
-			if (dirtyVertices && NormalsRecalculation == NormalsRecalculation.Fast)
+			if (dirtyVertices)
 			{
-				// Add normal recalculation to the end of the deformation chain.
-				handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
-				currentModifiedDataFlags |= DataFlags.Normals;
+				if (NormalsRecalculation == NormalsRecalculation.Fast)
+				{
+					// Add normal recalculation to the end of the deformation chain.
+					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
+					currentModifiedDataFlags |= DataFlags.Normals;
+				}
+				else if (NormalsRecalculation == NormalsRecalculation.Quality)
+				{
+					handle = MeshUtils.RecalculateNormals(data.DynamicNative, SmoothingAngle, handle);
+					currentModifiedDataFlags |= DataFlags.Normals;
+				}
 			}
+			
 			if (dirtyVertices && BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{
 				// Add bounds recalculation to the end as well.
