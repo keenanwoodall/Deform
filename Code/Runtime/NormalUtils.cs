@@ -33,12 +33,12 @@ namespace Deform
             
             var normalsFirstJob = new RecalculateNormalsFirstJob
             {
-                triangles = data.TriangleBuffer.Reinterpret<int, int3>(),
+                triangles = data.IndexBuffer.Reinterpret<int, int3>(),
                 vertices = data.VertexBuffer,
                 triangleNormals = data.TriangleNormals,
                 map = data.VertexMap.AsParallelWriter(),
             };
-            var normalsFirstHandle = normalsFirstJob.Schedule(data.TriangleBuffer.Length / 3, 32, dependency);
+            var normalsFirstHandle = normalsFirstJob.Schedule(data.IndexBuffer.Length / 3, 32, dependency);
 
             var normalsSecondJob = new RecalculateNormalsSecondJob
             {

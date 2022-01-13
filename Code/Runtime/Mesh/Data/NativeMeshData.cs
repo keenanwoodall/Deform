@@ -17,7 +17,7 @@ namespace Deform
 		public NativeArray<float4> TangentBuffer;
 		public NativeArray<float2> UVBuffer;
 		public NativeArray<float4> ColorBuffer;
-		public NativeArray<int> TriangleBuffer;
+		public NativeArray<int> IndexBuffer;
 		public NativeArray<float3> MaskVertexBuffer;
 		public NativeArray<bounds> Bounds;
 		
@@ -84,14 +84,14 @@ namespace Deform
 			}
 
 			if (indices == null)
-				TriangleBuffer = new NativeArray<int>(0, allocator);
+				IndexBuffer = new NativeArray<int>(0, allocator);
 			else
 			{
-				TriangleBuffer = new NativeArray<int>(indices.Length, allocator, NativeArrayOptions.UninitializedMemory);
-				indices.MemCpy(TriangleBuffer);
+				IndexBuffer = new NativeArray<int>(indices.Length, allocator, NativeArrayOptions.UninitializedMemory);
+				indices.MemCpy(IndexBuffer);
 			}
 
-			TriangleNormals = new NativeArray<float3>(TriangleBuffer.Length, allocator, NativeArrayOptions.UninitializedMemory);
+			TriangleNormals = new NativeArray<float3>(IndexBuffer.Length, allocator, NativeArrayOptions.UninitializedMemory);
 			VertexMap = new NativeMultiHashMap<int, int2>(vertexCount * 20, allocator);
 			VertexKeys = new NativeList<int>(vertexCount, allocator);
 			
@@ -108,7 +108,7 @@ namespace Deform
 			TangentBuffer		= new NativeArray<float4> (data.Tangents.Length,  allocator, NativeArrayOptions.UninitializedMemory);
 			UVBuffer			= new NativeArray<float2> (data.UVs.Length,		  allocator, NativeArrayOptions.UninitializedMemory);
 			ColorBuffer			= new NativeArray<float4> (data.Colors.Length,	  allocator, NativeArrayOptions.UninitializedMemory);
-			TriangleBuffer		= new NativeArray<int>	  (data.Triangles.Length, allocator, NativeArrayOptions.UninitializedMemory);
+			IndexBuffer		= new NativeArray<int>	  (data.Triangles.Length, allocator, NativeArrayOptions.UninitializedMemory);
 			MaskVertexBuffer	= new NativeArray<float3> (data.Vertices.Length,  allocator, NativeArrayOptions.UninitializedMemory);
 			Bounds				= new NativeArray<bounds> (1, allocator, NativeArrayOptions.UninitializedMemory);
 
@@ -130,8 +130,8 @@ namespace Deform
 				UVBuffer.Dispose ();
 			if (ColorBuffer.IsCreated)
 				ColorBuffer.Dispose ();
-			if (TriangleBuffer.IsCreated)
-				TriangleBuffer.Dispose ();
+			if (IndexBuffer.IsCreated)
+				IndexBuffer.Dispose ();
 			if (MaskVertexBuffer.IsCreated)
 				MaskVertexBuffer.Dispose ();
 			if (TriangleNormals.IsCreated)
@@ -154,7 +154,7 @@ namespace Deform
 			&& TangentBuffer.IsCreated
 			&& UVBuffer.IsCreated
 			&& ColorBuffer.IsCreated
-			&& TriangleBuffer.IsCreated
+			&& IndexBuffer.IsCreated
 			&& MaskVertexBuffer.IsCreated
 			&& TriangleNormals.IsCreated
 			&& VertexMap.IsCreated

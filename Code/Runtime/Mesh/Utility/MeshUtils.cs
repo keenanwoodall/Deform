@@ -20,7 +20,7 @@ namespace Deform
 			}.Schedule (length, 256, dependency);
 			dependency = new AddTriangleNormalToNormalsJob
 			{
-				triangles = data.TriangleBuffer,
+				triangles = data.IndexBuffer,
 				vertices = data.VertexBuffer,
 				normals = data.NormalBuffer
 			}.Schedule (dependency);

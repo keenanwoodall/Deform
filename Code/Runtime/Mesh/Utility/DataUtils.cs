@@ -43,7 +43,7 @@ namespace Deform
 			if ((dataFlags & DataFlags.Colors) != 0)
 				managed.Colors.MemCpy (native.ColorBuffer);
 			if ((dataFlags & DataFlags.Triangles) != 0)
-				managed.Triangles.MemCpy (native.TriangleBuffer);
+				managed.Triangles.MemCpy (native.IndexBuffer);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				native.Bounds[0] = managed.Bounds;
 
@@ -83,7 +83,7 @@ namespace Deform
 			if ((dataFlags & DataFlags.Colors) != 0)
 				native.ColorBuffer.MemCpy (managed.Colors);
 			if ((dataFlags & DataFlags.Triangles) != 0)
-				native.TriangleBuffer.CopyTo (managed.Triangles);
+				native.IndexBuffer.CopyTo (managed.Triangles);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				managed.Bounds = native.Bounds[0];
 
@@ -115,7 +115,7 @@ namespace Deform
 			if ((dataFlags & DataFlags.Colors) != 0)
 				from.ColorBuffer.CopyTo (to.ColorBuffer);
 			if ((dataFlags & DataFlags.Triangles) != 0)
-				from.TriangleBuffer.CopyTo (to.TriangleBuffer);
+				from.IndexBuffer.CopyTo (to.IndexBuffer);
 			if ((dataFlags & DataFlags.Bounds) != 0)
 				from.Bounds.CopyTo (to.Bounds);
 
@@ -191,7 +191,7 @@ namespace Deform
 					var submesh = to.GetSubMesh(i);
 					to.SetIndices
 					(
-						indices: 			from.TriangleBuffer,
+						indices: 			from.IndexBuffer,
 						indicesStart: 		submesh.indexStart, 
 						indicesLength: 		submesh.indexCount, 
 						topology: 			submesh.topology, 
