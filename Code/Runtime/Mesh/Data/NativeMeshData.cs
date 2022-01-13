@@ -92,7 +92,7 @@ namespace Deform
 			}
 
 			TriangleNormals = new NativeArray<float3>(IndexBuffer.Length, allocator, NativeArrayOptions.UninitializedMemory);
-			VertexMap = new NativeMultiHashMap<int, int2>(vertexCount * 20, allocator);
+			VertexMap = new NativeMultiHashMap<int, int2>(vertexCount * 10, allocator);
 			VertexKeys = new NativeList<int>(vertexCount, allocator);
 			
 			Bounds = new NativeArray<bounds> (1, allocator, NativeArrayOptions.UninitializedMemory);

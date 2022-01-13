@@ -21,6 +21,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
+using static Unity.Mathematics.math;
 
 namespace Deform
 {
@@ -31,7 +32,7 @@ namespace Deform
             data.VertexMap.Clear();
             data.VertexKeys.Clear();
             
-            var normalsFirstJob = new RecalculateNormalsFirstJob
+            var normalsFirstJob = new CalculateVertexMapAndTriangleNormalsJob
             {
                 triangles = data.IndexBuffer.Reinterpret<int, int3>(),
                 vertices = data.VertexBuffer,
@@ -40,20 +41,20 @@ namespace Deform
             };
             var normalsFirstHandle = normalsFirstJob.Schedule(data.IndexBuffer.Length / 3, 32, dependency);
 
-            var normalsSecondJob = new RecalculateNormalsSecondJob
+            var normalsSecondJob = new AddKeysFromMapJob
             {
                 keys = data.VertexKeys,
                 map = data.VertexMap
             };
             var normalsSecondHandle = normalsSecondJob.Schedule(normalsFirstHandle);
 
-            var normalsLastJob = new RecalculateNormalsLastJob
+            var normalsLastJob = new CalculateNormalsJob
             {
                 keys = data.VertexKeys.AsDeferredJobArray(),
                 map = data.VertexMap,
                 triNormals = data.TriangleNormals,
                 normals = data.NormalBuffer,
-                cosineThreshold = math.cos(angle * Mathf.Deg2Rad)
+                cosineThreshold = cos(angle * Mathf.Deg2Rad)
             };
 
             return normalsLastJob.Schedule(data.VertexKeys, 8, normalsSecondHandle);
@@ -66,21 +67,21 @@ namespace Deform
         private const long FNV32Init = 0x811c9dc5;
         private const long FNV32Prime = 0x01000193;
 
-        public static int Float3Hash(float3 vector)
+        private static int Float3Hash(float3 vector)
         {
             long rv = FNV32Init;
-            rv ^= (long) math.round(vector.x * Tolerance);
+            rv ^= (long) round(vector.x * Tolerance);
             rv *= FNV32Prime;
-            rv ^= (long) math.round(vector.y * Tolerance);
+            rv ^= (long) round(vector.y * Tolerance);
             rv *= FNV32Prime;
-            rv ^= (long) math.round(vector.z * Tolerance);
+            rv ^= (long) round(vector.z * Tolerance);
             rv *= FNV32Prime;
 
             return rv.GetHashCode();
         }
 
-        [BurstCompile(CompileSynchronously = true)]
-        public struct RecalculateNormalsFirstJob : IJobParallelFor
+        [BurstCompile(CompileSynchronously = Deformer.COMPILE_SYNCHRONOUSLY)]
+        private struct CalculateVertexMapAndTriangleNormalsJob : IJobParallelFor
         {
             [ReadOnly] public NativeArray<int3> triangles;
             [ReadOnly] public NativeArray<float3> vertices;
@@ -93,12 +94,7 @@ namespace Deform
 
                 float3 p1 = vertices[tri.y] - vertices[tri.x];
                 float3 p2 = vertices[tri.z] - vertices[tri.x];
-                float3 normal = math.cross(p1, p2);
-                float magnitude = math.length(normal);
-                if (magnitude > 0)
-                {
-                    normal /= magnitude;
-                }
+                float3 normal = normalizesafe(cross(p1, p2));
 
                 triangleNormals[triIndex] = normal;
 
@@ -112,8 +108,8 @@ namespace Deform
             }
         }
 
-        [BurstCompile(CompileSynchronously = true)]
-        public struct RecalculateNormalsSecondJob : IJob
+        [BurstCompile(CompileSynchronously = Deformer.COMPILE_SYNCHRONOUSLY)]
+        private struct AddKeysFromMapJob : IJob
         {
             public NativeList<int> keys;
             [ReadOnly] public NativeMultiHashMap<int, int2> map;
@@ -124,13 +120,14 @@ namespace Deform
             }
         }
 
-        [BurstCompile(CompileSynchronously = true)]
-        public struct RecalculateNormalsLastJob : IJobParallelForDefer
+        [BurstCompile(CompileSynchronously = Deformer.COMPILE_SYNCHRONOUSLY)]
+        private struct CalculateNormalsJob : IJobParallelForDefer
         {
             [ReadOnly] public NativeArray<int> keys;
             [ReadOnly] public NativeMultiHashMap<int, int2> map;
             [ReadOnly] public NativeArray<float3> triNormals;
-            [NativeDisableParallelForRestriction] public NativeArray<float3> normals;
+            [NativeDisableParallelForRestriction]
+            public NativeArray<float3> normals;
 
             public float cosineThreshold;
 
@@ -139,7 +136,7 @@ namespace Deform
                 var values = map.GetValuesForKey(keys[index]);
                 foreach (int2 lhsEntry in values)
                 {
-                    float3 sum = float3.zero;
+                    float3 sum = 0f;
 
                     foreach (int2 rhsEntry in values)
                     {
@@ -159,7 +156,7 @@ namespace Deform
                         }
                     }
 
-                    normals[lhsEntry.x] = math.normalize(sum);
+                    normals[lhsEntry.x] = normalize(sum);
                 }
             }
         }
