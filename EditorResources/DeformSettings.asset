@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84838e1060cbc4f45a2f463816b2d2fe, type: 3}
-  m_Name: 
+  m_Name: DeformSettings
   m_EditorClassIdentifier: 
   solidHandleColor: {r: 1, g: 0.4, b: 0, a: 1}
   lightHandleColor: {r: 1, g: 0.4, b: 0, a: 0.75}

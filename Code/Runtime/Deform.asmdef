@@ -1,17 +1,21 @@
 {
     "name": "Deform",
+    "rootNamespace": "",
     "references": [
         "Unity.Burst",
+        "Unity.Jobs",
         "Unity.Mathematics",
-        "Beans.Unity.Mathematics",
-        "Beans.Unity.Collections"
+        "Unity.Collections",
+        "Beans.Unity.Collections",
+        "Beans.Unity.Mathematics"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -2,11 +2,13 @@
 {
 	/// <summary>
 	/// None: Normals aren't touched.
-	/// Auto: Normals will be overwritten with auto-calculated normals after all deformers complete.
+	/// Fast: Split vertices will have hard edges. For smooth edges, adjacent triangles must share verts.
+	/// Quality: Calculate normals with smoothing angle.
 	/// </summary>
 	public enum NormalsRecalculation
 	{
-		Auto,
-		None
+		Fast,
+		None,
+		Quality
 	}
 }

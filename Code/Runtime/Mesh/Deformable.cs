@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Jobs;
@@ -52,6 +53,12 @@ namespace Deform
 			get => normalsRecalculation;
 			set => normalsRecalculation = value;
 		}
+		public float SmoothingAngle
+		{
+			get => smoothingAngle;
+			set => smoothingAngle = Mathf.Clamp(value, 0f, 180f);
+		}
+
 		public BoundsRecalculation BoundsRecalculation
 		{
 			get => boundsRecalculation;
@@ -102,7 +109,8 @@ namespace Deform
 
 		[SerializeField, HideInInspector] protected UpdateMode updateMode = UpdateMode.Auto;
 		[SerializeField, HideInInspector] protected CullingMode cullingMode = CullingMode.DontUpdate;
-		[SerializeField, HideInInspector] protected NormalsRecalculation normalsRecalculation = NormalsRecalculation.Auto;
+		[SerializeField, HideInInspector] protected NormalsRecalculation normalsRecalculation = NormalsRecalculation.Fast;
+		[SerializeField, HideInInspector] protected float smoothingAngle = 60f;
 		[SerializeField, HideInInspector] protected BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
 		[SerializeField, HideInInspector] protected ColliderRecalculation colliderRecalculation = ColliderRecalculation.None;
 		[SerializeField, HideInInspector] protected MeshCollider meshCollider;
@@ -302,11 +310,19 @@ namespace Deform
 			// Store if the vertices have been modified. If not, we don't need to update normals/bounds
 			var dirtyVertices = (currentModifiedDataFlags | DataFlags.Vertices) > 0;
 			
-			if (dirtyVertices && NormalsRecalculation == NormalsRecalculation.Auto)
+			if (dirtyVertices)
 			{
-				// Add normal recalculation to the end of the deformation chain.
-				handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
-				currentModifiedDataFlags |= DataFlags.Normals;
+				if (NormalsRecalculation == NormalsRecalculation.Fast)
+				{
+					// Add normal recalculation to the end of the deformation chain.
+					handle = MeshUtils.RecalculateNormals(data.DynamicNative, handle);
+					currentModifiedDataFlags |= DataFlags.Normals;
+				}
+				else if (NormalsRecalculation == NormalsRecalculation.Quality)
+				{
+					handle = MeshUtils.RecalculateNormals(data.DynamicNative, SmoothingAngle, handle);
+					currentModifiedDataFlags |= DataFlags.Normals;
+				}
 			}
 			if (dirtyVertices && BoundsRecalculation == BoundsRecalculation.Auto || BoundsRecalculation == BoundsRecalculation.OnceAtTheEnd)
 			{

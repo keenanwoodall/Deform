@@ -5,7 +5,7 @@ namespace Deform
 	/// <summary>
 	/// Contains utility methods for common mesh job operations.
 	/// </summary>
-	public static class MeshUtils
+	public static partial class MeshUtils
 	{
 		/// <summary>
 		/// Returns a job chain that will recalculate the normals of the native data.
@@ -20,7 +20,7 @@ namespace Deform
 			}.Schedule (length, 256, dependency);
 			dependency = new AddTriangleNormalToNormalsJob
 			{
-				triangles = data.IndexBuffer,
+				triangles = data.TriangleBuffer,
 				vertices = data.VertexBuffer,
 				normals = data.NormalBuffer
 			}.Schedule (dependency);

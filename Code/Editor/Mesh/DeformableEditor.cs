@@ -25,6 +25,7 @@ namespace DeformEditor
 			public static readonly GUIContent UpdateMode = new GUIContent(text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
 			public static readonly GUIContent CullingMode = new GUIContent(text: "Culling Mode", tooltip: "Always Update: Update everything regardless of renderer visibility.\n\nDon't Update: Do not update unless renderer is visible. When the deformers aren't recalculated, bounds cannot be updated which may result in animated deformables not reappearing on screen.");
 			public static readonly GUIContent NormalsRecalculation = new GUIContent(text: "Normals", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");
+			public static readonly GUIContent NormalsSmoothingAngle = new GUIContent(text: "Smoothing Angle", tooltip: "Fast: Split vertices will have hard edges. For smooth edges, adjacent triangles must share verts.\nNone: Normals aren't modified by the Deformable.\nQuality: Calculate normals with smoothing angle. Expensive.");
 			public static readonly GUIContent BoundsRecalculation = new GUIContent(text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent(text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
 			public static readonly GUIContent MeshCollider = new GUIContent(text: "Mesh Collider", tooltip: "The Mesh Collider to sync with the deformed mesh. To improve performance, try turning off different cooking options on the Mesh Collider (Especially 'Cook For Faster Simulation').");
@@ -48,6 +49,7 @@ namespace DeformEditor
 			public SerializedProperty UpdateMode;
 			public SerializedProperty CullingMode;
 			public SerializedProperty NormalsRecalculation;
+			public SerializedProperty NormalsSmoothingAngle;
 			public SerializedProperty BoundsRecalculation;
 			public SerializedProperty ColliderRecalculation;
 			public SerializedProperty MeshCollider;
@@ -58,6 +60,7 @@ namespace DeformEditor
 				UpdateMode = obj.FindProperty("updateMode");
 				CullingMode = obj.FindProperty("cullingMode");
 				NormalsRecalculation = obj.FindProperty("normalsRecalculation");
+				NormalsSmoothingAngle = obj.FindProperty("smoothingAngle");
 				BoundsRecalculation = obj.FindProperty("boundsRecalculation");
 				ColliderRecalculation = obj.FindProperty("colliderRecalculation");
 				MeshCollider = obj.FindProperty("meshCollider");
@@ -123,6 +126,11 @@ namespace DeformEditor
 			else
 				EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
 			EditorGUILayout.PropertyField(properties.NormalsRecalculation, Content.NormalsRecalculation);
+			if (properties.NormalsRecalculation.enumValueIndex == 2)
+			{
+				using (new EditorGUI.IndentLevelScope())
+					EditorGUILayout.Slider(properties.NormalsSmoothingAngle, 0f, 180f, Content.NormalsSmoothingAngle);
+			}
 			EditorGUILayout.PropertyField(properties.BoundsRecalculation, Content.BoundsRecalculation);
 
 			if (properties.BoundsRecalculation.hasMultipleDifferentValues || (BoundsRecalculation)properties.BoundsRecalculation.enumValueIndex == BoundsRecalculation.Custom)
