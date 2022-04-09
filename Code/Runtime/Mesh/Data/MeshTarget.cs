@@ -108,10 +108,9 @@ namespace Deform
 		{
 			if (skinnedMeshRenderer != null)
 				return skinnedMeshRenderer;
-			else if (meshFilter != null)
+			if (meshFilter != null)
 				return meshFilter.GetComponent<MeshRenderer> ();
-			else
-				return null;
+			return null;
 		}
 
 		/// <summary>

@@ -232,8 +232,8 @@ namespace Deform
 #endif
 		protected bool IsVisible()
 		{
-			bool isVisible = data.Target.GetRenderer().isVisible;
-			return isVisible;
+			var renderer = data.Target.GetRenderer();
+			return renderer != null && renderer.isVisible;
 		}
 
 		protected bool ShouldCull(bool ignoreCullingMode)
