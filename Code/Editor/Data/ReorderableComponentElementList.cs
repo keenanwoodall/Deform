@@ -3,13 +3,13 @@ using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
-using Object = UnityEngine.Object;
 using Beans.Unity.Editor;
+using Object = UnityEngine.Object;
 
 namespace DeformEditor
 {
 	/// <summary>
-	/// Draws a reorderabe list of IComponentElements.
+	/// Draws a reorderable list of IComponentElements.
 	/// </summary>
 	/// <typeparam name="T">The type of component the element holds.</typeparam>
 	public class ReorderableComponentElementList<T> : IDisposable where T : Component
@@ -93,7 +93,7 @@ namespace DeformEditor
 
 		private void SceneGUI (SceneView sceneView)
 		{
-			if (selectedComponentInspectorEditor == null)
+			if (selectedComponentInspectorEditor == null || selectedComponentInspectorEditor.target == null)
 				return;
 			var method = selectedComponentInspectorEditor.GetType().GetMethod("OnSceneGUI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			if (method == null)
