@@ -51,27 +51,15 @@ namespace Deform
 		[SerializeField, HideInInspector] private Transform axis;
 
 		private JobHandle combinedHandle;
-		private NativeCurve nativeCurve;
 
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
-		private void OnDisable ()
-		{
-			combinedHandle.Complete ();
-			nativeCurve.Dispose ();
-		}
-
-		public override void PreProcess ()
-		{
-			if (curve != null)
-				nativeCurve.Update (curve, 32);
-		}
-
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
-			if (!nativeCurve.IsCreated || curve == null)
+			if (curve == null || curve.length == 0)
 				return dependency;
 
+			var nativeCurve = new NativeCurve(curve, 32, Allocator.TempJob);
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
 
 			var newHandle = new CurveScaleJob
@@ -98,7 +86,7 @@ namespace Deform
 			public float offset;
 			public float4x4 meshToAxis;
 			public float4x4 axisToMesh;
-			[ReadOnly]
+			[ReadOnly, DeallocateOnJobCompletion]
 			public NativeCurve curve;
 			public NativeArray<float3> vertices;
 

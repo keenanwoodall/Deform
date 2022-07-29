@@ -20,31 +20,31 @@ namespace Beans.Unity.Collections
 		private WrapMode preWrapMode;
 		private WrapMode postWrapMode;
 
-		private void InitializeValues (int count)
+		public NativeCurve(AnimationCurve curve, int resolution, Allocator allocator)
 		{
-			if (values.IsCreated)
-				values.Dispose ();
-
-			values = new NativeArray<float> (count, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+			if (resolution < 2)
+				throw new ArgumentException("Resolution must be greater than two.");
+			if (curve == null || curve.length == 0)
+				throw new ArgumentException("Curve must have at least one keyframe.");
+			
+			preWrapMode = curve.preWrapMode;
+			postWrapMode = curve.postWrapMode;
+			
+			values = new NativeArray<float> (resolution, allocator, NativeArrayOptions.UninitializedMemory);
+			
+			CacheValues(curve);
 		}
 
-		/// <summary>
-		/// Updates the value cache.
-		/// </summary>
-		/// <param name="resolution">How many values should be calculated.</param>
-		public void Update (AnimationCurve curve, int resolution)
+
+		public void CacheValues(AnimationCurve curve)
 		{
 			if (curve == null)
 				throw new ArgumentNullException ("curve");
-
+			
 			preWrapMode = curve.preWrapMode;
 			postWrapMode = curve.postWrapMode;
-
-			if (!values.IsCreated || values.Length != resolution)
-				InitializeValues (resolution);
-
-			for (int i = 0; i < resolution; i++)
-				values[i] = curve.Evaluate ((float)i / (float)resolution);
+			for (int i = 0; i < values.Length; i++)
+				values[i] = curve.Evaluate ((float)i / values.Length);
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace Beans.Unity.Collections
 					default:
 						return values[0];
 					case WrapMode.Loop:
-						t = 1f - (abs (t) % 1f);
+						t = 1f - abs (t) % 1f;
 						break;
 					case WrapMode.PingPong:
 						t = mathx.pingpong (t, 1f);
