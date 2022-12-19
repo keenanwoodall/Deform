@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using Beans.Unity.Editor;
@@ -24,6 +25,7 @@ namespace DeformEditor
 		{
 			public static readonly GUIContent UpdateMode = new GUIContent(text: "Update Mode", tooltip: "Auto: Gets updated by a manager.\nPause: Never updated or reset.\nStop: Mesh is reverted to it's undeformed state until mode is switched.\nCustom: Allows updates, but not from a Deformable Manager.");
 			public static readonly GUIContent CullingMode = new GUIContent(text: "Culling Mode", tooltip: "Always Update: Update everything regardless of renderer visibility.\n\nDon't Update: Do not update unless renderer is visible. When the deformers aren't recalculated, bounds cannot be updated which may result in animated deformables not reappearing on screen.");
+			public static readonly GUIContent StripMode = new GUIContent(text: "Strip Mode", tooltip: "Strip:\nThis deformable will only exist in edit mode.\n\nDon't Strip:\nThis deformable will continue at runtime.");
 			public static readonly GUIContent NormalsRecalculation = new GUIContent(text: "Normals", tooltip: "Auto: Normals are auto calculated after the mesh is deformed; overwriting any changes made by deformers.\nNone: Normals aren't modified by the Deformable.");
 			public static readonly GUIContent BoundsRecalculation = new GUIContent(text: "Bounds", tooltip: "Auto: Bounds are recalculated for any deformers that need it, and at the end after all the deformers finish.\nNever: Bounds are never recalculated.\nOnce At The End: Deformers that needs updated bounds are ignored and bounds are only recalculated at the end.");
 			public static readonly GUIContent ColliderRecalculation = new GUIContent(text: "Collider", tooltip: "Auto: Collider's mesh is updated when the rendered mesh is updated.\nNone: Collider's mesh isn't updated.");
@@ -32,6 +34,7 @@ namespace DeformEditor
 			public static readonly GUIContent ApplyBounds = new GUIContent(text: "Apply Bounds", tooltip: "Applies the currently recorded bounds.");
 
 			public static readonly string ReadWriteNotEnableAlert = "Read/Write permissions must be enabled on the target mesh.";
+			public static readonly string StaticBatchingAlert = "Deformable will be stripped at runtime when static batching is enabled.";
 			public static readonly string FixReadWriteNotEnabled = "Fix It!";
 
 			public static readonly GUIContent[] UtilityToolbar =
@@ -47,6 +50,7 @@ namespace DeformEditor
 		{
 			public SerializedProperty UpdateMode;
 			public SerializedProperty CullingMode;
+			public SerializedProperty StripMode;
 			public SerializedProperty NormalsRecalculation;
 			public SerializedProperty BoundsRecalculation;
 			public SerializedProperty ColliderRecalculation;
@@ -57,6 +61,7 @@ namespace DeformEditor
 			{
 				UpdateMode = obj.FindProperty("updateMode");
 				CullingMode = obj.FindProperty("cullingMode");
+				StripMode = obj.FindProperty("stripMode");
 				NormalsRecalculation = obj.FindProperty("normalsRecalculation");
 				BoundsRecalculation = obj.FindProperty("boundsRecalculation");
 				ColliderRecalculation = obj.FindProperty("colliderRecalculation");
@@ -122,6 +127,19 @@ namespace DeformEditor
 				overrideCullingModeGUI.Invoke();
 			else
 				EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
+			
+			var batchingStatic = targets.Select(t => ((Deformable)t).gameObject).Any(go => GameObjectUtility.AreStaticEditorFlagsSet(go, StaticEditorFlags.BatchingStatic));
+			if (!batchingStatic)
+			{
+				using (new EditorGUI.DisabledScope(Application.isPlaying))
+					EditorGUILayout.PropertyField(properties.StripMode, Content.StripMode);
+			}
+			else using (new EditorGUI.DisabledScope(true))
+			{
+				EditorGUILayout.EnumPopup(Content.StripMode, StripMode.Strip);
+				EditorGUILayout.HelpBox(new GUIContent(Content.StaticBatchingAlert));
+			}
+
 			EditorGUILayout.PropertyField(properties.NormalsRecalculation, Content.NormalsRecalculation);
 			EditorGUILayout.PropertyField(properties.BoundsRecalculation, Content.BoundsRecalculation);
 
