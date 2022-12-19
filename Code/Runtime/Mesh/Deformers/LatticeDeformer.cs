@@ -20,6 +20,9 @@ namespace Deform
                 if (transform.GetComponentInParent<Deformable>() != null) return true;
 
                 LODGroup lodGroup = transform.GetComponentInParent<LODGroup>();
+                if (lodGroup == null)
+                    return false;
+                
                 var lods = lodGroup.GetLODs();
                 if (lods.Length != 0 && lods[0].renderers.Length != 0 && lods[0].renderers[0] != null)
                 {
