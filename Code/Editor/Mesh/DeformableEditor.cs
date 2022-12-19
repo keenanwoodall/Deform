@@ -71,6 +71,7 @@ namespace DeformEditor
 		}
 
 		protected Action overrideCullingModeGUI;
+		protected Action overrideStripModeGUI;
 
 		private Properties properties;
 		private ReorderableComponentElementList<Deformer> deformerList;
@@ -127,17 +128,24 @@ namespace DeformEditor
 				overrideCullingModeGUI.Invoke();
 			else
 				EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
-			
-			var batchingStatic = targets.Select(t => ((Deformable)t).gameObject).Any(go => GameObjectUtility.AreStaticEditorFlagsSet(go, StaticEditorFlags.BatchingStatic));
-			if (!batchingStatic)
+
+			if (overrideStripModeGUI != null)
+				overrideStripModeGUI.Invoke();
+			else
 			{
-				using (new EditorGUI.DisabledScope(Application.isPlaying))
-					EditorGUILayout.PropertyField(properties.StripMode, Content.StripMode);
-			}
-			else using (new EditorGUI.DisabledScope(true))
-			{
-				EditorGUILayout.EnumPopup(Content.StripMode, StripMode.Strip);
-				EditorGUILayout.HelpBox(new GUIContent(Content.StaticBatchingAlert));
+				var batchingStatic = targets.Select(t => ((Deformable)t).gameObject).Any(go =>
+					GameObjectUtility.AreStaticEditorFlagsSet(go, StaticEditorFlags.BatchingStatic));
+				if (!batchingStatic)
+				{
+					using (new EditorGUI.DisabledScope(Application.isPlaying))
+						EditorGUILayout.PropertyField(properties.StripMode, Content.StripMode);
+				}
+				else
+					using (new EditorGUI.DisabledScope(true))
+					{
+						EditorGUILayout.EnumPopup(Content.StripMode, StripMode.Strip);
+						EditorGUILayout.HelpBox(new GUIContent(Content.StaticBatchingAlert));
+					}
 			}
 
 			EditorGUILayout.PropertyField(properties.NormalsRecalculation, Content.NormalsRecalculation);

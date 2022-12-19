@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEditor;
 using Deform;
 using Beans.Unity.Editor;
@@ -10,7 +11,9 @@ namespace DeformEditor
 	{
 		private static class Content
 		{
-			public static readonly GUIContent CullingMode = new GUIContent("Culling Mode", $"{nameof(ElasticDeformable)} is a continuos simulation and should never be culled.");
+			public static readonly GUIContent CullingMode = new GUIContent("Culling Mode", $"{nameof(ElasticDeformable)} is a continuous simulation and should never be culled.");
+			public static readonly string StaticBatchingError = $"{nameof(ElasticDeformable)} will not work when static batching is enabled.";
+			public static readonly GUIContent FixStaticBatchingError = new GUIContent("Fix it!", "Disable static batching");
 		}
 		private class Properties
 		{
@@ -46,6 +49,9 @@ namespace DeformEditor
 				using (new EditorGUI.DisabledScope(properties.CullingMode.enumValueIndex != 1))
 					EditorGUILayout.PropertyField(properties.CullingMode, Content.CullingMode);
 			};
+
+			// Elastic deformable should never be stripped, so don't draw anything
+			overrideStripModeGUI = () => { };
 		}
 
 		public override void OnInspectorGUI()
@@ -75,7 +81,25 @@ namespace DeformEditor
 		protected override void DrawHelpBoxes()
 		{
 			base.DrawHelpBoxes();
-			EditorGUILayoutx.WIPAlert();
+
+			var staticBatchedGameObjects = targets
+				.Select(t => ((ElasticDeformable)t).gameObject)
+				.Where(go => GameObjectUtility.AreStaticEditorFlagsSet(go, StaticEditorFlags.BatchingStatic)).ToArray();
+			
+			if (staticBatchedGameObjects.Length <= 0) return;
+			
+			using (new EditorGUILayout.HorizontalScope())
+			{
+				EditorGUILayout.HelpBox(Content.StaticBatchingError, MessageType.Error);
+				if (GUILayout.Button(Content.FixStaticBatchingError, GUILayout.Width(50f), GUILayout.Height(EditorGUIUtility.singleLineHeight * 2f + EditorGUIUtility.standardVerticalSpacing)))
+				{
+					Undo.RecordObjects(staticBatchedGameObjects, "Disable Static Batching");
+					foreach (var go in staticBatchedGameObjects)
+					{
+						GameObjectUtility.SetStaticEditorFlags(go, GameObjectUtility.GetStaticEditorFlags(go) & ~StaticEditorFlags.BatchingStatic);
+					}
+				}
+			}
 		}
 	}
 }
