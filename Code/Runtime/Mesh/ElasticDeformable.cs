@@ -13,7 +13,13 @@ namespace Deform
 	public class ElasticDeformable : Deformable
 	{
 		public enum VertexColorMask { None = -1, R = 0, G = 1, B = 2, A = 3 }
-		
+
+		public override StripMode StripMode
+		{
+			get => StripMode.DontStrip;
+			set => Debug.LogError($"Cannot set {nameof(StripMode)}.\n{nameof(ElasticDeformable)} is a continuous simulation and should not be stripped");
+		}
+
 		public float DampingRatio
 		{
 			get => dampingRatio;

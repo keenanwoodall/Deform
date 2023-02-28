@@ -102,16 +102,6 @@ namespace DeformEditor
 			}
 		}
 		
-		public static BuildStrippingMode BuildStrippingMode
-		{
-			get => SettingsAsset.buildStripping;
-			set
-			{
-				SettingsAsset.buildStripping = value;
-				EditorUtility.SetDirty (SettingsAsset);
-			}
-		}
-
 		public static void SelectSettingsAsset ()
 		{
 			Selection.activeObject = SettingsAsset;

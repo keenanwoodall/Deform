@@ -16,8 +16,5 @@ namespace DeformEditor
 
 		[CollapsibleSection("Importer")]
 		public bool modelsReadableByDefault = false;
-		
-		[CollapsibleSection("Builds")]
-		public BuildStrippingMode buildStripping = BuildStrippingMode.NoStripping;
 	}
 }

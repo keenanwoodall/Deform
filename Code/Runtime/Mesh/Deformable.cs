@@ -67,6 +67,20 @@ namespace Deform
 			get => meshCollider;
 			set => meshCollider = value;
 		}
+
+		public virtual StripMode StripMode
+		{
+			get
+			{
+				#if UNITY_EDITOR
+				if (UnityEditor.GameObjectUtility.AreStaticEditorFlagsSet(gameObject, UnityEditor.StaticEditorFlags.BatchingStatic))
+					return StripMode.Strip;
+				#endif
+				return stripMode;
+			}
+			set => stripMode = value;
+		}
+
 		public List<DeformerElement> DeformerElements
 		{
 			get => deformerElements;
@@ -102,6 +116,7 @@ namespace Deform
 
 		[SerializeField, HideInInspector] protected UpdateMode updateMode = UpdateMode.Auto;
 		[SerializeField, HideInInspector] protected CullingMode cullingMode = CullingMode.DontUpdate;
+		[SerializeField, HideInInspector] protected StripMode stripMode = StripMode.DontStrip;
 		[SerializeField, HideInInspector] protected NormalsRecalculation normalsRecalculation = NormalsRecalculation.Auto;
 		[SerializeField, HideInInspector] protected BoundsRecalculation boundsRecalculation = BoundsRecalculation.Auto;
 		[SerializeField, HideInInspector] protected ColliderRecalculation colliderRecalculation = ColliderRecalculation.None;

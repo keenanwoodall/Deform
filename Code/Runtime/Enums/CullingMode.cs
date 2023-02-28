@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Deform
 {
 	public enum CullingMode
