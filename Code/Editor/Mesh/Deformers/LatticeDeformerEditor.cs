@@ -23,7 +23,7 @@ namespace DeformEditor
             NotActive,
             Eligible,
             InProgress
-        };
+        }
 
         private MouseDragState mouseDragState = MouseDragState.NotActive;
         private Vector2 mouseDownPosition;
@@ -41,16 +41,19 @@ namespace DeformEditor
         private static class Content
         {
             public static readonly GUIContent Resolution = new GUIContent(text: "Resolution", tooltip: "Per axis control point counts, the higher the resolution the more splits");
+            public static readonly GUIContent Mode = new GUIContent(text: "Mode", tooltip: "Mode by which vertices are positioned between control points");
             public static readonly GUIContent StopEditing = new GUIContent(text: "Stop Editing Control Points", tooltip: "Restore normal transform tools\n\nShortcut: Escape");
         }
 
         private class Properties
         {
             public SerializedProperty Resolution;
+            public SerializedProperty Mode;
 
             public Properties(SerializedObject obj)
             {
                 Resolution = obj.FindProperty("resolution");
+                Mode = obj.FindProperty("mode");
             }
         }
 
@@ -85,7 +88,8 @@ namespace DeformEditor
             serializedObject.UpdateIfRequiredOrScript();
 
             EditorGUI.BeginChangeCheck();
-            
+
+            EditorGUILayout.PropertyField(properties.Mode);
             newResolution = EditorGUILayout.Vector3IntField(Content.Resolution, newResolution);
             // Make sure we have at least two control points per axis
             newResolution = Vector3Int.Max(newResolution, new Vector3Int(2, 2, 2));
@@ -267,7 +271,7 @@ namespace DeformEditor
                 else
                 {
                     // Match the scene view behaviour that Pivot mode uses the last selected object as pivot
-                    originalPivotPosition = selectedOriginalPositions.Last();
+                    originalPivotPosition = selectedOriginalPositions.LastOrDefault();
                 }
 
                 var handleRotation = transform.rotation;
