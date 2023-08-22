@@ -398,7 +398,10 @@ namespace Deform
 		public void RecalculateMeshCollider()
 		{
 			if (MeshCollider != null)
+			{
+				MeshCollider.sharedMesh = null;
 				MeshCollider.sharedMesh = GetMesh();
+			}
 		}
 
 		/// <summary>
