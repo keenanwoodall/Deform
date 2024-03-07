@@ -75,6 +75,14 @@ namespace Deform
             if (deformable != null)
             {
                 var bounds = deformable.GetCurrentMesh().bounds;
+                
+                // Ensure minimum bounds size. Lattice deformer breaks if the size is 0 on any axis
+                var size = bounds.size;
+                size.x = Mathf.Max(Mathf.Abs(size.x), 0.0001f) * Mathf.Sign(size.x);
+                size.y = Mathf.Max(Mathf.Abs(size.y), 0.0001f) * Mathf.Sign(size.y);
+                size.z = Mathf.Max(Mathf.Abs(size.z), 0.0001f) * Mathf.Sign(size.z);
+                bounds.size = size;
+                
                 transform.localPosition = bounds.center;
                 transform.localScale = bounds.size;
                 // Make sure the rotation is zeroed so that we're not applying the size is the wrong axis
