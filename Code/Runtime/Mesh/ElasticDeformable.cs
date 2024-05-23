@@ -239,9 +239,7 @@ namespace Deform
 
 			// If in play-mode, always apply vertices since it's an elastic effect
 			if (Application.isPlaying)
-			{
 				currentModifiedDataFlags |= DataFlags.Vertices;
-			}
 
 			data.ApplyData(currentModifiedDataFlags | lastModifiedDataFlags);
 
@@ -250,6 +248,8 @@ namespace Deform
 
 			if (ColliderRecalculation == ColliderRecalculation.Auto)
 				RecalculateMeshCollider();
+
+			DynamicMeshUpdated?.Invoke(data);
 
 			ResetDynamicData();
 		}

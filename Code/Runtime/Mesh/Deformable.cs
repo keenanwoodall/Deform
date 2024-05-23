@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Jobs;
+using System;
 
 namespace Deform
 {
@@ -113,6 +114,7 @@ namespace Deform
 		public virtual UpdateFrequency UpdateFrequency => UpdateFrequency.Default;
 
 		public bool assignOriginalMeshOnDisable = true;
+		public Action<MeshData> DynamicMeshUpdated;
 
 		[SerializeField, HideInInspector] protected UpdateMode updateMode = UpdateMode.Auto;
 		[SerializeField, HideInInspector] protected CullingMode cullingMode = CullingMode.DontUpdate;
@@ -351,6 +353,8 @@ namespace Deform
 
 			if (ColliderRecalculation == ColliderRecalculation.Auto)
 				RecalculateMeshCollider();
+
+			DynamicMeshUpdated?.Invoke(data);
 
 			ResetDynamicData();
 		}
