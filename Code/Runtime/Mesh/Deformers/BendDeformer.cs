@@ -63,12 +63,15 @@ namespace Deform
 		[SerializeField, HideInInspector] private BoundsMode bottomMode = BoundsMode.Limited;
 		[SerializeField, HideInInspector] private Transform axis;
 
+		[HideInInspector]
+		public float minValidBendAngle = 1e-03f;
+
 		public override DataFlags DataFlags => DataFlags.Vertices;
 
 		public override JobHandle Process (MeshData data, JobHandle dependency = default (JobHandle))
 		{
 			var totalAngle = Angle * Factor;
-			if (Mathf.Approximately (totalAngle, 0f) || Mathf.Approximately (Top, Bottom))
+			if (Mathf.Abs(totalAngle) < minValidBendAngle || Mathf.Approximately (Top, Bottom))
 				return dependency;
 
 			var meshToAxis = DeformerUtils.GetMeshToAxisSpace (Axis, data.Target.GetTransform ());
